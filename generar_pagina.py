@@ -415,10 +415,20 @@ def main():
     # --- Páginas de historia ---
     os.makedirs(DIR_HISTORIAS, exist_ok=True)
     plantilla_historia = env.get_template("historia.html")
+    ids_vigentes = set()
     for h in contexto_historias:
         html_h = plantilla_historia.render(h=h, generado=generado, total_medios=len(medios_confirmados))
         with open(os.path.join(DIR_HISTORIAS, f"{h['id']}.html"), "w", encoding="utf-8") as f:
             f.write(html_h)
+        ids_vigentes.add(f"{h['id']}.html")
+
+    # Borra páginas de historias que ya no están vigentes (dejaron de tener 3+ medios
+    # o se re-agruparon con otro id), para no acumular páginas huérfanas.
+    huerfanas = 0
+    for nombre in os.listdir(DIR_HISTORIAS):
+        if nombre.endswith(".html") and nombre not in ids_vigentes:
+            os.remove(os.path.join(DIR_HISTORIAS, nombre))
+            huerfanas += 1
 
     # --- Comparación de medios ---
     nombres_matriz, totales_matriz, matriz = armar_matriz_comparacion(historias, medios_confirmados)
@@ -437,7 +447,8 @@ def main():
     print(
         f"Listo: {SALIDA} generado con {len(contexto_historias)} historias "
         f"(de {len(historias)} agrupadas, filtrando por {MEDIOS_MINIMOS}+ medios). "
-        f"{len(contexto_historias)} páginas de historia + comparación de medios."
+        f"{len(contexto_historias)} páginas de historia + comparación de medios. "
+        f"{huerfanas} páginas de historia vieja(s) borrada(s)."
     )
 
 
