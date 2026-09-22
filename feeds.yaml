@@ -118,18 +118,6 @@ confirmados:
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.
 candidatos:
-  - medio: "La Voz del Interior"
-    tipo: "Diario regional (Córdoba)"
-    feed_url: "https://www.lavoz.com.ar/arc/outboundfeeds/feeds/rss/?outputType=xml"
-    posicion_editorial: "sin clasificar"
-    nota: "validar_feeds.py devolvió status 530 (sitio caído o bloqueando el pedido). Reintentar más adelante."
-
-  - medio: "Diario de Cuyo"
-    tipo: "Diario regional (San Juan)"
-    feed_url: "https://www.diariodecuyo.com.ar/rss/rss.xml"
-    posicion_editorial: "sin clasificar"
-    nota: "validar_feeds.py devolvió status 404. La URL del feed cambió — hay que buscarla de nuevo a mano."
-
 # Medios de la lista original que siguen sin resolverse (URL no
 # encontrada, o feed inexistente probado a mano).
 pendientes:
@@ -145,6 +133,14 @@ pendientes:
     problema: "Es una agencia de cable (B2B); probablemente no tenga feed público. Revisar si ofrecen alguno o sacarla de la lista."
 
 descartados:
+  - medio: "La Voz del Interior"
+    feed_url_probada: "https://www.lavoz.com.ar/arc/outboundfeeds/feeds/rss/?outputType=xml"
+    problema: "Descartado por decisión del usuario (irrelevante para el proyecto), no por falla técnica. El feed daba status 530 al momento de probarlo."
+
+  - medio: "Diario de Cuyo"
+    feed_url_probada: "https://www.diariodecuyo.com.ar/rss/rss.xml"
+    problema: "Descartado por decisión del usuario (irrelevante para el proyecto), no por falla técnica. La URL probada daba 404."
+
   - medio: "Tiempo Argentino"
     feed_url_probada: "https://www.tiempoar.com.ar/feed"
     problema: "El feed devolvió contenido de apuestas online en ruso, no noticias del medio. Da la pinta de un feed comprometido o abandonado. No usar esta URL; si se quiere este medio, hay que encontrar un feed nuevo y confirmarlo de nuevo antes de sumarlo."
