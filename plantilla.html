@@ -53,11 +53,49 @@
   .subtitulo { color: var(--text-muted); font-size: 0.92rem; margin: 10px 0 2px; }
   .generado { color: var(--text-muted); font-size: 0.78rem; margin: 0; }
 
+  .buscador-row { display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; height: 42px; max-width: 720px; margin: 20px 0 0; }
+  .buscador-row svg { flex-shrink: 0; color: var(--text-muted); }
+  .buscador-row input { flex-grow: 1; border: none; outline: none; background: transparent; color: var(--text); font-size: 0.9rem; font-family: inherit; }
+  .buscador-row input::placeholder { color: var(--text-muted); }
+
+  .chip-row { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 2px; max-width: 720px; scrollbar-width: none; }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0; white-space: nowrap; font-size: 0.8rem; font-weight: 600;
+    padding: 7px 14px; border-radius: 999px; cursor: pointer; font-family: inherit;
+    border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+  }
+  .chip.activo { border-color: var(--accent); background: var(--accent); color: var(--bg); }
+
+  .palabra-dia {
+    max-width: 720px; margin: 18px 0 0;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .palabra-dia .etiqueta-mini { display: inline-block; align-self: flex-start; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 2px 9px; }
+  .palabra-dia .titulo-palabra { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; }
+  .palabra-dia .meta-palabra { font-size: 0.85rem; color: var(--text-muted); }
+  .palabra-dia .columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  .palabra-dia .col-bucket { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+  .palabra-dia .barra { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 6px 0; }
+  .palabra-dia .barra div { height: 100%; background: var(--highlight); border-radius: 3px; }
+  .palabra-dia .ejemplo { font-size: 0.8rem; line-height: 1.35; color: var(--text); }
+
+  .franja-editorial { max-width: 720px; margin: 18px 0 0; display: flex; flex-direction: column; gap: 6px; }
+  .franja-editorial .etiqueta-chica { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+  .franja-eje { position: relative; height: 20px; margin: 4px 0 0; }
+  .franja-eje .eje-linea { position: absolute; top: 8px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
+  .franja-eje .eje-marca { position: absolute; top: 6px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
+  .franja-eje .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--highlight); border: 2px solid var(--bg); transform: translate(-50%, -50%); cursor: default; }
+  .franja-extremos { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
   .grilla {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 16px;
     align-items: start;
+    margin-top: 20px;
   }
 
   .historia {
@@ -71,19 +109,21 @@
   @media (hover: hover) {
     .historia:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
   }
-  .destacada {
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+  .destacada, .badge-categoria {
     display: inline-block;
     font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--highlight);
-    border: 1px solid var(--highlight);
     border-radius: 999px;
     padding: 2px 9px;
-    margin-bottom: 9px;
   }
+  .destacada { color: var(--highlight); border: 1px solid var(--highlight); }
+  .badge-categoria { color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
   .historia h2 { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.35; }
+  .historia h2 a { color: var(--text); }
+  .historia h2 a:hover { text-decoration: underline; }
 
   .indicador-politico { display: flex; flex-direction: column; gap: 6px; margin: 0 0 14px; }
   .indicador-header { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
@@ -103,6 +143,14 @@
   .notas a { color: inherit; text-decoration: none; }
   .notas a:hover { text-decoration: underline; }
   .faltan { font-size: 0.82rem; color: var(--text-muted); margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .cta-historia { display: inline-block; margin-top: 12px; font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+  .cta-historia:hover { text-decoration: underline; }
+
+  .link-comparacion { display: block; text-align: center; margin-top: 24px; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+  .link-comparacion:hover { text-decoration: underline; }
+
+  .sin-resultados { display: none; color: var(--text-muted); padding: 32px 0; text-align: center; max-width: 720px; }
+
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 28px 0 8px; }
   .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; max-width: 720px; }
 </style>
@@ -121,12 +169,61 @@
     <p class="generado">Actualizado: {{ generado }} · {{ historias|length }} historias · {{ total_medios }} medios monitoreados · se muestran historias cubiertas por {{ medios_minimos }} o más medios</p>
   </header>
 
+  <div class="buscador-row">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
+    <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
+  </div>
+
+  <div class="chip-row" id="chips">
+    {% for cat in ["Todas"] + categorias %}
+    <button type="button" class="chip{% if loop.first %} activo{% endif %}" data-categoria="{{ cat }}">{{ cat }}</button>
+    {% endfor %}
+  </div>
+
+  {% if palabra_del_dia %}
+  <div class="palabra-dia">
+    <span class="etiqueta-mini">Palabra del día</span>
+    <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+      <span class="titulo-palabra">"{{ palabra_del_dia.palabra }}"</span>
+      <span class="meta-palabra">mencionada en {{ palabra_del_dia.frecuencia }} titular{{ 'es' if palabra_del_dia.frecuencia != 1 else '' }} de {{ palabra_del_dia.n_medios }} medio{{ 's' if palabra_del_dia.n_medios != 1 else '' }}, últimas {{ palabra_del_dia.horas }} h</span>
+    </div>
+    <div class="columnas">
+      {% for col in palabra_del_dia.columnas %}
+      <div>
+        <div class="col-bucket"><span>{{ col.bucket }}</span><span>{{ col.count }}</span></div>
+        <div class="barra"><div style="width: {{ col.pct }}%;"></div></div>
+        <span class="ejemplo">"{{ col.titulo }}" — {{ col.medio }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted); font-style: italic;">Agrupa titulares por matiz editorial del medio, no por posición del lector.</p>
+  </div>
+  {% endif %}
+
+  <div class="franja-editorial">
+    <span class="etiqueta-chica">Ubicación editorial de los medios (ilustrativa)</span>
+    <div class="franja-eje">
+      <div class="eje-linea"></div>
+      {% for marca in [0, 25, 50, 75, 100] %}
+      <div class="eje-marca" style="left: {{ marca }}%;"></div>
+      {% endfor %}
+      {% for p in indicador_global.puntos %}
+      <div class="eje-punto" title="{{ p.titulo }}" style="left: {{ p.x_pct }}%; width: {{ p.size }}px; height: {{ p.size }}px;"></div>
+      {% endfor %}
+    </div>
+    <div class="franja-extremos"><span>Izquierda</span><span>Derecha</span></div>
+  </div>
+
   {% if historias %}
-  <div class="grilla">
+  <div class="grilla" id="grilla">
     {% for h in historias %}
-    <article class="historia">
-      {% if loop.first %}<span class="destacada">Más cubierta</span><br>{% endif %}
-      <h2>{{ h.titulo }}</h2>
+    <article class="historia" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}">
+      <div class="badges">
+        {% if h.destacada %}<span class="destacada">Más cubierta</span>{% endif %}
+        <span class="badge-categoria">{{ h.categoria }}</span>
+      </div>
+      <h2><a href="historias/{{ h.id }}.html">{{ h.titulo }}</a></h2>
 
       <div class="indicador-politico">
         <div class="indicador-header">
@@ -157,12 +254,16 @@
       {% if h.medios_faltan %}
       <p class="faltan">No lo cubrieron: {{ h.medios_faltan_texto }}</p>
       {% endif %}
+      <a href="historias/{{ h.id }}.html" class="cta-historia">Ver cobertura completa y tendencias →</a>
     </article>
     {% endfor %}
   </div>
+  <p class="sin-resultados" id="sin-resultados">No hay historias que coincidan con la búsqueda o la categoría elegida.</p>
   {% else %}
     <p class="vacio">Todavía no hay historias con cobertura de {{ medios_minimos }} o más medios.</p>
   {% endif %}
+
+  <a href="comparacion.html" class="link-comparacion">Ver comparación de medios →</a>
 
   <footer>Proyecto abierto, metodología pública. Datos de RSS de cada medio, sin modificar su contenido. La posición editorial de cada medio es aproximada y se ajusta con el tiempo — ver metodología en el repositorio.</footer>
 </div>
@@ -172,6 +273,37 @@
       navigator.serviceWorker.register('sw.js').catch(() => {});
     });
   }
+
+  (function () {
+    var input = document.getElementById('buscar-puente');
+    var chips = document.querySelectorAll('#chips .chip');
+    var tarjetas = document.querySelectorAll('#grilla .historia');
+    var sinResultados = document.getElementById('sin-resultados');
+    var categoriaActiva = 'Todas';
+
+    function aplicarFiltros() {
+      var query = (input.value || '').trim().toLowerCase();
+      var visibles = 0;
+      tarjetas.forEach(function (t) {
+        var coincideCategoria = categoriaActiva === 'Todas' || t.dataset.categoria === categoriaActiva;
+        var coincideBusqueda = !query || (t.dataset.buscar || '').indexOf(query) !== -1;
+        var visible = coincideCategoria && coincideBusqueda;
+        t.style.display = visible ? '' : 'none';
+        if (visible) visibles++;
+      });
+      if (sinResultados) sinResultados.style.display = visibles === 0 ? 'block' : 'none';
+    }
+
+    if (input) input.addEventListener('input', aplicarFiltros);
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        chips.forEach(function (c) { c.classList.remove('activo'); });
+        chip.classList.add('activo');
+        categoriaActiva = chip.dataset.categoria;
+        aplicarFiltros();
+      });
+    });
+  })();
 </script>
 </body>
 </html>

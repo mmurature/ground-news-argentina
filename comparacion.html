@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comparación de medios — Puente</title>
+<meta name="description" content="Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono.svg">
+<meta name="theme-color" content="#0f766e">
+<style>
+  :root {
+    --bg: #f7f5f2; --card-bg: #ffffff; --text: #1c1b1f; --text-muted: #6b6875;
+    --accent: #0f766e; --highlight: #ea580c; --border: #e7e3dc;
+    --font-serif: Georgia, "Times New Roman", Times, serif;
+    --accent-rgb: 15,118,110;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3; --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; --accent-rgb: 45,212,191; }
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0 20px 56px; }
+  .contenedor { max-width: 1100px; margin: 0 auto; padding-top: 28px; display: flex; flex-direction: column; gap: 22px; }
+  a { text-decoration: none; }
+  .volver { font-size: 0.82rem; font-weight: 600; color: var(--accent); align-self: flex-start; }
+  .volver:hover { text-decoration: underline; }
+  h1 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--text-muted); font-size: 0.9rem; margin: 4px 0 0; }
+
+  .leyenda {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .leyenda .etiqueta-chica { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+  .leyenda-eje { position: relative; height: 12px; margin: 8px 6px 0; }
+  .leyenda-eje .eje-linea { position: absolute; top: 3px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
+  .punto-medio {
+    position: absolute; top: -2px; width: 12px; height: 12px; padding: 0; border-radius: 50%;
+    background: var(--highlight); border: 2px solid var(--bg); transform: translateX(-50%);
+    cursor: pointer;
+  }
+  .punto-medio.activo { box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.4); }
+
+  .tabla-scroll { overflow-x: auto; padding-bottom: 6px; }
+  table.matriz { border-collapse: collapse; font-size: 0.76rem; }
+  table.matriz th, table.matriz td { padding: 4px; text-align: center; }
+  table.matriz th.rotulo-fila { text-align: right; padding-right: 8px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+  table.matriz th.rotulo-col { font-weight: 600; color: var(--text-muted); vertical-align: bottom; cursor: pointer; white-space: nowrap; }
+  table.matriz td.celda { border-radius: 6px; height: 40px; width: 52px; font-weight: 500; }
+  table.matriz td.diagonal { background: var(--bg); color: var(--text-muted); font-weight: 700; border: 1px dashed var(--border); }
+  table.matriz tr.activa th.rotulo-fila, table.matriz th.rotulo-col.activa { color: var(--text); font-weight: 700; }
+  table.matriz td.celda.activa { box-shadow: inset 0 0 0 2px var(--accent); font-weight: 700; }
+
+  .nota { margin: 0; font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
+</style>
+</head>
+<body>
+<div class="contenedor">
+  <a href="index.html" class="volver">← Volver a Puente</a>
+
+  <div>
+    <h1>Comparación de medios</h1>
+    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado {{ generado }}.</p>
+  </div>
+
+  <div class="leyenda">
+    <span class="etiqueta-chica">Ubicación editorial (ilustrativa) — tocá un medio para resaltarlo</span>
+    <div class="leyenda-eje" id="leyenda-eje">
+      <div class="eje-linea"></div>
+      {% for n in nombres %}
+      <button type="button" class="punto-medio" data-idx="{{ loop.index0 }}" aria-label="{{ n }}" title="{{ n }}" style="left: {{ ((posiciones.get(n, 11) - 1) / 20 * 100)|round(2) }}%;"></button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tabla-scroll">
+    <table class="matriz" id="tabla-matriz">
+      <thead>
+        <tr>
+          <th></th>
+          {% for n in nombres %}
+          <th class="rotulo-col" data-idx="{{ loop.index0 }}" title="{{ n }}">{{ abreviados[loop.index0] }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(nombres|length) %}
+        <tr data-idx="{{ i }}">
+          <th class="rotulo-fila" data-idx="{{ i }}" title="{{ nombres[i] }}">{{ abreviados[i] }}</th>
+          {% for j in range(nombres|length) %}
+            {% if i == j %}
+            <td class="celda diagonal" title="{{ nombres[i] }}: {{ totales[i] }} historias cubiertas">{{ totales[i] }}</td>
+            {% else %}
+            {% set v = matriz[i][j] %}
+            <td class="celda" data-fila="{{ i }}" data-col="{{ j }}" title="{{ nombres[i] }} / {{ nombres[j] }}: {{ v }}% de historias en común" style="background: rgba(var(--accent-rgb), {{ (v / 100 * 0.55)|round(2) }});">{{ v }}%</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="nota">Diagonal: total de historias (con 2+ coberturas agrupadas) donde participó el medio. Resto de las celdas: % de historias en común entre ambos, sobre el total de historias que cubrió al menos uno de los dos.</p>
+
+  <footer>Puente · metodología pública</footer>
+</div>
+<script>
+  (function () {
+    var activo = null;
+    var puntos = document.querySelectorAll('.punto-medio');
+    var filas = document.querySelectorAll('#tabla-matriz tbody tr');
+    var colHeaders = document.querySelectorAll('#tabla-matriz th.rotulo-col');
+    var celdas = document.querySelectorAll('#tabla-matriz td.celda:not(.diagonal)');
+
+    function limpiar() {
+      puntos.forEach(function (p) { p.classList.remove('activo'); });
+      filas.forEach(function (f) { f.classList.remove('activa'); });
+      colHeaders.forEach(function (c) { c.classList.remove('activa'); });
+      celdas.forEach(function (c) { c.classList.remove('activa'); });
+    }
+
+    function resaltar(idx) {
+      limpiar();
+      if (idx === null) return;
+      puntos.forEach(function (p) { if (p.dataset.idx === String(idx)) p.classList.add('activo'); });
+      filas.forEach(function (f) { if (f.dataset.idx === String(idx)) f.classList.add('activa'); });
+      colHeaders.forEach(function (c) { if (c.dataset.idx === String(idx)) c.classList.add('activa'); });
+      celdas.forEach(function (c) {
+        if (c.dataset.fila === String(idx) || c.dataset.col === String(idx)) c.classList.add('activa');
+      });
+    }
+
+    function toggle(idx) {
+      activo = activo === idx ? null : idx;
+      resaltar(activo);
+    }
+
+    puntos.forEach(function (p) { p.addEventListener('click', function () { toggle(p.dataset.idx); }); });
+    colHeaders.forEach(function (c) { c.addEventListener('click', function () { toggle(c.dataset.idx); }); });
+    document.querySelectorAll('#tabla-matriz th.rotulo-fila').forEach(function (r) {
+      r.addEventListener('click', function () { toggle(r.dataset.idx); });
+    });
+  })();
+</script>
+</body>
+</html>
