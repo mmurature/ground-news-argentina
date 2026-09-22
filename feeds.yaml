@@ -6,132 +6,136 @@
 # cada medio que no entró.
 #
 # posicion_editorial: escala 1 (Izquierda) a 21 (Derecha), centro en 11.
+# Admite decimales para más precisión (ej. 9.3, 14.7) desde la revisión
+# de septiembre 2026, que refinó los 17 valores originales e investigó
+# los 3 que estaban sin clasificar (La Capital, Crónica, Cadena 3).
 # fuente_posicion indica de dónde sale ese número (Media Bias/Fact Check,
-# estudios académicos, autodescripción del medio, o criterio editorial
-# de Max cuando no hay fuente pública confiable). Todos los medios
-# confirmados están clasificados; no quedan "sin clasificar".
+# estudios académicos, propiedad/vínculos documentados del medio,
+# autodescripción, o criterio editorial de Max cuando no hay fuente
+# pública confiable). Todos los medios confirmados están clasificados;
+# no quedan "sin clasificar".
 
 confirmados:
   - medio: "La Nación"
     tipo: "Diario nacional"
     feed_url: "https://www.lanacion.com.ar/arc/outboundfeeds/rss/"
-    posicion_editorial: 19
-    fuente_posicion: "Media Bias/Fact Check (Right-Center) + estudios académicos que la ubican en el espacio centro-derecha/derecha, más marcada que Clarín (PMC)"
+    posicion_editorial: 18.6
+    fuente_posicion: "Media Bias/Fact Check (Right-Center) + estudios académicos (SciELO México, \"Tres medios y dos presidencias\") que la ubican en centro-derecha/derecha, con sesgo partidario algo menor al de Clarín"
 
   - medio: "Perfil"
     tipo: "Diario y portal nacional"
     feed_url: "https://www.perfil.com/feed"
-    posicion_editorial: 11
-    fuente_posicion: "Criterio editorial de Max (dueño del proyecto) — posicionamiento transversal, sin inclinación clara"
+    posicion_editorial: 10.8
+    fuente_posicion: "Criterio editorial de Max (posicionamiento transversal) + editorial explícita de Fontevecchia en 2023 llamando a votar en contra de Milei, tras histórica postura crítica de Kirchner/CFK y Menem por igual"
 
   - medio: "Ámbito"
     tipo: "Economía y política"
     feed_url: "https://www.ambito.com/rss/pages/home.xml"
-    posicion_editorial: 10
-    fuente_posicion: "Criterio editorial de Max + Dialnet: línea económica difícil de reducir al eje izq-der, con lectores algo inclinados a la izquierda pero no lo suficiente para agruparlo con los medios de izquierda"
+    posicion_editorial: 9.6
+    fuente_posicion: "Línea económica difícil de reducir al eje izq-der + paso documentado por Grupo Indalo (Cristóbal López, descrito como \"empresario kirchnerista\" por La Nación) entre 2015 y 2016"
 
   - medio: "La Izquierda Diario"
     tipo: "Portal nacional"
     feed_url: "https://www.laizquierdadiario.com/spip.php?page=backend"
-    posicion_editorial: 2
-    fuente_posicion: "Autodescripción (medio del PTS) + estudios del ecosistema mediático argentino que lo ubican entre los de sesgo más marcado a la izquierda"
+    posicion_editorial: 2.0
+    fuente_posicion: "Autodescripción (medio del PTS, trotskista) + análisis de Nueva Sociedad sobre el trotskismo argentino que lo describe como vocero explícito de esa tradición"
 
   - medio: "Infobae"
     tipo: "Portal nacional"
     feed_url: "https://www.infobae.com/arc/outboundfeeds/rss/"
-    posicion_editorial: 9
-    fuente_posicion: "Criterio editorial de Max (inclinación a la izquierda considerada despreciable) + estudios sobre elecciones argentinas que lo encuentran cerca del centro, menos marcado que Página/12"
+    posicion_editorial: 9.3
+    fuente_posicion: "Media Bias/Fact Check (Left-Center) + estudios sobre elecciones argentinas que lo encuentran cerca del centro; literatura académica en tensión (un paper lo ubica center-left, otro center-right junto a Clarín/TN)"
     nota: "El feed funciona, pero en la prueba trajo notas de España/internacionales mezcladas con Argentina. Revisar si hay un feed específico de la sección Argentina."
 
   - medio: "Página/12"
     tipo: "Diario nacional"
     feed_url: "https://www.pagina12.com.ar/arc/outboundfeeds/rss/portada"
-    posicion_editorial: 5
-    fuente_posicion: "Literatura académica (SciELO México) que lo identifica como medio de izquierda con sesgo partidario claramente diferenciado de Clarín y La Nación"
+    posicion_editorial: 5.0
+    fuente_posicion: "Literatura académica (SciELO México, \"Tres medios y dos presidencias\") que lo identifica con el sesgo partidario más fuerte entre Clarín/La Nación/Página12, claramente de izquierda"
 
   - medio: "Los Andes"
     tipo: "Diario regional (Mendoza)"
     feed_url: "https://www.losandes.com.ar/rss/pages/ultimas-noticias.xml"
-    posicion_editorial: 12
-    fuente_posicion: "Diario tradicional de Mendoza históricamente asociado a posiciones liberales/conservadoras, aunque su línea actual no justifica una posición extrema"
+    posicion_editorial: 12.4
+    fuente_posicion: "Diario tradicional de Mendoza asociado a posiciones liberales/conservadoras; cambió de manos en 2024 a empresarios mendocinos con vínculos en espacios de Cambia Mendoza (centro-derecha provincial)"
 
   - medio: "Río Negro"
     tipo: "Diario regional (Patagonia norte)"
     feed_url: "https://www.rionegro.com.ar/feed/"
-    posicion_editorial: 11
-    fuente_posicion: "Medio regional patagónico sin línea editorial que justifique alejarlo del centro con la evidencia disponible"
+    posicion_editorial: 11.0
+    fuente_posicion: "Medio regional patagónico sin línea editorial que justifique alejarlo del centro con la evidencia disponible; cambio de dueño en 2025 sin alineamiento político documentado"
 
   - medio: "La Gaceta"
     tipo: "Diario regional (Tucumán)"
     feed_url: "https://feeds.feedburner.com/LaGaceta-General"
-    posicion_editorial: 15
-    fuente_posicion: "Tradición editorial liberal y republicana documentada en estudios históricos (defensa de derechos individuales y límites a la intervención estatal)"
+    posicion_editorial: 15.3
+    fuente_posicion: "Tradición editorial liberal y republicana + apoyo editorial documentado al Proceso de Reorganización Nacional y vínculos familiares con el interventor Bussi en Tucumán (Wikipedia)"
 
   - medio: "Misiones Online"
     tipo: "Portal regional (Misiones)"
     feed_url: "https://misionesonline.net/feed/"
-    posicion_editorial: 12
+    posicion_editorial: 12.0
     fuente_posicion: "Medio provincial/generalista; sin evidencia que justifique una posición cercana a los extremos"
 
   - medio: "Diario Registrado"
     tipo: "Portal nacional"
     feed_url: "https://www.diarioregistrado.com/rss.xml"
-    posicion_editorial: 6
-    fuente_posicion: "Línea histórica asociada a posiciones kirchneristas/progresistas, aunque con menos definición en el eje que La Izquierda Diario"
+    posicion_editorial: 6.3
+    fuente_posicion: "Fundado por Diego Gvirtz (creador de \"6,7,8\", pro-kirchnerista); controlado por Grupo Indalo (Cristóbal López), mismo grupo que controló Ámbito Financiero"
 
   - medio: "El Día"
     tipo: "Diario regional (La Plata)"
     feed_url: "https://www.eldia.com/.rss"
-    posicion_editorial: 13
-    fuente_posicion: "Diario tradicional de La Plata con historia editorial ligada a posiciones liberales y opositoras al peronismo, sin que eso implique una posición extrema hoy"
+    posicion_editorial: 13.6
+    fuente_posicion: "Historia editorial ligada a posiciones liberales y opositoras al peronismo + apoyo editorial documentado de la familia Kraiselburd al golpe de 1976 (Wikipedia), sin implicar posición extrema hoy"
 
   - medio: "El Intransigente"
     tipo: "Portal regional (Salta / NOA)"
     feed_url: "https://elintransigente.com/feed/"
-    posicion_editorial: 15
-    fuente_posicion: "Diario tradicional de Salta con trayectoria históricamente opositora al peronismo; se ubica a la derecha del centro con cautela sobre su vigencia actual"
+    posicion_editorial: 14.2
+    fuente_posicion: "Trayectoria históricamente opositora al peronismo; autodescripción actual como medio \"sin compromisos partidarios\" sugiere una posición algo más moderada de lo estimado originalmente (evidencia débil)"
 
   - medio: "Clarín"
     tipo: "Diario nacional"
     feed_url: "https://www.clarin.com/rss/lo-ultimo/"
-    posicion_editorial: 17
-    fuente_posicion: "Media Bias/Fact Check (Right-Center) + estudios académicos que lo caracterizan centrista con inclinación a la derecha, con sesgo partidario diferenciado de Página/12"
+    posicion_editorial: 17.4
+    fuente_posicion: "Media Bias/Fact Check (Right-Center, score más alto que La Nación) + SciELO México: mayor intensidad de sesgo partidario (anti-K/pro-Macri) que La Nación"
 
   - medio: "TN"
     tipo: "Portal nacional"
     feed_url: "https://tn.com.ar/feed/"
-    posicion_editorial: 16
-    fuente_posicion: "Mismo grupo que Clarín (Grupo Clarín) + estudios del ecosistema mediático argentino que lo ubican junto a Clarín y La Nación en el espacio centro-derecha"
+    posicion_editorial: 16.3
+    fuente_posicion: "Mismo grupo que Clarín (Grupo Clarín/Artear) + papers académicos (Nature 2024, arXiv) que lo agrupan center-right junto a Clarín y La Nación"
 
   - medio: "Buenos Aires Times"
     tipo: "Diario nacional en inglés"
     feed_url: "https://www.batimes.com.ar/feed"
-    posicion_editorial: 11
-    fuente_posicion: "Medio de Grupo Perfil orientado a público angloparlante; sin ubicación ideológica marcada en las fuentes consultadas"
+    posicion_editorial: 13.0
+    fuente_posicion: "Media Bias/Fact Check (Right-Center): títulos con carga emocional favorables a Macri/Bullrich, con alta factualidad — medio de Grupo Perfil"
 
   - medio: "MercoPress"
     tipo: "Portal internacional (Mercosur/Cono Sur, en inglés)"
     feed_url: "https://en.mercopress.com/rss/"
-    posicion_editorial: 11
+    posicion_editorial: 11.0
     fuente_posicion: "Agencia regional/económica con base en Uruguay; sin evidencia de una posición ideológica marcada en el eje argentino"
 
   - medio: "La Capital"
     tipo: "Diario regional (Rosario)"
     feed_url: "https://www.lacapital.com.ar/rss/ultimas-noticias.xml"
-    posicion_editorial: 11
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 10.5
+    fuente_posicion: "Propiedad: familia Lagos → Grupo América (Vila-Manzano) 1997-2019 → Grupo Scaglione (también dueño de Telefe) desde 2019; apoyo editorial documentado a la Ley de Servicios Audiovisuales de 2009 (evidencia parcial/ambigua)"
 
   - medio: "Crónica"
     tipo: "Diario popular nacional"
     feed_url: "https://www.cronica.com.ar/feed/feed.xml"
-    posicion_editorial: 11
-    fuente_posicion: "Sin clasificar con fuente sólida — tradición de periodismo popular/tabloide, históricamente asociado al periodismo peronista, tratado como Centro por defecto hasta definir con Max"
+    posicion_editorial: 9.0
+    fuente_posicion: "Propiedad de Grupo Olmos desde 2005, con vínculos documentados (Media Ownership Monitor) entre sus dueños y el sindicalismo alineado al kirchnerismo; tradición histórica de periodismo popular/peronista"
 
   - medio: "Cadena 3"
     tipo: "Radio y portal nacional (con base en Córdoba)"
     feed_url: "https://cadena3.com/rss/PoliticayEconomia.xml"
-    posicion_editorial: 11
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 14.5
+    fuente_posicion: "Cobertura periodística documenta línea consistentemente crítica del kirchnerismo (entrevistas de Mario Pereyra) y audiencia en una Córdoba caracterizada como opositora al gobierno nacional peronista; propietario ligado a círculos agroindustriales cordobeses"
 
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.
@@ -143,8 +147,6 @@ pendientes:
     problema: "Ninguna de las URLs de feed probadas (/feed, /rss, /arc/outboundfeeds/rss/) existe. Hay que buscar la URL correcta a mano en el sitio."
   - medio: "El Destape"
     problema: "Ninguna de las URLs probadas existe. Buscar la URL correcta a mano."
-  - medio: "La Capital"
-    problema: "No se encontró la URL del feed por búsqueda. Buscar a mano en el sitio (Rosario)."
   - medio: "El Cronista"
     problema: "Su robots.txt prohíbe explícitamente el acceso automático a esa ruta. No se incluye por eso, no por falla técnica."
   - medio: "Noticias Argentinas"
