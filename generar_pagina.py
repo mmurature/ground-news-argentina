@@ -220,6 +220,19 @@ def cargar_historias(con):
         historias.setdefault(hid, []).append(
             {"medio": medio, "titulo": titulo, "link": link, "fecha": fecha}
         )
+
+    # Un mismo medio puede publicar más de una nota sobre la misma historia
+    # (por ejemplo notas "en vivo" que se republican con una URL nueva cada
+    # vez). Nos quedamos con una sola por medio y por historia — la más
+    # reciente — para no inflar el indicador político ni repetir la tarjeta.
+    for hid, notas in historias.items():
+        por_medio = {}
+        for n in notas:
+            actual = por_medio.get(n["medio"])
+            if actual is None or (n["fecha"] or "") > (actual["fecha"] or ""):
+                por_medio[n["medio"]] = n
+        historias[hid] = list(por_medio.values())
+
     return historias
 
 
