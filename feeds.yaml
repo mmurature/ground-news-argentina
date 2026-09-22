@@ -1,49 +1,146 @@
-# Ground News Argentina — feeds validados (etapa 1)
-# Generado a mano probando cada URL candidata. Ver notas.md para el detalle
-# de qué se probó y por qué se descartó cada medio que no entró.
+# Puente — feeds de medios (etapa 1 + ampliación de cobertura)
+# "confirmados" son los que ya están corriendo en el sitio. "candidatos"
+# son URLs encontradas por investigación pero sin confirmar todavía —
+# correr validar_feeds.py y mover a "confirmados" los que anden.
+# Ver notas.md para el detalle de qué se probó y por qué se descartó
+# cada medio que no entró.
+#
+# posicion_editorial: escala 1 (Izquierda) a 5 (Derecha), paso 1 por medio
+# de referencia (1=Izquierda, 2=Centro-izquierda, 3=Centro,
+# 4=Centro-derecha, 5=Derecha). fuente indica de dónde sale ese número.
+# "Sin clasificar" = todavía no se investigó / no hay fuente confiable;
+# se trata como Centro (3) en los cálculos hasta que se defina.
 
 confirmados:
   - medio: "La Nación"
     tipo: "Diario nacional"
     feed_url: "https://www.lanacion.com.ar/arc/outboundfeeds/rss/"
+    posicion_editorial: 4
+    fuente_posicion: "Media Bias/Fact Check (Right-Center)"
 
   - medio: "Perfil"
     tipo: "Diario y portal nacional"
     feed_url: "https://www.perfil.com/feed"
+    posicion_editorial: 3
+    fuente_posicion: "Criterio editorial de Max (dueño del proyecto)"
 
   - medio: "Ámbito"
     tipo: "Economía y política"
     feed_url: "https://www.ambito.com/rss/pages/home.xml"
+    posicion_editorial: 3
+    fuente_posicion: "Criterio editorial de Max (dueño del proyecto)"
 
   - medio: "La Izquierda Diario"
     tipo: "Portal nacional"
     feed_url: "https://www.laizquierdadiario.com/spip.php?page=backend"
+    posicion_editorial: 1
+    fuente_posicion: "Autodescripción — medio del PTS (Partido de los Trabajadores Socialistas)"
 
   - medio: "Infobae"
     tipo: "Portal nacional"
     feed_url: "https://www.infobae.com/arc/outboundfeeds/rss/"
-    nota: "El feed funciona, pero en la prueba trajo notas de España/internacionales mezcladas con Argentina. Revisar si hay un feed específico de la sección Argentina antes de usarlo en la etapa 2."
+    posicion_editorial: 3
+    fuente_posicion: "Criterio editorial de Max: centro, con una inclinación a la izquierda considerada despreciable"
+    nota: "El feed funciona, pero en la prueba trajo notas de España/internacionales mezcladas con Argentina. Revisar si hay un feed específico de la sección Argentina."
 
-# Medios de la lista original que NO quedaron confirmados en esta pasada.
-# No están descartados para siempre: falta encontrarles la URL correcta,
-# o probarlos desde un entorno sin las restricciones de red de este sandbox.
-pendientes:
   - medio: "Página/12"
-    problema: "La URL probada (/rss/portada) no existe. Buscar la URL correcta a mano."
+    tipo: "Diario nacional"
+    feed_url: "https://www.pagina12.com.ar/arc/outboundfeeds/rss/portada"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "Los Andes"
+    tipo: "Diario regional (Mendoza)"
+    feed_url: "https://www.losandes.com.ar/rss/pages/ultimas-noticias.xml"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "Río Negro"
+    tipo: "Diario regional (Patagonia norte)"
+    feed_url: "https://www.rionegro.com.ar/feed/"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "La Gaceta"
+    tipo: "Diario regional (Tucumán)"
+    feed_url: "https://feeds.feedburner.com/LaGaceta-General"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "Misiones Online"
+    tipo: "Portal regional (Misiones)"
+    feed_url: "https://misionesonline.net/feed/"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "Diario Registrado"
+    tipo: "Portal nacional"
+    feed_url: "https://www.diarioregistrado.com/rss.xml"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "El Día"
+    tipo: "Diario regional (La Plata)"
+    feed_url: "https://www.eldia.com/.rss"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "El Intransigente"
+    tipo: "Portal regional (Salta / NOA)"
+    feed_url: "https://elintransigente.com/feed/"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
   - medio: "Clarín"
-    problema: "El sitio bloqueó el pedido automático (protección anti-bots). Hay que probarlo desde el script real, con headers de navegador."
+    tipo: "Diario nacional"
+    feed_url: "https://www.clarin.com/rss/lo-ultimo/"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
   - medio: "TN"
-    problema: "Mismo bloqueo anti-bots que Clarín."
+    tipo: "Portal nacional"
+    feed_url: "https://tn.com.ar/feed/"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "Buenos Aires Times"
+    tipo: "Diario nacional en inglés"
+    feed_url: "https://www.batimes.com.ar/feed"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+  - medio: "MercoPress"
+    tipo: "Portal internacional (Mercosur/Cono Sur, en inglés)"
+    feed_url: "https://en.mercopress.com/rss/"
+    posicion_editorial: 3
+    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+
+# Candidatos que todavía no validaron. Reintentar validar_feeds.py más
+# adelante o buscar la URL correcta a mano.
+candidatos:
   - medio: "La Voz del Interior"
-    problema: "Mismo bloqueo anti-bots."
-  - medio: "El Cronista"
-    problema: "Su robots.txt prohíbe explícitamente el acceso automático a esa ruta. Si se quiere incluir, hay que buscar otra forma autorizada de acceder (o pedir permiso)."
+    tipo: "Diario regional (Córdoba)"
+    feed_url: "https://www.lavoz.com.ar/arc/outboundfeeds/feeds/rss/?outputType=xml"
+    posicion_editorial: "sin clasificar"
+    nota: "validar_feeds.py devolvió status 530 (sitio caído o bloqueando el pedido). Reintentar más adelante."
+
+  - medio: "Diario de Cuyo"
+    tipo: "Diario regional (San Juan)"
+    feed_url: "https://www.diariodecuyo.com.ar/rss/rss.xml"
+    posicion_editorial: "sin clasificar"
+    nota: "validar_feeds.py devolvió status 404. La URL del feed cambió — hay que buscarla de nuevo a mano."
+
+# Medios de la lista original que siguen sin resolverse (URL no
+# encontrada, o feed inexistente probado a mano).
+pendientes:
   - medio: "C5N"
     problema: "Ninguna de las URLs de feed probadas (/feed, /rss, /arc/outboundfeeds/rss/) existe. Hay que buscar la URL correcta a mano en el sitio."
   - medio: "El Destape"
     problema: "Ninguna de las URLs probadas existe. Buscar la URL correcta a mano."
-  - medio: "Los Andes"
-    problema: "La URL probada no existe. Buscar la URL correcta a mano."
+  - medio: "La Capital"
+    problema: "No se encontró la URL del feed por búsqueda. Buscar a mano en el sitio (Rosario)."
+  - medio: "El Cronista"
+    problema: "Su robots.txt prohíbe explícitamente el acceso automático a esa ruta. No se incluye por eso, no por falla técnica."
   - medio: "Noticias Argentinas"
     problema: "Es una agencia de cable (B2B); probablemente no tenga feed público. Revisar si ofrecen alguno o sacarla de la lista."
 

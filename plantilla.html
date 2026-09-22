@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Puente — cobertura de noticias Argentina</title>
-<meta name="description" content="Quién cubrió cada historia de la agenda argentina, contada desde distintos medios, y quién no dijo nada.">
+<meta name="description" content="Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icono.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icono.svg">
@@ -37,10 +37,10 @@
     color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     margin: 0;
-    padding: 0 16px 48px;
+    padding: 0 20px 56px;
   }
-  .contenedor { max-width: 640px; margin: 0 auto; }
-  header { padding: 28px 0 18px; }
+  .contenedor { max-width: 1240px; margin: 0 auto; }
+  header { padding: 28px 0 20px; max-width: 720px; }
   .marca { display: flex; align-items: center; gap: 10px; }
   .marca svg { color: var(--accent); flex-shrink: 0; }
   h1 {
@@ -52,12 +52,19 @@
   }
   .subtitulo { color: var(--text-muted); font-size: 0.92rem; margin: 10px 0 2px; }
   .generado { color: var(--text-muted); font-size: 0.78rem; margin: 0; }
+
+  .grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+
   .historia {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
-    margin-bottom: 16px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.15s ease, transform 0.15s ease;
   }
@@ -76,10 +83,19 @@
     padding: 2px 9px;
     margin-bottom: 9px;
   }
-  .historia h2 { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin: 0 0 8px; line-height: 1.35; }
-  .cobertura { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 6px; }
-  .medidor { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 0 0 12px; }
-  .medidor-relleno { height: 100%; background: var(--accent); border-radius: 3px; }
+  .historia h2 { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.35; }
+
+  .indicador-politico { display: flex; flex-direction: column; gap: 6px; margin: 0 0 14px; }
+  .indicador-header { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .indicador-etiqueta { font-family: var(--font-serif); font-weight: 700; color: var(--highlight); font-size: 0.95rem; }
+  .indicador-desc { color: var(--text-muted); font-size: 0.78rem; }
+  .indicador-eje { position: relative; height: 20px; }
+  .eje-linea { position: absolute; top: 8px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
+  .eje-marca { position: absolute; top: 6px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
+  .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--text-muted); opacity: 0.6; transform: translate(-50%, -50%); }
+  .eje-promedio { position: absolute; top: 50%; left: 0; width: 12px; height: 12px; background: var(--highlight); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); box-shadow: 0 0 0 3px var(--card-bg); }
+  .eje-extremos { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
   .notas { list-style: none; padding: 0; margin: 0; }
   .notas li { padding: 7px 0; border-top: 1px solid var(--border); font-size: 0.92rem; line-height: 1.35; }
   .notas li:first-child { border-top: none; }
@@ -87,8 +103,8 @@
   .notas a { color: inherit; text-decoration: none; }
   .notas a:hover { text-decoration: underline; }
   .faltan { font-size: 0.82rem; color: var(--text-muted); margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
-  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 24px 0 8px; }
-  .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; }
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 28px 0 8px; }
+  .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; max-width: 720px; }
 </style>
 </head>
 <body>
@@ -101,17 +117,35 @@
       </svg>
       <h1>Puente</h1>
     </div>
-    <p class="subtitulo">Quién cubrió cada historia de la agenda argentina, contada desde distintos medios.</p>
-    <p class="generado">Actualizado: {{ generado }} · {{ historias|length }} historias · {{ total_medios }} medios monitoreados</p>
+    <p class="subtitulo">Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.</p>
+    <p class="generado">Actualizado: {{ generado }} · {{ historias|length }} historias · {{ total_medios }} medios monitoreados · se muestran historias cubiertas por {{ medios_minimos }} o más medios</p>
   </header>
 
   {% if historias %}
+  <div class="grilla">
     {% for h in historias %}
     <article class="historia">
-      {% if loop.first and h.n_medios > 1 %}<span class="destacada">Más cubierta</span><br>{% endif %}
+      {% if loop.first %}<span class="destacada">Más cubierta</span><br>{% endif %}
       <h2>{{ h.titulo }}</h2>
-      <p class="cobertura">{{ h.n_medios }} de {{ total_medios }} medios lo cubrieron</p>
-      <div class="medidor"><div class="medidor-relleno" style="width: {{ (h.n_medios / total_medios * 100) | round(0, 'floor') | int }}%"></div></div>
+
+      <div class="indicador-politico">
+        <div class="indicador-header">
+          <span class="indicador-etiqueta">{{ h.indicador.etiqueta }}</span>
+          <span class="indicador-desc">— {{ h.indicador.descripcion }}</span>
+        </div>
+        <div class="indicador-eje">
+          <div class="eje-linea"></div>
+          {% for marca in [0, 25, 50, 75, 100] %}
+          <div class="eje-marca" style="left: {{ marca }}%;"></div>
+          {% endfor %}
+          {% for p in h.indicador.puntos %}
+          <div class="eje-punto" title="{{ p.titulo }}" style="left: {{ p.x_pct }}%; width: {{ p.size }}px; height: {{ p.size }}px;"></div>
+          {% endfor %}
+          <div class="eje-promedio" style="left: {{ h.indicador.promedio_x_pct }}%;"></div>
+        </div>
+        <div class="eje-extremos"><span>Izquierda</span><span>Derecha</span></div>
+      </div>
+
       <ul class="notas">
         {% for n in h.notas %}
         <li>
@@ -121,15 +155,16 @@
         {% endfor %}
       </ul>
       {% if h.medios_faltan %}
-      <p class="faltan">No lo cubrieron: {{ h.medios_faltan|join(', ') }}</p>
+      <p class="faltan">No lo cubrieron: {{ h.medios_faltan_texto }}</p>
       {% endif %}
     </article>
     {% endfor %}
+  </div>
   {% else %}
-    <p class="vacio">Todavía no hay historias agrupadas.</p>
+    <p class="vacio">Todavía no hay historias con cobertura de {{ medios_minimos }} o más medios.</p>
   {% endif %}
 
-  <footer>Proyecto abierto, metodología pública. Datos de RSS de cada medio, sin modificar su contenido.</footer>
+  <footer>Proyecto abierto, metodología pública. Datos de RSS de cada medio, sin modificar su contenido. La posición editorial de cada medio es aproximada y se ajusta con el tiempo — ver metodología en el repositorio.</footer>
 </div>
 <script>
   if ('serviceWorker' in navigator) {

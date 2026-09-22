@@ -1,27 +1,35 @@
-// Puente — service worker mínimo
-// Guarda en caché lo último que se vio, para que la página instalada
-// abra algo aunque no haya internet en ese momento.
-// Nota: esto solo se activa cuando la página se sirve por http(s)
-// (localhost o el sitio ya publicado), no al abrir index.html directo
-// desde el explorador de archivos.
+// Puente — service worker
+// Estrategia "network-first": siempre intenta traer la versión más nueva
+// de internet; si no hay conexión, sirve la última que quedó guardada.
+// Así, cuando el sitio se actualiza (cada 3hs), quien ya lo instaló ve
+// el cambio en la próxima carga en vez de quedarse pegado a una vieja.
 
-const CACHE = "puente-v1";
+const CACHE = "puente-v2";
 const ARCHIVOS = ["./", "./index.html", "./manifest.json", "./icono.svg"];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ARCHIVOS)));
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((nombres) =>
-      Promise.all(nombres.filter((n) => n !== CACHE).map((n) => caches.delete(n)))
-    )
+    caches.keys()
+      .then((nombres) =>
+        Promise.all(nombres.filter((n) => n !== CACHE).map((n) => caches.delete(n)))
+      )
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((resp) => resp || fetch(event.request))
+    fetch(event.request)
+      .then((resp) => {
+        const copia = resp.clone();
+        caches.open(CACHE).then((cache) => cache.put(event.request, copia));
+        return resp;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
