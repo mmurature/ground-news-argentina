@@ -1,11 +1,11 @@
-// Ground News Argentina — service worker mínimo (etapa 4)
+// Puente — service worker mínimo
 // Guarda en caché lo último que se vio, para que la página instalada
 // abra algo aunque no haya internet en ese momento.
 // Nota: esto solo se activa cuando la página se sirve por http(s)
 // (localhost o el sitio ya publicado), no al abrir index.html directo
 // desde el explorador de archivos.
 
-const CACHE = "gn-ar-v1";
+const CACHE = "puente-v1";
 const ARCHIVOS = ["./", "./index.html", "./manifest.json", "./icono.svg"];
 
 self.addEventListener("install", (event) => {

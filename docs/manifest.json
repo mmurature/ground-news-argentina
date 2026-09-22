@@ -1,12 +1,12 @@
 {
-  "name": "Ground News Argentina",
-  "short_name": "GN Argentina",
-  "description": "Quién cubrió cada historia de la agenda argentina, y quién no dijo nada.",
+  "name": "Puente — noticias Argentina",
+  "short_name": "Puente",
+  "description": "Quién cubrió cada historia de la agenda argentina, contada desde distintos medios.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#f7f5f2",
+  "theme_color": "#0f766e",
   "lang": "es-AR",
   "icons": [
     {
