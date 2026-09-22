@@ -5,115 +5,115 @@
 # Ver notas.md para el detalle de qué se probó y por qué se descartó
 # cada medio que no entró.
 #
-# posicion_editorial: escala 1 (Izquierda) a 5 (Derecha), paso 1 por medio
-# de referencia (1=Izquierda, 2=Centro-izquierda, 3=Centro,
-# 4=Centro-derecha, 5=Derecha). fuente indica de dónde sale ese número.
-# "Sin clasificar" = todavía no se investigó / no hay fuente confiable;
-# se trata como Centro (3) en los cálculos hasta que se defina.
+# posicion_editorial: escala 1 (Izquierda) a 21 (Derecha), centro en 11.
+# fuente_posicion indica de dónde sale ese número (Media Bias/Fact Check,
+# estudios académicos, autodescripción del medio, o criterio editorial
+# de Max cuando no hay fuente pública confiable). Todos los medios
+# confirmados están clasificados; no quedan "sin clasificar".
 
 confirmados:
   - medio: "La Nación"
     tipo: "Diario nacional"
     feed_url: "https://www.lanacion.com.ar/arc/outboundfeeds/rss/"
-    posicion_editorial: 4
-    fuente_posicion: "Media Bias/Fact Check (Right-Center)"
+    posicion_editorial: 19
+    fuente_posicion: "Media Bias/Fact Check (Right-Center) + estudios académicos que la ubican en el espacio centro-derecha/derecha, más marcada que Clarín (PMC)"
 
   - medio: "Perfil"
     tipo: "Diario y portal nacional"
     feed_url: "https://www.perfil.com/feed"
-    posicion_editorial: 3
-    fuente_posicion: "Criterio editorial de Max (dueño del proyecto)"
+    posicion_editorial: 11
+    fuente_posicion: "Criterio editorial de Max (dueño del proyecto) — posicionamiento transversal, sin inclinación clara"
 
   - medio: "Ámbito"
     tipo: "Economía y política"
     feed_url: "https://www.ambito.com/rss/pages/home.xml"
-    posicion_editorial: 3
-    fuente_posicion: "Criterio editorial de Max (dueño del proyecto)"
+    posicion_editorial: 10
+    fuente_posicion: "Criterio editorial de Max + Dialnet: línea económica difícil de reducir al eje izq-der, con lectores algo inclinados a la izquierda pero no lo suficiente para agruparlo con los medios de izquierda"
 
   - medio: "La Izquierda Diario"
     tipo: "Portal nacional"
     feed_url: "https://www.laizquierdadiario.com/spip.php?page=backend"
-    posicion_editorial: 1
-    fuente_posicion: "Autodescripción — medio del PTS (Partido de los Trabajadores Socialistas)"
+    posicion_editorial: 2
+    fuente_posicion: "Autodescripción (medio del PTS) + estudios del ecosistema mediático argentino que lo ubican entre los de sesgo más marcado a la izquierda"
 
   - medio: "Infobae"
     tipo: "Portal nacional"
     feed_url: "https://www.infobae.com/arc/outboundfeeds/rss/"
-    posicion_editorial: 3
-    fuente_posicion: "Criterio editorial de Max: centro, con una inclinación a la izquierda considerada despreciable"
+    posicion_editorial: 9
+    fuente_posicion: "Criterio editorial de Max (inclinación a la izquierda considerada despreciable) + estudios sobre elecciones argentinas que lo encuentran cerca del centro, menos marcado que Página/12"
     nota: "El feed funciona, pero en la prueba trajo notas de España/internacionales mezcladas con Argentina. Revisar si hay un feed específico de la sección Argentina."
 
   - medio: "Página/12"
     tipo: "Diario nacional"
     feed_url: "https://www.pagina12.com.ar/arc/outboundfeeds/rss/portada"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 5
+    fuente_posicion: "Literatura académica (SciELO México) que lo identifica como medio de izquierda con sesgo partidario claramente diferenciado de Clarín y La Nación"
 
   - medio: "Los Andes"
     tipo: "Diario regional (Mendoza)"
     feed_url: "https://www.losandes.com.ar/rss/pages/ultimas-noticias.xml"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 12
+    fuente_posicion: "Diario tradicional de Mendoza históricamente asociado a posiciones liberales/conservadoras, aunque su línea actual no justifica una posición extrema"
 
   - medio: "Río Negro"
     tipo: "Diario regional (Patagonia norte)"
     feed_url: "https://www.rionegro.com.ar/feed/"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 11
+    fuente_posicion: "Medio regional patagónico sin línea editorial que justifique alejarlo del centro con la evidencia disponible"
 
   - medio: "La Gaceta"
     tipo: "Diario regional (Tucumán)"
     feed_url: "https://feeds.feedburner.com/LaGaceta-General"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 15
+    fuente_posicion: "Tradición editorial liberal y republicana documentada en estudios históricos (defensa de derechos individuales y límites a la intervención estatal)"
 
   - medio: "Misiones Online"
     tipo: "Portal regional (Misiones)"
     feed_url: "https://misionesonline.net/feed/"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 12
+    fuente_posicion: "Medio provincial/generalista; sin evidencia que justifique una posición cercana a los extremos"
 
   - medio: "Diario Registrado"
     tipo: "Portal nacional"
     feed_url: "https://www.diarioregistrado.com/rss.xml"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 6
+    fuente_posicion: "Línea histórica asociada a posiciones kirchneristas/progresistas, aunque con menos definición en el eje que La Izquierda Diario"
 
   - medio: "El Día"
     tipo: "Diario regional (La Plata)"
     feed_url: "https://www.eldia.com/.rss"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 13
+    fuente_posicion: "Diario tradicional de La Plata con historia editorial ligada a posiciones liberales y opositoras al peronismo, sin que eso implique una posición extrema hoy"
 
   - medio: "El Intransigente"
     tipo: "Portal regional (Salta / NOA)"
     feed_url: "https://elintransigente.com/feed/"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 15
+    fuente_posicion: "Diario tradicional de Salta con trayectoria históricamente opositora al peronismo; se ubica a la derecha del centro con cautela sobre su vigencia actual"
 
   - medio: "Clarín"
     tipo: "Diario nacional"
     feed_url: "https://www.clarin.com/rss/lo-ultimo/"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 17
+    fuente_posicion: "Media Bias/Fact Check (Right-Center) + estudios académicos que lo caracterizan centrista con inclinación a la derecha, con sesgo partidario diferenciado de Página/12"
 
   - medio: "TN"
     tipo: "Portal nacional"
     feed_url: "https://tn.com.ar/feed/"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 16
+    fuente_posicion: "Mismo grupo que Clarín (Grupo Clarín) + estudios del ecosistema mediático argentino que lo ubican junto a Clarín y La Nación en el espacio centro-derecha"
 
   - medio: "Buenos Aires Times"
     tipo: "Diario nacional en inglés"
     feed_url: "https://www.batimes.com.ar/feed"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 11
+    fuente_posicion: "Medio de Grupo Perfil orientado a público angloparlante; sin ubicación ideológica marcada en las fuentes consultadas"
 
   - medio: "MercoPress"
     tipo: "Portal internacional (Mercosur/Cono Sur, en inglés)"
     feed_url: "https://en.mercopress.com/rss/"
-    posicion_editorial: 3
-    fuente_posicion: "Sin clasificar — tratado como Centro por defecto"
+    posicion_editorial: 11
+    fuente_posicion: "Agencia regional/económica con base en Uruguay; sin evidencia de una posición ideológica marcada en el eje argentino"
 
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.

@@ -28,7 +28,11 @@ SALIDA = os.path.join("docs", "index.html")
 
 MEDIOS_MINIMOS = 3  # una historia solo entra a la página si la cubrieron al menos estos medios distintos
 
-# Escala de posición editorial: 1=Izquierda .. 5=Derecha
+# Escala de posición editorial: 1=Izquierda .. 21=Derecha, centro en 11
+ESCALA_MIN = 1
+ESCALA_MAX = 21
+ESCALA_CENTRO = 11
+
 ETIQUETAS_POSICION = {
     1: "Izquierda",
     2: "Centro-izquierda",
@@ -45,8 +49,8 @@ def cargar_medios_confirmados():
     nombres = [m["medio"] for m in medios]
     posiciones = {}
     for m in medios:
-        pos = m.get("posicion_editorial", 3)
-        posiciones[m["medio"]] = pos if isinstance(pos, (int, float)) else 3
+        pos = m.get("posicion_editorial", ESCALA_CENTRO)
+        posiciones[m["medio"]] = pos if isinstance(pos, (int, float)) else ESCALA_CENTRO
     return nombres, posiciones
 
 
@@ -69,13 +73,13 @@ def cargar_historias(con):
 
 
 def bucket_de_posicion(pos: float) -> str:
-    if pos < 1.5:
-        return ETIQUETAS_POSICION[1]
-    if pos < 2.5:
-        return ETIQUETAS_POSICION[2]
-    if pos < 3.5:
-        return ETIQUETAS_POSICION[3]
     if pos < 4.5:
+        return ETIQUETAS_POSICION[1]
+    if pos < 8.5:
+        return ETIQUETAS_POSICION[2]
+    if pos < 13.5:
+        return ETIQUETAS_POSICION[3]
+    if pos < 17.5:
         return ETIQUETAS_POSICION[4]
     return ETIQUETAS_POSICION[5]
 
@@ -85,31 +89,33 @@ def descripcion_promedio(promedio: float, n_coberturas: int) -> str:
     bucket = bucket_de_posicion(promedio)
     if bucket != "Centro":
         return base
-    diff = abs(promedio - 3)
-    if diff < 0.15:
+    diff = abs(promedio - ESCALA_CENTRO)
+    if diff < 1:
         return base
-    direccion = "la derecha" if promedio > 3 else "la izquierda"
-    calificador = "leve inclinación a" if diff < 0.5 else "inclinación a"
+    direccion = "la derecha" if promedio > ESCALA_CENTRO else "la izquierda"
+    calificador = "leve inclinación a" if diff < 2.5 else "inclinación a"
     return f"{base}, {calificador} {direccion}"
 
 
 def armar_indicador(notas, posiciones):
     """Strip-plot: agrupa las notas por la posición editorial de su medio,
     y calcula el promedio ponderado por cantidad de coberturas."""
-    valores = [posiciones.get(n["medio"], 3) for n in notas]
+    valores = [posiciones.get(n["medio"], ESCALA_CENTRO) for n in notas]
     promedio = sum(valores) / len(valores)
 
     grupos = {}
     for n in notas:
-        pos = posiciones.get(n["medio"], 3)
+        pos = posiciones.get(n["medio"], ESCALA_CENTRO)
         grupos.setdefault(pos, []).append(n["medio"])
+
+    rango = ESCALA_MAX - ESCALA_MIN
 
     puntos = []
     for pos, medios_en_pos in sorted(grupos.items()):
         n = len(medios_en_pos)
         puntos.append(
             {
-                "x_pct": round((pos - 1) / 4 * 100, 2),
+                "x_pct": round((pos - ESCALA_MIN) / rango * 100, 2),
                 "size": min(9 + 2 * (n - 1), 17),
                 "titulo": ", ".join(medios_en_pos),
             }
@@ -117,7 +123,7 @@ def armar_indicador(notas, posiciones):
 
     return {
         "promedio": promedio,
-        "promedio_x_pct": round((promedio - 1) / 4 * 100, 2),
+        "promedio_x_pct": round((promedio - ESCALA_MIN) / rango * 100, 2),
         "etiqueta": bucket_de_posicion(promedio),
         "descripcion": descripcion_promedio(promedio, len(notas)),
         "puntos": puntos,
