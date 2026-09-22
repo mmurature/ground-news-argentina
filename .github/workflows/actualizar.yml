@@ -5,6 +5,13 @@ on:
     - cron: "0 */3 * * *"  # cada 3 horas (UTC)
   workflow_dispatch: {}     # permite correrlo a mano desde la pestaña Actions
 
+# Evita que dos corridas (ej. la automática y una manual) se pisen
+# intentando pushear al mismo tiempo: si ya hay una corriendo, la
+# siguiente espera en cola en vez de correr en paralelo.
+concurrency:
+  group: actualizar-puente
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -42,5 +49,13 @@ jobs:
             exit 0
           fi
           git commit -m "Actualización automática"
-          git pull --rebase origin main
-          git push
+          for intento in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              echo "Push OK (intento $intento)."
+              exit 0
+            fi
+            echo "Intento $intento falló, reintentando en 5s..."
+            sleep 5
+          done
+          echo "No se pudo pushear después de 3 intentos."
+          exit 1
