@@ -37,5 +37,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add noticias.db docs/index.html
-          git diff --cached --quiet || git commit -m "Actualización automática"
+          if git diff --cached --quiet; then
+            echo "Sin cambios, nada que subir."
+            exit 0
+          fi
+          git commit -m "Actualización automática"
+          git pull --rebase origin main
           git push
