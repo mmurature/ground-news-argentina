@@ -1,0 +1,19 @@
+{
+  "name": "Ground News Argentina",
+  "short_name": "GN Argentina",
+  "description": "Quién cubrió cada historia de la agenda argentina, y quién no dijo nada.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "es-AR",
+  "icons": [
+    {
+      "src": "icono.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+feedparser
+requests
+pyyaml
+jinja2
+sentence-transformers
+numpy

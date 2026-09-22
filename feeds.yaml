@@ -1,0 +1,53 @@
+# Ground News Argentina — feeds validados (etapa 1)
+# Generado a mano probando cada URL candidata. Ver notas.md para el detalle
+# de qué se probó y por qué se descartó cada medio que no entró.
+
+confirmados:
+  - medio: "La Nación"
+    tipo: "Diario nacional"
+    feed_url: "https://www.lanacion.com.ar/arc/outboundfeeds/rss/"
+
+  - medio: "Perfil"
+    tipo: "Diario y portal nacional"
+    feed_url: "https://www.perfil.com/feed"
+
+  - medio: "Ámbito"
+    tipo: "Economía y política"
+    feed_url: "https://www.ambito.com/rss/pages/home.xml"
+
+  - medio: "La Izquierda Diario"
+    tipo: "Portal nacional"
+    feed_url: "https://www.laizquierdadiario.com/spip.php?page=backend"
+
+  - medio: "Infobae"
+    tipo: "Portal nacional"
+    feed_url: "https://www.infobae.com/arc/outboundfeeds/rss/"
+    nota: "El feed funciona, pero en la prueba trajo notas de España/internacionales mezcladas con Argentina. Revisar si hay un feed específico de la sección Argentina antes de usarlo en la etapa 2."
+
+# Medios de la lista original que NO quedaron confirmados en esta pasada.
+# No están descartados para siempre: falta encontrarles la URL correcta,
+# o probarlos desde un entorno sin las restricciones de red de este sandbox.
+pendientes:
+  - medio: "Página/12"
+    problema: "La URL probada (/rss/portada) no existe. Buscar la URL correcta a mano."
+  - medio: "Clarín"
+    problema: "El sitio bloqueó el pedido automático (protección anti-bots). Hay que probarlo desde el script real, con headers de navegador."
+  - medio: "TN"
+    problema: "Mismo bloqueo anti-bots que Clarín."
+  - medio: "La Voz del Interior"
+    problema: "Mismo bloqueo anti-bots."
+  - medio: "El Cronista"
+    problema: "Su robots.txt prohíbe explícitamente el acceso automático a esa ruta. Si se quiere incluir, hay que buscar otra forma autorizada de acceder (o pedir permiso)."
+  - medio: "C5N"
+    problema: "Ninguna de las URLs de feed probadas (/feed, /rss, /arc/outboundfeeds/rss/) existe. Hay que buscar la URL correcta a mano en el sitio."
+  - medio: "El Destape"
+    problema: "Ninguna de las URLs probadas existe. Buscar la URL correcta a mano."
+  - medio: "Los Andes"
+    problema: "La URL probada no existe. Buscar la URL correcta a mano."
+  - medio: "Noticias Argentinas"
+    problema: "Es una agencia de cable (B2B); probablemente no tenga feed público. Revisar si ofrecen alguno o sacarla de la lista."
+
+descartados:
+  - medio: "Tiempo Argentino"
+    feed_url_probada: "https://www.tiempoar.com.ar/feed"
+    problema: "El feed devolvió contenido de apuestas online en ruso, no noticias del medio. Da la pinta de un feed comprometido o abandonado. No usar esta URL; si se quiere este medio, hay que encontrar un feed nuevo y confirmarlo de nuevo antes de sumarlo."

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ground News Argentina</title>
+<meta name="description" content="Quién cubrió cada historia de la agenda argentina, y quién no dijo nada.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono.svg">
+<meta name="theme-color" content="#0f172a">
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --accent: #1d4ed8;
+    --border: #e2e8f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #60a5fa;
+      --border: #334155;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0 16px 48px;
+  }
+  .contenedor { max-width: 640px; margin: 0 auto; }
+  header { padding: 24px 0 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .subtitulo { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 2px; }
+  .generado { color: var(--text-muted); font-size: 0.78rem; margin: 0; }
+  .historia {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .historia h2 { font-size: 1.05rem; margin: 0 0 8px; line-height: 1.35; }
+  .cobertura { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 10px; }
+  .notas { list-style: none; padding: 0; margin: 0; }
+  .notas li { padding: 7px 0; border-top: 1px solid var(--border); font-size: 0.92rem; line-height: 1.35; }
+  .notas li:first-child { border-top: none; }
+  .medio { font-weight: 600; color: var(--accent); margin-right: 4px; white-space: nowrap; }
+  .notas a { color: inherit; text-decoration: none; }
+  .notas a:hover { text-decoration: underline; }
+  .faltan { font-size: 0.82rem; color: var(--text-muted); margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 24px 0 8px; }
+  .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="contenedor">
+  <header>
+    <h1>Ground News Argentina</h1>
+    <p class="subtitulo">Quién cubrió cada historia, y quién no dijo nada.</p>
+    <p class="generado">Actualizado: {{ generado }} · {{ historias|length }} historias · {{ total_medios }} medios monitoreados</p>
+  </header>
+
+  {% if historias %}
+    {% for h in historias %}
+    <article class="historia">
+      <h2>{{ h.titulo }}</h2>
+      <p class="cobertura">{{ h.n_medios }} de {{ total_medios }} medios lo cubrieron</p>
+      <ul class="notas">
+        {% for n in h.notas %}
+        <li>
+          <span class="medio">{{ n.medio }}</span>
+          <a href="{{ n.link }}" target="_blank" rel="noopener">{{ n.titulo }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% if h.medios_faltan %}
+      <p class="faltan">No lo cubrieron: {{ h.medios_faltan|join(', ') }}</p>
+      {% endif %}
+    </article>
+    {% endfor %}
+  {% else %}
+    <p class="vacio">Todavía no hay historias agrupadas.</p>
+  {% endif %}
+
+  <footer>Proyecto abierto, metodología pública. Datos de RSS de cada medio, sin modificar su contenido.</footer>
+</div>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
