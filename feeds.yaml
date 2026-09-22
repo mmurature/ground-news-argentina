@@ -118,6 +118,24 @@ confirmados:
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.
 candidatos:
+  - medio: "La Capital"
+    tipo: "Diario regional (Rosario)"
+    feed_url: "https://www.lacapital.com.ar/rss/ultimas-noticias.xml"
+    posicion_editorial: "sin clasificar"
+    nota: "URL encontrada en la página de RSS del propio sitio. Sin validar todavía con validar_feeds.py."
+
+  - medio: "Crónica"
+    tipo: "Diario popular nacional"
+    feed_url: "https://www.cronica.com.ar/feed/feed.xml"
+    posicion_editorial: "sin clasificar"
+    nota: "Feed confirmado como válido (trae notas reales y recientes). Tradición de periodismo popular/tabloide, históricamente asociado al periodismo peronista, pero sin una fuente sólida que lo cuantifique — a definir junto con Max."
+
+  - medio: "Cadena 3"
+    tipo: "Radio y portal nacional (con base en Córdoba)"
+    feed_url: "https://cadena3.com/rss/PoliticayEconomia.xml"
+    posicion_editorial: "sin clasificar"
+    nota: "No tiene un feed general único, así que se usa la sección Política y Economía (la más relevante para este proyecto). Sin validar todavía."
+
 # Medios de la lista original que siguen sin resolverse (URL no
 # encontrada, o feed inexistente probado a mano).
 pendientes:
