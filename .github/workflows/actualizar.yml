@@ -49,11 +49,25 @@ jobs:
             exit 0
           fi
           git commit -m "Actualización automática"
+
+          # noticias.db es binario y docs/ se regenera entero cada corrida:
+          # si otro push (manual o de otra corrida) tocó esos mismos archivos
+          # mientras esta corría, un rebase normal no puede mezclarlos (un
+          # sqlite no admite merge de contenido) y queda trabado en conflicto
+          # sin importar cuántas veces se reintente. En vez de rebase, se
+          # hace merge con -X ours: como este job SOLO toca noticias.db y
+          # docs/, cualquier conflicto real va a estar ahí, y "ours" se
+          # queda con la versión recién regenerada (correcta, porque ya
+          # incluye lo último). Cualquier otro archivo (feeds.yaml, scripts)
+          # que haya cambiado en origin mientras tanto se sigue mezclando
+          # normal, sin tocarlo.
           for intento in 1 2 3; do
-            if git pull --rebase origin main && git push; then
+            git fetch origin main
+            if git merge --no-edit -X ours origin/main && git push; then
               echo "Push OK (intento $intento)."
               exit 0
             fi
+            git merge --abort 2>/dev/null || true
             echo "Intento $intento falló, reintentando en 5s..."
             sleep 5
           done
