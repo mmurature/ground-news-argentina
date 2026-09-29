@@ -9,49 +9,20 @@
 <link rel="icon" href="icono.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icono-180.png">
 <meta name="theme-color" content="#0f766e">
+{% include "_tema_temprano.html" %}
 <style>
-  :root {
-    --bg: #f7f5f2;
-    --card-bg: #ffffff;
-    --text: #1c1b1f;
-    --text-muted: #6b6875;
-    --accent: #0f766e;
-    --highlight: #ea580c;
-    --border: #e7e3dc;
-    --font-serif: Georgia, "Times New Roman", Times, serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121417;
-      --card-bg: #1b1f23;
-      --text: #f2f1ee;
-      --text-muted: #9a9ca3;
-      --accent: #2dd4bf;
-      --highlight: #fb923c;
-      --border: #2a2e33;
-    }
-  }
-  * { box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    padding: 0 20px 56px;
-  }
-  .contenedor { max-width: 1240px; margin: 0 auto; }
-  header { padding: 28px 0 20px; max-width: 720px; }
-  .marca { display: flex; align-items: center; gap: 10px; }
-  .marca svg { color: var(--accent); flex-shrink: 0; }
+{% include "_estilos_base.html" %}
+  header.hero { padding: 26px 0 6px; max-width: 720px; }
+  .kicker { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin: 0 0 8px; }
   h1 {
     font-family: var(--font-serif);
-    font-size: 1.6rem;
+    font-size: 1.75rem;
     font-weight: 700;
     letter-spacing: -0.01em;
     margin: 0;
   }
-  .subtitulo { color: var(--text-muted); font-size: 0.92rem; margin: 10px 0 2px; }
-  .generado { color: var(--text-muted); font-size: 0.78rem; margin: 0; }
+  .subtitulo { color: var(--text-muted); font-size: 0.94rem; margin: 10px 0 2px; max-width: 620px; }
+  .generado { color: var(--text-muted); font-size: 0.78rem; margin: 6px 0 0; }
 
   .buscador-row { display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; height: 42px; max-width: 720px; margin: 20px 0 0; }
   .buscador-row svg { flex-shrink: 0; color: var(--text-muted); }
@@ -92,7 +63,7 @@
 
   .grilla {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
     gap: 16px;
     align-items: start;
     margin-top: 20px;
@@ -105,6 +76,7 @@
     padding: 16px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.15s ease, transform 0.15s ease;
+    min-width: 0;
   }
   @media (hover: hover) {
     .historia:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
@@ -137,7 +109,7 @@
   .eje-extremos { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
 
   .notas { list-style: none; padding: 0; margin: 0; }
-  .notas li { padding: 7px 0; border-top: 1px solid var(--border); font-size: 0.92rem; line-height: 1.35; }
+  .notas li { padding: 7px 0; border-top: 1px solid var(--border); font-size: 0.92rem; line-height: 1.35; overflow-wrap: break-word; }
   .notas li:first-child { border-top: none; }
   .medio { font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
   .notas a { color: inherit; text-decoration: none; }
@@ -153,27 +125,19 @@
 
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 28px 0 8px; }
   .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; max-width: 720px; }
-  .btn-instalar {
-    align-self: flex-start; margin-top: 4px; padding: 6px 14px; border-radius: 999px;
-    border: 1px solid var(--accent); background: transparent; color: var(--accent);
-    font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit;
-  }
-  .btn-instalar:hover { background: var(--accent); color: var(--card-bg); }
 </style>
 </head>
 <body>
+{% set base = '' %}
+{% set pagina = 'inicio' %}
+{% include "_splash.html" %}
+{% include "_nav.html" %}
 <div class="contenedor">
-  <header>
-    <div class="marca">
-      <svg width="30" height="22" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-        <path d="M6 34 Q6 18 30 8 Q54 18 54 34" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
-        <path d="M6 34 L6 38 M54 34 L54 38" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
-      </svg>
-      <h1>Puente</h1>
-    </div>
+  <header class="hero">
+    <span class="kicker">Medios argentinos, comparados</span>
+    <h1>Puente</h1>
     <p class="subtitulo">Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.</p>
     <p class="generado">Actualizado: {{ generado }} · {{ historias|length }} historias · {{ total_medios }} medios monitoreados · se muestran historias cubiertas por {{ medios_minimos }} o más medios</p>
-    <button type="button" id="btn-instalar" class="btn-instalar" hidden>Instalar Puente</button>
   </header>
 
   <div class="buscador-row">
@@ -274,44 +238,8 @@
 
   <footer>Proyecto abierto, metodología pública. Datos de RSS de cada medio, sin modificar su contenido. La posición editorial de cada medio es aproximada y se ajusta con el tiempo — ver metodología en el repositorio.</footer>
 </div>
+{% include "_scripts_base.html" %}
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    });
-  }
-
-  (function () {
-    // Chrome/Edge en Android (y desktop) disparan este evento cuando el
-    // sitio cumple los requisitos de instalación (manifest + service
-    // worker) — lo interceptamos para mostrar nuestro propio botón en vez
-    // de depender de que alguien encuentre la opción en el menú del
-    // navegador. Safari/iOS no dispara este evento, así que ahí el botón
-    // se queda oculto (en iOS se instala desde Compartir > Agregar a inicio).
-    var btn = document.getElementById('btn-instalar');
-    var promptDiferido = null;
-
-    window.addEventListener('beforeinstallprompt', function (e) {
-      e.preventDefault();
-      promptDiferido = e;
-      if (btn) btn.hidden = false;
-    });
-
-    if (btn) {
-      btn.addEventListener('click', function () {
-        if (!promptDiferido) return;
-        btn.hidden = true;
-        promptDiferido.prompt();
-        promptDiferido.userChoice.finally(function () { promptDiferido = null; });
-      });
-    }
-
-    window.addEventListener('appinstalled', function () {
-      if (btn) btn.hidden = true;
-      promptDiferido = null;
-    });
-  })();
-
   (function () {
     var input = document.getElementById('buscar-puente');
     var chips = document.querySelectorAll('#chips .chip');

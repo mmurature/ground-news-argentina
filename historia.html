@@ -9,21 +9,10 @@
 <link rel="icon" href="../icono.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../icono-180.png">
 <meta name="theme-color" content="#0f766e">
+{% include "_tema_temprano.html" %}
 <style>
-  :root {
-    --bg: #f7f5f2; --card-bg: #ffffff; --text: #1c1b1f; --text-muted: #6b6875;
-    --accent: #0f766e; --highlight: #ea580c; --border: #e7e3dc;
-    --font-serif: Georgia, "Times New Roman", Times, serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3; --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; }
-  }
-  * { box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0 20px 56px; }
-  .contenedor { max-width: 720px; margin: 0 auto; padding-top: 28px; display: flex; flex-direction: column; gap: 22px; }
-  a { text-decoration: none; }
-  .volver { font-size: 0.82rem; font-weight: 600; color: var(--accent); align-self: flex-start; }
-  .volver:hover { text-decoration: underline; }
+{% include "_estilos_base.html" %}
+  .contenedor { max-width: 720px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
 
   .badges { display: flex; gap: 8px; flex-wrap: wrap; }
   .destacada, .badge-categoria {
@@ -57,7 +46,7 @@
   .cobertura .fila-medio { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .cobertura .medio { font-weight: 700; color: var(--accent); }
   .cobertura .bucket { font-size: 0.68rem; font-weight: 600; color: var(--highlight); border: 1px solid var(--highlight); border-radius: 999px; padding: 1px 8px; }
-  .cobertura a { font-size: 0.92rem; color: var(--text); line-height: 1.35; }
+  .cobertura a { font-size: 0.92rem; color: var(--text); line-height: 1.35; overflow-wrap: break-word; }
   .cobertura a:hover { text-decoration: underline; }
 
   .faltan { margin: 0; font-size: 0.82rem; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed var(--border); }
@@ -66,9 +55,11 @@
 </style>
 </head>
 <body>
+{% set base = '../' %}
+{% set pagina = '' %}
+{% include "_splash.html" %}
+{% include "_nav.html" %}
 <div class="contenedor">
-  <a href="../index.html" class="volver">← Volver a Puente</a>
-
   <div style="display: flex; flex-direction: column; gap: 14px;">
     <div class="badges">
       {% if h.destacada %}<span class="destacada">Más cubierta</span>{% endif %}
@@ -121,5 +112,6 @@
 
   <footer>Puente · <a href="../comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
 </div>
+{% include "_scripts_base.html" %}
 </body>
 </html>

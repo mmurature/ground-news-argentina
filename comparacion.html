@@ -9,22 +9,10 @@
 <link rel="icon" href="icono.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icono-180.png">
 <meta name="theme-color" content="#0f766e">
+{% include "_tema_temprano.html" %}
 <style>
-  :root {
-    --bg: #f7f5f2; --card-bg: #ffffff; --text: #1c1b1f; --text-muted: #6b6875;
-    --accent: #0f766e; --highlight: #ea580c; --border: #e7e3dc;
-    --font-serif: Georgia, "Times New Roman", Times, serif;
-    --accent-rgb: 15,118,110;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3; --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; --accent-rgb: 45,212,191; }
-  }
-  * { box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0 20px 56px; }
-  .contenedor { max-width: 1100px; margin: 0 auto; padding-top: 28px; display: flex; flex-direction: column; gap: 22px; }
-  a { text-decoration: none; }
-  .volver { font-size: 0.82rem; font-weight: 600; color: var(--accent); align-self: flex-start; }
-  .volver:hover { text-decoration: underline; }
+{% include "_estilos_base.html" %}
+  .contenedor { max-width: 1100px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
   h1 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
   .subtitulo { color: var(--text-muted); font-size: 0.9rem; margin: 4px 0 0; }
 
@@ -57,9 +45,11 @@
 </style>
 </head>
 <body>
+{% set base = '' %}
+{% set pagina = 'comparacion' %}
+{% include "_splash.html" %}
+{% include "_nav.html" %}
 <div class="contenedor">
-  <a href="index.html" class="volver">← Volver a Puente</a>
-
   <div>
     <h1>Comparación de medios</h1>
     <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado {{ generado }}.</p>
@@ -107,6 +97,7 @@
 
   <footer>Puente · metodología pública</footer>
 </div>
+{% include "_scripts_base.html" %}
 <script>
   (function () {
     var activo = null;

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sobre Puente</title>
+<meta name="description" content="Qué es Puente, cómo funciona y por qué existe: un proyecto abierto para comparar cómo cada medio argentino cuenta la misma noticia.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png">
+<meta name="theme-color" content="#0f766e">
+{% include "_tema_temprano.html" %}
+<style>
+{% include "_estilos_base.html" %}
+  .contenedor { max-width: 680px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 26px; }
+  h1 { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--text-muted); font-size: 0.94rem; margin: 8px 0 0; }
+  section { display: flex; flex-direction: column; gap: 8px; }
+  h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--accent); }
+  section p { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--text); }
+  section ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  section li { font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+  .nota-transparencia {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .nota-transparencia h2 { color: var(--highlight); }
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
+</style>
+</head>
+<body>
+{% set base = '' %}
+{% set pagina = 'nosotros' %}
+{% include "_splash.html" %}
+{% include "_nav.html" %}
+<div class="contenedor">
+  <header>
+    <h1>Sobre Puente</h1>
+    <p class="subtitulo">Puente junta, en un solo lugar, cómo distintos medios argentinos cuentan la misma noticia — y muestra, de un vistazo, si esa cobertura viene de medios que se ubican más a la izquierda, en el centro o más a la derecha del espectro editorial.</p>
+  </header>
+
+  <section>
+    <h2>Qué hace</h2>
+    <ul>
+      <li>Recolecta títulos y notas de los RSS públicos de medios argentinos, cada pocas horas.</li>
+      <li>Agrupa automáticamente las notas que hablan de la misma historia, usando similitud semántica entre títulos — la agrupación es matemática, no una decisión editorial.</li>
+      <li>Ubica a cada medio en un espectro editorial de izquierda a derecha, en base a clasificaciones públicas existentes y research manual — no a un puntaje generado por una inteligencia artificial.</li>
+      <li>Muestra, para cada historia, el título y el link original de cada medio que la cubrió, para que cada persona lea la fuente directamente.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Misión</h2>
+    <p>Que cualquier persona en Argentina pueda ver, en segundos, cómo cambia el relato de una misma noticia según quién la cuenta — para leer con más contexto, no para decirle a nadie qué pensar ni qué creer.</p>
+  </section>
+
+  <section>
+    <h2>Visión</h2>
+    <p>Ser una herramienta de referencia, gratuita, sin publicidad y sin fines de lucro, para consumir noticias argentinas con más perspectiva — con una metodología pública, que cualquiera pueda revisar y cuestionar.</p>
+  </section>
+
+  <section class="nota-transparencia">
+    <h2>Transparencia</h2>
+    <p>Puente es un proyecto personal e independiente: no está afiliado a ningún medio, partido ni organización. La ubicación editorial de cada medio es una aproximación, se revisa y ajusta con el tiempo, y tanto el código como los criterios usados son públicos. Si algo te parece mal clasificado, es —literalmente— trabajo en progreso.</p>
+  </section>
+
+  <section>
+    <h2>Quién lo hace</h2>
+    <p>Puente lo desarrolla y mantiene un estudiante en Buenos Aires, como proyecto personal. El sitio se actualiza solo, cada pocas horas, sin intervención manual en el contenido de las noticias.</p>
+  </section>
+
+  <footer>Puente · <a href="comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
+</div>
+{% include "_scripts_base.html" %}
+</body>
+</html>

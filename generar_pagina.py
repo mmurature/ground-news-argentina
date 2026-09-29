@@ -34,6 +34,7 @@ FEEDS_PATH = "feeds.yaml"
 DOCS_DIR = "docs"
 SALIDA = os.path.join(DOCS_DIR, "index.html")
 SALIDA_COMPARACION = os.path.join(DOCS_DIR, "comparacion.html")
+SALIDA_NOSOTROS = os.path.join(DOCS_DIR, "nosotros.html")
 DIR_HISTORIAS = os.path.join(DOCS_DIR, "historias")
 
 MEDIOS_MINIMOS = 3  # una historia solo entra a la página si la cubrieron al menos estos medios distintos
@@ -456,6 +457,12 @@ def main():
     )
     with open(SALIDA_COMPARACION, "w", encoding="utf-8") as f:
         f.write(html_c)
+
+    # --- Nosotros ---
+    plantilla_nosotros = env.get_template("nosotros.html")
+    html_n = plantilla_nosotros.render()
+    with open(SALIDA_NOSOTROS, "w", encoding="utf-8") as f:
+        f.write(html_n)
 
     print(
         f"Listo: {SALIDA} generado con {len(contexto_historias)} historias "

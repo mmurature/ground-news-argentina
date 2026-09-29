@@ -1,0 +1,70 @@
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('{{ base }}sw.js').catch(function () {});
+    });
+  }
+
+  (function () {
+    var splash = document.getElementById('splash');
+    if (!splash) return;
+    function ocultar() {
+      splash.classList.add('oculto');
+      setTimeout(function () { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 400);
+    }
+    var minimo = new Promise(function (r) { setTimeout(r, 300); });
+    var listo = new Promise(function (r) {
+      if (document.readyState === 'complete') r();
+      else window.addEventListener('load', r);
+    });
+    Promise.all([minimo, listo]).then(ocultar);
+    setTimeout(ocultar, 2200);
+  })();
+
+  (function () {
+    var btn = document.getElementById('btn-tema');
+    var sol = document.getElementById('icono-sol');
+    var luna = document.getElementById('icono-luna');
+    if (!btn) return;
+    function oscuroActivo() {
+      var attr = document.documentElement.getAttribute('data-theme');
+      if (attr === 'dark') return true;
+      if (attr === 'light') return false;
+      return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    function pintarIcono() {
+      var osc = oscuroActivo();
+      if (sol) sol.hidden = osc;
+      if (luna) luna.hidden = !osc;
+    }
+    btn.addEventListener('click', function () {
+      var nuevo = oscuroActivo() ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', nuevo);
+      try { localStorage.setItem('puente-tema', nuevo === 'dark' ? 'oscuro' : 'claro'); } catch (e) {}
+      pintarIcono();
+    });
+    pintarIcono();
+  })();
+
+  (function () {
+    var btnInstalar = document.getElementById('btn-instalar');
+    var promptDiferido = null;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      promptDiferido = e;
+      if (btnInstalar) btnInstalar.hidden = false;
+    });
+    if (btnInstalar) {
+      btnInstalar.addEventListener('click', function () {
+        if (!promptDiferido) return;
+        btnInstalar.hidden = true;
+        promptDiferido.prompt();
+        promptDiferido.userChoice.finally(function () { promptDiferido = null; });
+      });
+    }
+    window.addEventListener('appinstalled', function () {
+      if (btnInstalar) btnInstalar.hidden = true;
+      promptDiferido = null;
+    });
+  })();
+</script>

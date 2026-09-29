@@ -1,0 +1,80 @@
+:root {
+  --bg: #f7f5f2;
+  --card-bg: #ffffff;
+  --text: #1c1b1f;
+  --text-muted: #6b6875;
+  --accent: #0f766e;
+  --highlight: #ea580c;
+  --border: #e7e3dc;
+  --accent-rgb: 15,118,110;
+  --font-serif: Georgia, "Times New Roman", Times, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3;
+    --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; --accent-rgb: 45,212,191;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f7f5f2; --card-bg: #ffffff; --text: #1c1b1f; --text-muted: #6b6875;
+  --accent: #0f766e; --highlight: #ea580c; --border: #e7e3dc; --accent-rgb: 15,118,110;
+}
+:root[data-theme="dark"] {
+  --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3;
+  --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; --accent-rgb: 45,212,191;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { color-scheme: light dark; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0; padding: 0 0 56px; overflow-x: hidden;
+}
+h1, h2 { overflow-wrap: break-word; }
+a { text-decoration: none; }
+.contenedor { padding: 0 20px; }
+
+.nav-superior {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--card-bg); border-bottom: 1px solid var(--border);
+  padding: 10px 20px 0;
+}
+.nav-superior::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--highlight));
+}
+.nav-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.nav-marca { display: flex; align-items: center; gap: 8px; color: var(--text); flex-shrink: 0; }
+.nav-marca span { font-family: var(--font-serif); font-weight: 700; font-size: 1.1rem; }
+.nav-links {
+  display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+  margin: 8px 0 0; padding: 0 0 9px;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-links a { flex-shrink: 0; white-space: nowrap; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); padding: 6px 10px; border-radius: 7px; }
+.nav-links a:hover { color: var(--text); background: var(--bg); }
+.nav-links a.activo { color: var(--accent); }
+.nav-acciones { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.btn-tema, .btn-instalar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+  border-radius: 999px; cursor: pointer; font-family: inherit;
+}
+.btn-tema { width: 34px; height: 34px; padding: 0; }
+.btn-tema:hover { color: var(--text); border-color: var(--accent); }
+.btn-instalar { padding: 0 14px; height: 34px; font-size: 0.8rem; font-weight: 600; color: var(--accent); border-color: var(--accent); }
+.btn-instalar:hover { background: var(--accent); color: var(--card-bg); }
+
+.splash {
+  position: fixed; inset: 0; z-index: 100; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.35s ease;
+}
+.splash.oculto { opacity: 0; pointer-events: none; }
+.splash .trazo { stroke-dasharray: 96; stroke-dashoffset: 96; animation: splash-trazo 1.3s ease-in-out infinite; }
+.splash .trazo.naranja { animation-delay: 0.15s; }
+@keyframes splash-trazo { 0% { stroke-dashoffset: 96; } 55%, 100% { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .splash .trazo { animation: none; stroke-dashoffset: 0; }
+}
