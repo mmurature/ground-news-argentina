@@ -225,6 +225,18 @@
   {% endif %}
 
   {% if historias %}
+  <div class="modo-lectura-fila">
+    <label class="switch-lectura" for="switch-modo-lectura">
+      <span class="switch-texto">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V6a2 2 0 0 1 2-2h5v17H6a2 2 0 0 1-2-2z"/><path d="M20 19V6a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 0 2-2z"/></svg>
+        Modo lectura: deslizá entre historias
+      </span>
+      <span class="switch-pista" id="switch-pista">
+        <input type="checkbox" id="switch-modo-lectura">
+        <span class="switch-cursor"></span>
+      </span>
+    </label>
+  </div>
   <div class="grilla" id="grilla">
     {% for h in historias %}
     <article class="historia" data-id="{{ h.id }}" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}">
@@ -271,9 +283,6 @@
         </button>
         <button type="button" class="accion-icono btn-compartir" data-id="{{ h.id }}" data-titulo="{{ h.titulo }}" data-etiqueta="{{ h.indicador.etiqueta }}" data-medios="{{ h.notas[:5]|map(attribute='medio')|join(', ') }}{% if h.notas|length > 5 %} y {{ h.notas|length - 5 }} más{% endif %}" title="Compartir como imagen">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
-        </button>
-        <button type="button" class="accion-icono btn-lector" data-id="{{ h.id }}" title="Modo lectura">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V6a2 2 0 0 1 2-2h5v17H6a2 2 0 0 1-2-2z"/><path d="M20 19V6a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 0 2-2z"/></svg>
         </button>
       </div>
     </article>

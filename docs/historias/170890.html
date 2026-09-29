@@ -109,7 +109,7 @@ a { text-decoration: none; }
 .badge-consenso.mixta { color: var(--c-mixta); }
 .badge-consenso.polarizada { color: var(--c-polarizada); }
 
-/* --- acciones por tarjeta: guardar, compartir, modo lectura --- */
+/* --- acciones por tarjeta: guardar, compartir --- */
 .acciones-historia { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
 .accion-icono {
   display: inline-flex; align-items: center; justify-content: center;
@@ -121,7 +121,17 @@ a { text-decoration: none; }
 .btn-guardar.guardado { color: var(--highlight); border-color: var(--highlight); }
 .btn-guardar.guardado svg { fill: currentColor; }
 
-/* --- modo lectura (swipe entre historias) --- */
+/* --- switch para activar/desactivar el modo lectura --- */
+.modo-lectura-fila { display: flex; justify-content: flex-end; max-width: 720px; margin: 6px 0 0; }
+.switch-lectura { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; user-select: none; }
+.switch-lectura .switch-texto { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+.switch-pista { position: relative; width: 36px; height: 20px; border-radius: 999px; background: var(--border); transition: background 0.2s ease; flex-shrink: 0; }
+.switch-pista input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.switch-cursor { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--card-bg); box-shadow: 0 1px 2px rgba(0,0,0,0.25); transition: transform 0.2s ease; }
+.switch-pista.activo { background: var(--accent); }
+.switch-pista.activo .switch-cursor { transform: translateX(16px); }
+
+/* --- modo lectura (swipe animado entre historias) --- */
 #lector { position: fixed; inset: 0; z-index: 90; background: var(--bg); display: flex; flex-direction: column; }
 .lector-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .lector-contador { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
@@ -131,10 +141,27 @@ a { text-decoration: none; }
 }
 .lector-cerrar:hover { color: var(--text); border-color: var(--accent); }
 .lector-cuerpo { flex-grow: 1; overflow-y: auto; padding: 20px; touch-action: pan-y; }
-.lector-cuerpo .contenido-lector { max-width: 620px; margin: 0 auto; }
+.lector-cuerpo .contenido-lector { max-width: 620px; margin: 0 auto; transition: transform 0.22s ease, opacity 0.22s ease; }
+.contenido-lector.lector-sale-izq { transform: translateX(-28px); opacity: 0; }
+.contenido-lector.lector-sale-der { transform: translateX(28px); opacity: 0; }
+.contenido-lector.lector-sin-anim { transition: none !important; }
 #lector-contenido .historia { border: none; box-shadow: none; padding: 0; background: transparent; }
-#lector-contenido .historia h2 { font-size: 1.4rem; }
-#lector-contenido .btn-lector { display: none; }
+.lector-item { display: flex; flex-direction: column; }
+.lector-resumen { display: flex; flex-direction: column; gap: 4px; }
+.lector-resumen .badges { margin-bottom: 4px; }
+.lector-resumen h2 { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin: 8px 0 0; line-height: 1.32; }
+.lector-resumen h2 a { color: var(--text); }
+.lector-resumen h2 a:hover { text-decoration: underline; }
+.lector-expandir {
+  display: flex; align-items: center; justify-content: center; gap: 6px; margin: 16px 0; padding: 10px 14px;
+  width: 100%; border: 1px solid var(--border); border-radius: 10px; background: var(--card-bg);
+  color: var(--accent); font-size: 0.82rem; font-weight: 700; font-family: inherit; cursor: pointer;
+}
+.lector-expandir:hover { border-color: var(--accent); }
+.lector-expandir-icono { transition: transform 0.2s ease; }
+.lector-item.expandido .lector-expandir-icono { transform: rotate(180deg); }
+.lector-vista-completa { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
+.lector-item.expandido .lector-vista-completa { max-height: 2600px; opacity: 1; }
 .lector-nav { display: flex; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; gap: 10px; }
 .lector-flecha {
   flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -249,7 +276,7 @@ a { text-decoration: none; }
       <span class="badge-consenso polarizada">Cobertura polarizada</span>
     </div>
     <h1>Misterio en Reino Unido tras liberación de sospechosos de planear ataque a base militar</h1>
-    <p class="meta">4 coberturas de 4 medios · 16 de 20 medios no la cubrieron · Actualizado 29/09/2026 22:09 UTC</p>
+    <p class="meta">4 coberturas de 4 medios · 16 de 20 medios no la cubrieron · Actualizado 29/09/2026 22:33 UTC</p>
     <div class="acciones-historia">
       <button type="button" class="accion-icono btn-guardar" data-id="170890" aria-pressed="false" title="Guardar para después">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
@@ -544,7 +571,7 @@ a { text-decoration: none; }
     });
   })();
 
-  // --- Modo lectura (swipe entre historias) ---
+  // --- Modo lectura (swipe animado entre historias, con titular colapsable) ---
   (function () {
     var lector = document.getElementById('lector');
     if (!lector) return;
@@ -556,6 +583,31 @@ a { text-decoration: none; }
     var btnSig = document.getElementById('lector-siguiente');
     var lista = [];
     var indice = 0;
+    var animando = false;
+    var DURACION_ANIM = 220;
+
+    var CLAVE_MODO = 'puente-modo-lectura';
+    function modoLecturaActivo() {
+      try { return localStorage.getItem(CLAVE_MODO) === '1'; } catch (e) { return false; }
+    }
+    function guardarModoLectura(activo) {
+      try { localStorage.setItem(CLAVE_MODO, activo ? '1' : '0'); } catch (e) {}
+    }
+
+    // --- switch "Modo lectura" (aparece en el inicio, pero el estado es global) ---
+    var switchModo = document.getElementById('switch-modo-lectura');
+    var switchPista = document.getElementById('switch-pista');
+    function pintarSwitch() {
+      if (switchPista) switchPista.classList.toggle('activo', modoLecturaActivo());
+    }
+    if (switchModo) {
+      switchModo.checked = modoLecturaActivo();
+      pintarSwitch();
+      switchModo.addEventListener('change', function () {
+        guardarModoLectura(switchModo.checked);
+        pintarSwitch();
+      });
+    }
 
     function historiasVisibles() {
       return Array.prototype.filter.call(document.querySelectorAll('.historia[data-id]'), function (el) {
@@ -563,18 +615,90 @@ a { text-decoration: none; }
       });
     }
 
-    function render() {
+    // Arma el contenido de una tarjeta del lector: el titular solo, y un botón
+    // para expandir y ver lo mismo que se ve en la tarjeta de la versión normal.
+    function construirItem(nodo) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'lector-item';
+
+      var resumen = document.createElement('div');
+      resumen.className = 'lector-resumen';
+      var badges = nodo.querySelector('.badges');
+      var titulo = nodo.querySelector('h2');
+      if (badges) resumen.appendChild(badges.cloneNode(true));
+      if (titulo) resumen.appendChild(titulo.cloneNode(true));
+
+      var btnExpandir = document.createElement('button');
+      btnExpandir.type = 'button';
+      btnExpandir.className = 'lector-expandir';
+      btnExpandir.setAttribute('aria-expanded', 'false');
+      btnExpandir.innerHTML =
+        '<span class="lector-expandir-texto">Ver cobertura completa</span>' +
+        '<svg class="lector-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
+      btnExpandir.addEventListener('click', function () {
+        var expandido = wrapper.classList.toggle('expandido');
+        btnExpandir.setAttribute('aria-expanded', expandido ? 'true' : 'false');
+        btnExpandir.querySelector('.lector-expandir-texto').textContent =
+          expandido ? 'Ocultar cobertura completa' : 'Ver cobertura completa';
+      });
+
+      var completaCont = document.createElement('div');
+      completaCont.className = 'lector-vista-completa';
+      var clonCompleta = nodo.cloneNode(true);
+      // el titular y las badges ya se muestran arriba, en el resumen: se sacan
+      // de la vista completa para no duplicarlos
+      var badgesCompleta = clonCompleta.querySelector('.badges');
+      var tituloCompleto = clonCompleta.querySelector('h2');
+      if (badgesCompleta) badgesCompleta.remove();
+      if (tituloCompleto) tituloCompleto.remove();
+      // sin data-id: evita que este clon se cuente como una tarjeta más
+      // la próxima vez que se calculen las historias visibles
+      clonCompleta.removeAttribute('data-id');
+      completaCont.appendChild(clonCompleta);
+
+      wrapper.appendChild(resumen);
+      wrapper.appendChild(btnExpandir);
+      wrapper.appendChild(completaCont);
+      return wrapper;
+    }
+
+    function pintarContenido(nodo) {
+      contenido.innerHTML = '';
+      contenido.appendChild(construirItem(nodo));
+      contador.textContent = (indice + 1) + ' / ' + lista.length;
+      cuerpo.scrollTop = 0;
+      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+    }
+
+    // direccion: null (sin animación, primera apertura) | 'sig' | 'ant'
+    function render(direccion) {
       if (!lista.length) {
         contenido.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
         contador.textContent = '';
         return;
       }
       var nodo = lista[indice];
-      contenido.innerHTML = '';
-      contenido.appendChild(nodo.cloneNode(true));
-      contador.textContent = (indice + 1) + ' / ' + lista.length;
-      cuerpo.scrollTop = 0;
-      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+      if (!direccion) {
+        contenido.classList.add('lector-sin-anim');
+        contenido.classList.remove('lector-sale-izq', 'lector-sale-der');
+        pintarContenido(nodo);
+        void contenido.offsetWidth;
+        contenido.classList.remove('lector-sin-anim');
+        return;
+      }
+      animando = true;
+      var claseSalida = direccion === 'sig' ? 'lector-sale-izq' : 'lector-sale-der';
+      var claseEntrada = direccion === 'sig' ? 'lector-sale-der' : 'lector-sale-izq';
+      contenido.classList.add(claseSalida);
+      setTimeout(function () {
+        pintarContenido(nodo);
+        contenido.classList.add('lector-sin-anim');
+        contenido.classList.remove(claseSalida);
+        contenido.classList.add(claseEntrada);
+        void contenido.offsetWidth;
+        contenido.classList.remove('lector-sin-anim', claseEntrada);
+        setTimeout(function () { animando = false; }, DURACION_ANIM);
+      }, DURACION_ANIM);
     }
 
     function abrir(desdeId) {
@@ -587,21 +711,29 @@ a { text-decoration: none; }
       indice = idx === -1 ? 0 : idx;
       lector.hidden = false;
       document.body.style.overflow = 'hidden';
-      render();
+      render(null);
     }
 
     function cerrar() {
       lector.hidden = true;
       document.body.style.overflow = '';
+      contenido.innerHTML = '';
     }
 
-    function siguiente() { if (lista.length) { indice = (indice + 1) % lista.length; render(); } }
-    function anterior() { if (lista.length) { indice = (indice - 1 + lista.length) % lista.length; render(); } }
+    function siguiente() { if (!lista.length || animando) return; indice = (indice + 1) % lista.length; render('sig'); }
+    function anterior() { if (!lista.length || animando) return; indice = (indice - 1 + lista.length) % lista.length; render('ant'); }
 
+    // con el modo lectura activado, tocar el título o "Ver cobertura completa"
+    // de una tarjeta abre el lector en vez de navegar a la página de la historia
     document.addEventListener('click', function (e) {
-      var btn = e.target.closest('.btn-lector[data-id]');
-      if (!btn) return;
-      abrir(btn.dataset.id);
+      if (!modoLecturaActivo()) return;
+      if (e.target.closest('#lector')) return;
+      var link = e.target.closest('.historia h2 a, .historia .cta-historia');
+      if (!link) return;
+      var tarjeta = link.closest('.historia[data-id]');
+      if (!tarjeta) return;
+      e.preventDefault();
+      abrir(tarjeta.dataset.id);
     });
     btnCerrar.addEventListener('click', cerrar);
     btnSig.addEventListener('click', siguiente);
