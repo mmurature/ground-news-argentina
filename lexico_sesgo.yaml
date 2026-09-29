@@ -1,0 +1,118 @@
+# Léxico de lenguaje cargado políticamente — borrador v1
+#
+# Usado por metricas.py para calcular Bias Intensity sin LLM: cada
+# aparición de uno de estos términos en un título cuenta como "lenguaje
+# cargado", sin importar de qué lado del espectro venga — esto mide
+# INTENSIDAD (qué tan cargado titula un medio), no DIRECCIÓN. La
+# dirección política ya la da posicion_editorial en feeds.yaml.
+#
+# Es un borrador armado por Claude, pensado para que Max lo edite
+# libremente: agregar, sacar o afinar términos según lo que vea en la
+# cobertura real. Es un yaml plano, cada entrada es independiente.
+
+terminos:
+  # tierras y protesta social
+  - termino: "usurpación"
+    tema: "tierras y protesta social"
+  - termino: "toma ilegal"
+    tema: "tierras y protesta social"
+  - termino: "ocupación ilegal"
+    tema: "tierras y protesta social"
+  - termino: "recuperación de tierras"
+    tema: "tierras y protesta social"
+  - termino: "desalojo violento"
+    tema: "tierras y protesta social"
+  - termino: "represión policial"
+    tema: "tierras y protesta social"
+  - termino: "restablecer el orden"
+    tema: "tierras y protesta social"
+  - termino: "corte de calle"
+    tema: "tierras y protesta social"
+  - termino: "piquete"
+    tema: "tierras y protesta social"
+
+  # economía y ajuste
+  - termino: "motosierra"
+    tema: "economía y ajuste"
+  - termino: "brutal ajuste"
+    tema: "economía y ajuste"
+  - termino: "licuación"
+    tema: "economía y ajuste"
+  - termino: "sinceramiento"
+    tema: "economía y ajuste"
+  - termino: "shock"
+    tema: "economía y ajuste"
+  - termino: "plan platita"
+    tema: "economía y ajuste"
+  - termino: "casta política"
+    tema: "economía y ajuste"
+  - termino: "déficit cero"
+    tema: "economía y ajuste"
+  - termino: "saqueo fiscal"
+    tema: "economía y ajuste"
+  - termino: "recorte brutal"
+    tema: "economía y ajuste"
+  - termino: "ajuste feroz"
+    tema: "economía y ajuste"
+
+  # seguridad y justicia
+  - termino: "mano dura"
+    tema: "seguridad y justicia"
+  - termino: "garantismo"
+    tema: "seguridad y justicia"
+  - termino: "impunidad"
+    tema: "seguridad y justicia"
+  - termino: "ola de inseguridad"
+    tema: "seguridad y justicia"
+  - termino: "inseguridad galopante"
+    tema: "seguridad y justicia"
+  - termino: "gatillo fácil"
+    tema: "seguridad y justicia"
+  - termino: "protocolo antipiquetes"
+    tema: "seguridad y justicia"
+
+  # institucional y judicial
+  - termino: "lawfare"
+    tema: "institucional y judicial"
+  - termino: "proscripción"
+    tema: "institucional y judicial"
+  - termino: "persecución judicial"
+    tema: "institucional y judicial"
+  - termino: "mafia judicial"
+    tema: "institucional y judicial"
+  - termino: "operación judicial"
+    tema: "institucional y judicial"
+  - termino: "blindaje"
+    tema: "institucional y judicial"
+  - termino: "aprietan"
+    tema: "institucional y judicial"
+
+  # etiquetas político-ideológicas
+  - termino: "populismo"
+    tema: "etiquetas ideológicas"
+  - termino: "zurdo"
+    tema: "etiquetas ideológicas"
+  - termino: "gorila"
+    tema: "etiquetas ideológicas"
+  - termino: "kuka"
+    tema: "etiquetas ideológicas"
+  - termino: "libertario"
+    tema: "etiquetas ideológicas"
+  - termino: "facho"
+    tema: "etiquetas ideológicas"
+  - termino: "setentista"
+    tema: "etiquetas ideológicas"
+  - termino: "extremista"
+    tema: "etiquetas ideológicas"
+
+  # internacional y soberanía
+  - termino: "injerencia"
+    tema: "internacional y soberanía"
+  - termino: "sometimiento"
+    tema: "internacional y soberanía"
+  - termino: "alineamiento automático"
+    tema: "internacional y soberanía"
+  - termino: "entrega de la soberanía"
+    tema: "internacional y soberanía"
+  - termino: "cipayo"
+    tema: "internacional y soberanía"
