@@ -4,8 +4,11 @@
 // Así, cuando el sitio se actualiza (cada 3hs), quien ya lo instaló ve
 // el cambio en la próxima carga en vez de quedarse pegado a una vieja.
 
-const CACHE = "puente-v2";
-const ARCHIVOS = ["./", "./index.html", "./manifest.json", "./icono.svg"];
+const CACHE = "puente-v3";
+const ARCHIVOS = [
+  "./", "./index.html", "./manifest.json", "./icono.svg",
+  "./icono-192.png", "./icono-512.png", "./icono-180.png", "./icono-maskable-512.png",
+];
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

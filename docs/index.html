@@ -7,7 +7,7 @@
 <meta name="description" content="Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icono.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icono.svg">
+<link rel="apple-touch-icon" href="icono-180.png">
 <meta name="theme-color" content="#0f766e">
 <style>
   :root {
@@ -153,6 +153,12 @@
 
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 28px 0 8px; }
   .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; max-width: 720px; }
+  .btn-instalar {
+    align-self: flex-start; margin-top: 4px; padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--accent); background: transparent; color: var(--accent);
+    font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .btn-instalar:hover { background: var(--accent); color: var(--card-bg); }
 </style>
 </head>
 <body>
@@ -166,7 +172,8 @@
       <h1>Puente</h1>
     </div>
     <p class="subtitulo">Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.</p>
-    <p class="generado">Actualizado: 22/09/2026 23:52 UTC · 28 historias · 20 medios monitoreados · se muestran historias cubiertas por 3 o más medios</p>
+    <p class="generado">Actualizado: 29/09/2026 20:53 UTC · 28 historias · 20 medios monitoreados · se muestran historias cubiertas por 3 o más medios</p>
+    <button type="button" id="btn-instalar" class="btn-instalar" hidden>Instalar Puente</button>
   </header>
 
   <div class="buscador-row">
@@ -191,42 +198,6 @@
     
   </div>
 
-  
-  <div class="palabra-dia">
-    <span class="etiqueta-mini">Palabra del día</span>
-    <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-      <span class="titulo-palabra">"gobierno"</span>
-      <span class="meta-palabra">mencionada en 72 titulares de 14 medios, últimas 24 h</span>
-    </div>
-    <div class="columnas">
-      
-      <div>
-        <div class="col-bucket"><span>Centro-izquierda</span><span>3</span></div>
-        <div class="barra"><div style="width: 7%;"></div></div>
-        <span class="ejemplo">"Pese a la puesta en escena de Milei, el gobierno británico autorizó una prórroga de las licencias petroleras en Malvinas" — Página/12</span>
-      </div>
-      
-      <div>
-        <div class="col-bucket"><span>Centro</span><span>41</span></div>
-        <div class="barra"><div style="width: 100%;"></div></div>
-        <span class="ejemplo">"Adrián Ravier habló del acuerdo comercial con EEUU y relativizó la interna en el Gobierno: "No somos manada"" — Ámbito</span>
-      </div>
-      
-      <div>
-        <div class="col-bucket"><span>Centro-derecha</span><span>18</span></div>
-        <div class="barra"><div style="width: 44%;"></div></div>
-        <span class="ejemplo">"El Gobierno cuestionó a la jueza que declaró inconstitucional el régimen penal juvenil en un caso de 14 años" — La Gaceta</span>
-      </div>
-      
-      <div>
-        <div class="col-bucket"><span>Derecha</span><span>10</span></div>
-        <div class="barra"><div style="width: 24%;"></div></div>
-        <span class="ejemplo">"“Es desesperante”: el secretario de Agricultura sorprendió con un pedido para que aplaudan los logros del Gobierno y dejó una arenga" — La Nación</span>
-      </div>
-      
-    </div>
-    <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted); font-style: italic;">Agrupa titulares por matiz editorial del medio, no por posición del lector.</p>
-  </div>
   
 
   <div class="franja-editorial">
@@ -2348,6 +2319,37 @@
       navigator.serviceWorker.register('sw.js').catch(() => {});
     });
   }
+
+  (function () {
+    // Chrome/Edge en Android (y desktop) disparan este evento cuando el
+    // sitio cumple los requisitos de instalación (manifest + service
+    // worker) — lo interceptamos para mostrar nuestro propio botón en vez
+    // de depender de que alguien encuentre la opción en el menú del
+    // navegador. Safari/iOS no dispara este evento, así que ahí el botón
+    // se queda oculto (en iOS se instala desde Compartir > Agregar a inicio).
+    var btn = document.getElementById('btn-instalar');
+    var promptDiferido = null;
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      promptDiferido = e;
+      if (btn) btn.hidden = false;
+    });
+
+    if (btn) {
+      btn.addEventListener('click', function () {
+        if (!promptDiferido) return;
+        btn.hidden = true;
+        promptDiferido.prompt();
+        promptDiferido.userChoice.finally(function () { promptDiferido = null; });
+      });
+    }
+
+    window.addEventListener('appinstalled', function () {
+      if (btn) btn.hidden = true;
+      promptDiferido = null;
+    });
+  })();
 
   (function () {
     var input = document.getElementById('buscar-puente');
