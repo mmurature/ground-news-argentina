@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AFA difundió los audios del VAR de Central-Estudiantes y la defensa de Jorge Baliño — Puente</title>
-<meta name="description" content="Cobertura y tendencias políticas de esta historia, contada desde distintos medios argentinos.">
-<link rel="manifest" href="../manifest.json">
-<link rel="icon" href="../icono.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../icono-180.png">
+<title>Sobre Puente</title>
+<meta name="description" content="Qué es Puente, cómo funciona y por qué existe: un proyecto abierto para comparar cómo cada medio argentino cuenta la misma noticia.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png">
 <meta name="theme-color" content="#0f766e">
 <script>(function(){try{var t=localStorage.getItem('puente-tema');if(t==='oscuro')document.documentElement.setAttribute('data-theme','dark');else if(t==='claro')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <style>
@@ -91,45 +91,19 @@ a { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   .splash .trazo { animation: none; stroke-dashoffset: 0; }
 }
-  .contenedor { max-width: 720px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
-
-  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .destacada, .badge-categoria {
-    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 999px; padding: 2px 9px;
+  .contenedor { max-width: 680px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 26px; }
+  h1 { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--text-muted); font-size: 0.94rem; margin: 8px 0 0; }
+  section { display: flex; flex-direction: column; gap: 8px; }
+  h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--accent); }
+  section p { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--text); }
+  section ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  section li { font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+  .nota-transparencia {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px;
   }
-  .destacada { color: var(--highlight); border: 1px solid var(--highlight); }
-  .badge-categoria { color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
-
-  h1 { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 700; margin: 0; line-height: 1.3; letter-spacing: -0.01em; }
-  .meta { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
-
-  h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; }
-  .subtitulo-seccion { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-muted); }
-
-  .indicador-politico { display: flex; flex-direction: column; gap: 6px; }
-  .indicador-header { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-  .indicador-etiqueta { font-family: var(--font-serif); font-weight: 700; color: var(--highlight); font-size: 1.1rem; }
-  .indicador-desc { color: var(--text-muted); font-size: 0.8rem; }
-  .indicador-eje { position: relative; height: 24px; }
-  .eje-linea { position: absolute; top: 10px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
-  .eje-marca { position: absolute; top: 8px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
-  .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--text-muted); opacity: 0.6; transform: translate(-50%, -50%); }
-  .eje-promedio { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; background: var(--highlight); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); box-shadow: 0 0 0 3px var(--bg); }
-  .eje-extremos { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
-
-  .coberturas { display: flex; flex-direction: column; gap: 10px; }
-  .cobertura {
-    border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 6px;
-  }
-  .cobertura .fila-medio { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .cobertura .medio { font-weight: 700; color: var(--accent); }
-  .cobertura .bucket { font-size: 0.68rem; font-weight: 600; color: var(--highlight); border: 1px solid var(--highlight); border-radius: 999px; padding: 1px 8px; }
-  .cobertura a { font-size: 0.92rem; color: var(--text); line-height: 1.35; overflow-wrap: break-word; }
-  .cobertura a:hover { text-decoration: underline; }
-
-  .faltan { margin: 0; font-size: 0.82rem; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed var(--border); }
-
+  .nota-transparencia h2 { color: var(--highlight); }
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
 </style>
 </head>
@@ -144,7 +118,7 @@ a { text-decoration: none; }
 </div>
 <nav class="nav-superior">
   <div class="nav-fila">
-    <a href="../index.html" class="nav-marca">
+    <a href="index.html" class="nav-marca">
       <svg width="26" height="19" viewBox="0 0 70 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <path d="M6 38 Q6 20 30 10 Q54 20 54 38" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
         <path d="M20 40 Q20 24 42 16 Q64 24 64 40" stroke="var(--highlight)" stroke-width="4.5" stroke-linecap="round"/>
@@ -160,106 +134,53 @@ a { text-decoration: none; }
     </div>
   </div>
   <div class="nav-links">
-    <a href="../index.html">Inicio</a>
-    <a href="../comparacion.html">Comparación</a>
-    <a href="../nosotros.html">Nosotros</a>
+    <a href="index.html">Inicio</a>
+    <a href="comparacion.html">Comparación</a>
+    <a href="nosotros.html" class="activo">Nosotros</a>
   </div>
 </nav>
 <div class="contenedor">
-  <div style="display: flex; flex-direction: column; gap: 14px;">
-    <div class="badges">
-      
-      <span class="badge-categoria">Deportes</span>
-    </div>
-    <h1>AFA difundió los audios del VAR de Central-Estudiantes y la defensa de Jorge Baliño</h1>
-    <p class="meta">4 coberturas de 4 medios · 16 de 20 medios no la cubrieron · Actualizado 29/09/2026 21:33 UTC</p>
-  </div>
+  <header>
+    <h1>Sobre Puente</h1>
+    <p class="subtitulo">Puente junta, en un solo lugar, cómo distintos medios argentinos cuentan la misma noticia — y muestra, de un vistazo, si esa cobertura viene de medios que se ubican más a la izquierda, en el centro o más a la derecha del espectro editorial.</p>
+  </header>
 
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-    <div>
-      <h2>Cobertura y tendencias políticas</h2>
-      <p class="subtitulo-seccion">Cómo se ubica editorialmente cada medio que cubrió esta historia, y qué tituló cada uno.</p>
-    </div>
+  <section>
+    <h2>Qué hace</h2>
+    <ul>
+      <li>Recolecta títulos y notas de los RSS públicos de medios argentinos, cada pocas horas.</li>
+      <li>Agrupa automáticamente las notas que hablan de la misma historia, usando similitud semántica entre títulos — la agrupación es matemática, no una decisión editorial.</li>
+      <li>Ubica a cada medio en un espectro editorial de izquierda a derecha, en base a clasificaciones públicas existentes y research manual — no a un puntaje generado por una inteligencia artificial.</li>
+      <li>Muestra, para cada historia, el título y el link original de cada medio que la cubrió, para que cada persona lea la fuente directamente.</li>
+    </ul>
+  </section>
 
-    <div class="indicador-politico">
-      <div class="indicador-header">
-        <span class="indicador-etiqueta">Centro-derecha</span>
-        <span class="indicador-desc">— promedio de 4 coberturas</span>
-      </div>
-      <div class="indicador-eje">
-        <div class="eje-linea"></div>
-        
-        <div class="eje-marca" style="left: 0%;"></div>
-        
-        <div class="eje-marca" style="left: 25%;"></div>
-        
-        <div class="eje-marca" style="left: 50%;"></div>
-        
-        <div class="eje-marca" style="left: 75%;"></div>
-        
-        <div class="eje-marca" style="left: 100%;"></div>
-        
-        
-        <div class="eje-punto" title="La Capital" style="left: 47.5%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-punto" title="El Intransigente" style="left: 66.0%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-punto" title="TN" style="left: 76.5%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-punto" title="La Nación" style="left: 88.0%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-promedio" style="left: 69.5%;"></div>
-      </div>
-      <div class="eje-extremos"><span>Izquierda</span><span>Derecha</span></div>
-    </div>
+  <section>
+    <h2>Misión</h2>
+    <p>Que cualquier persona en Argentina pueda ver, en segundos, cómo cambia el relato de una misma noticia según quién la cuenta — para leer con más contexto, no para decirle a nadie qué pensar ni qué creer.</p>
+  </section>
 
-    <div class="coberturas">
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">El Intransigente</span>
-          <span class="bucket">Centro-derecha</span>
-        </div>
-        <a href="https://elintransigente.com/2026/09/estudiantes-la-plata-audios-var/" target="_blank" rel="noopener">AFA difundió los audios del VAR de Central-Estudiantes y la defensa de Jorge Baliño</a>
-      </div>
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">La Capital</span>
-          <span class="bucket">Centro</span>
-        </div>
-        <a href="https://www.lacapital.com.ar/la-afa-dio-conocer-los-audios-del-var-la-final-central-y-estudiantes-n10283758.html" target="_blank" rel="noopener">La AFA dio a conocer los audios del VAR de la final entre Central y Estudiantes</a>
-      </div>
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">La Nación</span>
-          <span class="bucket">Derecha</span>
-        </div>
-        <a href="https://www.lanacion.com.ar/deportes/futbol/se-conocieron-los-audios-del-var-de-la-supercopa-internacional-entre-estudiantes-y-rosario-central-nid28092026/" target="_blank" rel="noopener">Se conocieron los audios del VAR de la Supercopa Internacional entre Estudiantes y Rosario Central, que terminó en un escándalo</a>
-      </div>
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">TN</span>
-          <span class="bucket">Centro-derecha</span>
-        </div>
-        <a href="https://tn.com.ar/deportes/futbol/2026/09/28/la-afa-difundio-los-audios-del-var-del-polemico-partido-entre-estudiantes-y-rosario-central-por-la-supercopa-internacional/" target="_blank" rel="noopener">La AFA difundió los audios del VAR del polémico partido entre Estudiantes y Rosario Central por la Supercopa Internacional</a>
-      </div>
-      
-    </div>
+  <section>
+    <h2>Visión</h2>
+    <p>Ser una herramienta de referencia, gratuita, sin publicidad y sin fines de lucro, para consumir noticias argentinas con más perspectiva — con una metodología pública, que cualquiera pueda revisar y cuestionar.</p>
+  </section>
 
-    
-    <p class="faltan">No la cubrieron: Perfil, Ámbito, La Izquierda Diario, Infobae, Página/12, Los Andes y 10 medios más — sin nota propia sobre esta historia al momento de esta actualización.</p>
-    
-  </div>
+  <section class="nota-transparencia">
+    <h2>Transparencia</h2>
+    <p>Puente es un proyecto personal e independiente: no está afiliado a ningún medio, partido ni organización. La ubicación editorial de cada medio es una aproximación, se revisa y ajusta con el tiempo, y tanto el código como los criterios usados son públicos. Si algo te parece mal clasificado, es —literalmente— trabajo en progreso.</p>
+  </section>
 
-  <footer>Puente · <a href="../comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
+  <section>
+    <h2>Quién lo hace</h2>
+    <p>Puente lo desarrolla y mantiene un estudiante en Buenos Aires, como proyecto personal. El sitio se actualiza solo, cada pocas horas, sin intervención manual en el contenido de las noticias.</p>
+  </section>
+
+  <footer>Puente · <a href="comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
 </div>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('../sw.js').catch(function () {});
+      navigator.serviceWorker.register('sw.js').catch(function () {});
     });
   }
 
