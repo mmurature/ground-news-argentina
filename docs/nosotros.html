@@ -6,8 +6,8 @@
 <title>Sobre Puente</title>
 <meta name="description" content="Qué es Puente, cómo funciona y por qué existe: un proyecto abierto para comparar cómo cada medio argentino cuenta la misma noticia.">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icono.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icono-180.png">
+<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png?v=2">
 <meta name="theme-color" content="#0f766e">
 <script>(function(){try{var t=localStorage.getItem('puente-tema');if(t==='oscuro')document.documentElement.setAttribute('data-theme','dark');else if(t==='claro')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <style>
@@ -191,13 +191,13 @@ a { text-decoration: none; }
       splash.classList.add('oculto');
       setTimeout(function () { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 400);
     }
-    var minimo = new Promise(function (r) { setTimeout(r, 300); });
+    var minimo = new Promise(function (r) { setTimeout(r, 1100); });
     var listo = new Promise(function (r) {
       if (document.readyState === 'complete') r();
       else window.addEventListener('load', r);
     });
     Promise.all([minimo, listo]).then(ocultar);
-    setTimeout(ocultar, 2200);
+    setTimeout(ocultar, 3000);
   })();
 
   (function () {

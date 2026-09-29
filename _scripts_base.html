@@ -12,13 +12,13 @@
       splash.classList.add('oculto');
       setTimeout(function () { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 400);
     }
-    var minimo = new Promise(function (r) { setTimeout(r, 300); });
+    var minimo = new Promise(function (r) { setTimeout(r, 1100); });
     var listo = new Promise(function (r) {
       if (document.readyState === 'complete') r();
       else window.addEventListener('load', r);
     });
     Promise.all([minimo, listo]).then(ocultar);
-    setTimeout(ocultar, 2200);
+    setTimeout(ocultar, 3000);
   })();
 
   (function () {

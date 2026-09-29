@@ -6,8 +6,8 @@
 <title>Puente — cobertura de noticias Argentina</title>
 <meta name="description" content="Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icono.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icono-180.png">
+<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png?v=2">
 <meta name="theme-color" content="#0f766e">
 <script>(function(){try{var t=localStorage.getItem('puente-tema');if(t==='oscuro')document.documentElement.setAttribute('data-theme','dark');else if(t==='claro')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <style>
@@ -243,30 +243,8 @@ a { text-decoration: none; }
     <span class="kicker">Medios argentinos, comparados</span>
     <h1>Puente</h1>
     <p class="subtitulo">Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.</p>
-    <p class="generado">Actualizado: 29/09/2026 21:33 UTC · 165 historias · 20 medios monitoreados · se muestran historias cubiertas por 3 o más medios</p>
+    <p class="generado">Actualizado: 29/09/2026 21:53 UTC · 165 historias · 20 medios monitoreados · se muestran historias cubiertas por 3 o más medios</p>
   </header>
-
-  <div class="buscador-row">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
-    <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
-  </div>
-
-  <div class="chip-row" id="chips">
-    
-    <button type="button" class="chip activo" data-categoria="Todas">Todas</button>
-    
-    <button type="button" class="chip" data-categoria="Política nacional">Política nacional</button>
-    
-    <button type="button" class="chip" data-categoria="Geopolítica">Geopolítica</button>
-    
-    <button type="button" class="chip" data-categoria="Economía">Economía</button>
-    
-    <button type="button" class="chip" data-categoria="Deportes">Deportes</button>
-    
-    <button type="button" class="chip" data-categoria="Asuntos internos">Asuntos internos</button>
-    
-  </div>
 
   
   <div class="palabra-dia">
@@ -311,6 +289,28 @@ a { text-decoration: none; }
     <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted); font-style: italic;">Agrupa titulares por matiz editorial del medio, no por posición del lector.</p>
   </div>
   
+
+  <div class="buscador-row">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
+    <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
+  </div>
+
+  <div class="chip-row" id="chips">
+    
+    <button type="button" class="chip activo" data-categoria="Todas">Todas</button>
+    
+    <button type="button" class="chip" data-categoria="Política nacional">Política nacional</button>
+    
+    <button type="button" class="chip" data-categoria="Geopolítica">Geopolítica</button>
+    
+    <button type="button" class="chip" data-categoria="Economía">Economía</button>
+    
+    <button type="button" class="chip" data-categoria="Deportes">Deportes</button>
+    
+    <button type="button" class="chip" data-categoria="Asuntos internos">Asuntos internos</button>
+    
+  </div>
 
   <div class="franja-editorial">
     <span class="etiqueta-chica">Ubicación editorial de los medios (ilustrativa)</span>
@@ -12278,13 +12278,13 @@ a { text-decoration: none; }
       splash.classList.add('oculto');
       setTimeout(function () { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 400);
     }
-    var minimo = new Promise(function (r) { setTimeout(r, 300); });
+    var minimo = new Promise(function (r) { setTimeout(r, 1100); });
     var listo = new Promise(function (r) {
       if (document.readyState === 'complete') r();
       else window.addEventListener('load', r);
     });
     Promise.all([minimo, listo]).then(ocultar);
-    setTimeout(ocultar, 2200);
+    setTimeout(ocultar, 3000);
   })();
 
   (function () {

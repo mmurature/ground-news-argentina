@@ -6,8 +6,8 @@
 <title>Puente — cobertura de noticias Argentina</title>
 <meta name="description" content="Qué inclinación política tiene la cobertura de cada historia de la agenda argentina, contada desde distintos medios.">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icono.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icono-180.png">
+<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png?v=2">
 <meta name="theme-color" content="#0f766e">
 {% include "_tema_temprano.html" %}
 <style>
@@ -140,18 +140,6 @@
     <p class="generado">Actualizado: {{ generado }} · {{ historias|length }} historias · {{ total_medios }} medios monitoreados · se muestran historias cubiertas por {{ medios_minimos }} o más medios</p>
   </header>
 
-  <div class="buscador-row">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
-    <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
-  </div>
-
-  <div class="chip-row" id="chips">
-    {% for cat in ["Todas"] + categorias %}
-    <button type="button" class="chip{% if loop.first %} activo{% endif %}" data-categoria="{{ cat }}">{{ cat }}</button>
-    {% endfor %}
-  </div>
-
   {% if palabra_del_dia %}
   <div class="palabra-dia">
     <span class="etiqueta-mini">Palabra del día</span>
@@ -171,6 +159,18 @@
     <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted); font-style: italic;">Agrupa titulares por matiz editorial del medio, no por posición del lector.</p>
   </div>
   {% endif %}
+
+  <div class="buscador-row">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
+    <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
+  </div>
+
+  <div class="chip-row" id="chips">
+    {% for cat in ["Todas"] + categorias %}
+    <button type="button" class="chip{% if loop.first %} activo{% endif %}" data-categoria="{{ cat }}">{{ cat }}</button>
+    {% endfor %}
+  </div>
 
   <div class="franja-editorial">
     <span class="etiqueta-chica">Ubicación editorial de los medios (ilustrativa)</span>
