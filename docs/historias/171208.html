@@ -145,23 +145,28 @@ a { text-decoration: none; }
 .contenido-lector.lector-sale-izq { transform: translateX(-28px); opacity: 0; }
 .contenido-lector.lector-sale-der { transform: translateX(28px); opacity: 0; }
 .contenido-lector.lector-sin-anim { transition: none !important; }
-#lector-contenido .historia { border: none; box-shadow: none; padding: 0; background: transparent; }
 .lector-item { display: flex; flex-direction: column; }
 .lector-resumen { display: flex; flex-direction: column; gap: 4px; }
 .lector-resumen .badges { margin-bottom: 4px; }
 .lector-resumen h2 { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin: 8px 0 0; line-height: 1.32; }
 .lector-resumen h2 a { color: var(--text); }
 .lector-resumen h2 a:hover { text-decoration: underline; }
-.lector-expandir {
-  display: flex; align-items: center; justify-content: center; gap: 6px; margin: 16px 0; padding: 10px 14px;
+.lector-resumen .indicador-politico { margin-top: 14px; }
+.lector-medios { font-size: 0.85rem; color: var(--text-muted); margin: 2px 0 14px; line-height: 1.4; }
+.lector-resumen .acciones-historia { margin-top: 4px; }
+
+/* --- bloque expandible: coberturas colapsadas en el inicio, titulares en el lector --- */
+.btn-expandir {
+  display: flex; align-items: center; justify-content: center; gap: 6px; margin: 14px 0 0; padding: 9px 14px;
   width: 100%; border: 1px solid var(--border); border-radius: 10px; background: var(--card-bg);
   color: var(--accent); font-size: 0.82rem; font-weight: 700; font-family: inherit; cursor: pointer;
 }
-.lector-expandir:hover { border-color: var(--accent); }
-.lector-expandir-icono { transition: transform 0.2s ease; }
-.lector-item.expandido .lector-expandir-icono { transform: rotate(180deg); }
-.lector-vista-completa { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
-.lector-item.expandido .lector-vista-completa { max-height: 2600px; opacity: 1; }
+.btn-expandir:hover { border-color: var(--accent); }
+.btn-expandir-icono { transition: transform 0.2s ease; }
+.expandible.expandido .btn-expandir-icono { transform: rotate(180deg); }
+.expandible-contenido { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
+.expandible.expandido .expandible-contenido { max-height: 3000px; opacity: 1; }
+.expandible .notas { margin-top: 14px; }
 .lector-nav { display: flex; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; gap: 10px; }
 .lector-flecha {
   flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -276,7 +281,7 @@ a { text-decoration: none; }
       <span class="badge-consenso mixta">Cobertura mixta</span>
     </div>
     <h1>Máximo Kirchner aseguró que Cristina Kirchner quiere ser candidata a presidenta</h1>
-    <p class="meta">7 coberturas de 7 medios · 13 de 20 medios no la cubrieron · Actualizado 29/09/2026 22:33 UTC</p>
+    <p class="meta">7 coberturas de 7 medios · 13 de 20 medios no la cubrieron · Actualizado 29/09/2026 22:45 UTC</p>
     <div class="acciones-historia">
       <button type="button" class="accion-icono btn-guardar" data-id="171208" aria-pressed="false" title="Guardar para después">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
@@ -419,6 +424,23 @@ a { text-decoration: none; }
     });
     Promise.all([minimo, listo]).then(ocultar);
     setTimeout(ocultar, 3000);
+  })();
+
+  // --- Bloques expandibles: coberturas colapsadas en el inicio, titulares en el lector ---
+  (function () {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-expandir');
+      if (!btn) return;
+      var cont = btn.closest('.expandible');
+      if (!cont) return;
+      var expandido = cont.classList.toggle('expandido');
+      btn.setAttribute('aria-expanded', expandido ? 'true' : 'false');
+      var texto = btn.querySelector('.btn-expandir-texto');
+      if (texto) {
+        var nuevo = expandido ? btn.dataset.textoExpandido : btn.dataset.textoColapsado;
+        if (nuevo) texto.textContent = nuevo;
+      }
+    });
   })();
 
   (function () {
@@ -645,8 +667,9 @@ a { text-decoration: none; }
       });
     }
 
-    // Arma el contenido de una tarjeta del lector: el titular solo, y un botón
-    // para expandir y ver lo mismo que se ve en la tarjeta de la versión normal.
+    // Arma el contenido de una tarjeta del lector: de entrada, el resumen
+    // (titular), las inclinaciones y los medios que la cubrieron; el titular
+    // exacto de cada medio queda detrás de un botón para no saturar el swipe.
     function construirItem(nodo) {
       var wrapper = document.createElement('div');
       wrapper.className = 'lector-item';
@@ -655,40 +678,51 @@ a { text-decoration: none; }
       resumen.className = 'lector-resumen';
       var badges = nodo.querySelector('.badges');
       var titulo = nodo.querySelector('h2');
+      var indicador = nodo.querySelector('.indicador-politico');
+      var acciones = nodo.querySelector('.acciones-historia');
       if (badges) resumen.appendChild(badges.cloneNode(true));
       if (titulo) resumen.appendChild(titulo.cloneNode(true));
+      if (indicador) resumen.appendChild(indicador.cloneNode(true));
 
+      var nombresMedios = Array.prototype.map.call(nodo.querySelectorAll('.notas .medio'), function (el) {
+        return el.textContent.trim();
+      });
+      if (nombresMedios.length) {
+        var medios = document.createElement('p');
+        medios.className = 'lector-medios';
+        var TOPE = 6;
+        medios.textContent = nombresMedios.length <= TOPE
+          ? 'Medios: ' + nombresMedios.join(', ')
+          : 'Medios: ' + nombresMedios.slice(0, TOPE).join(', ') + ' y ' + (nombresMedios.length - TOPE) + ' más';
+        resumen.appendChild(medios);
+      }
+
+      if (acciones) resumen.appendChild(acciones.cloneNode(true));
+
+      var expandible = document.createElement('div');
+      expandible.className = 'expandible';
       var btnExpandir = document.createElement('button');
       btnExpandir.type = 'button';
-      btnExpandir.className = 'lector-expandir';
+      btnExpandir.className = 'btn-expandir';
       btnExpandir.setAttribute('aria-expanded', 'false');
+      btnExpandir.dataset.textoColapsado = 'Ver el titular de cada medio';
+      btnExpandir.dataset.textoExpandido = 'Ocultar los titulares';
       btnExpandir.innerHTML =
-        '<span class="lector-expandir-texto">Ver cobertura completa</span>' +
-        '<svg class="lector-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
-      btnExpandir.addEventListener('click', function () {
-        var expandido = wrapper.classList.toggle('expandido');
-        btnExpandir.setAttribute('aria-expanded', expandido ? 'true' : 'false');
-        btnExpandir.querySelector('.lector-expandir-texto').textContent =
-          expandido ? 'Ocultar cobertura completa' : 'Ver cobertura completa';
-      });
+        '<span class="btn-expandir-texto">Ver el titular de cada medio</span>' +
+        '<svg class="btn-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
 
-      var completaCont = document.createElement('div');
-      completaCont.className = 'lector-vista-completa';
-      var clonCompleta = nodo.cloneNode(true);
-      // el titular y las badges ya se muestran arriba, en el resumen: se sacan
-      // de la vista completa para no duplicarlos
-      var badgesCompleta = clonCompleta.querySelector('.badges');
-      var tituloCompleto = clonCompleta.querySelector('h2');
-      if (badgesCompleta) badgesCompleta.remove();
-      if (tituloCompleto) tituloCompleto.remove();
-      // sin data-id: evita que este clon se cuente como una tarjeta más
-      // la próxima vez que se calculen las historias visibles
-      clonCompleta.removeAttribute('data-id');
-      completaCont.appendChild(clonCompleta);
+      var contenidoExpandible = document.createElement('div');
+      contenidoExpandible.className = 'expandible-contenido';
+      var notas = nodo.querySelector('.notas');
+      var faltan = nodo.querySelector('.faltan');
+      if (notas) contenidoExpandible.appendChild(notas.cloneNode(true));
+      if (faltan) contenidoExpandible.appendChild(faltan.cloneNode(true));
+
+      expandible.appendChild(btnExpandir);
+      expandible.appendChild(contenidoExpandible);
 
       wrapper.appendChild(resumen);
-      wrapper.appendChild(btnExpandir);
-      wrapper.appendChild(completaCont);
+      wrapper.appendChild(expandible);
       return wrapper;
     }
 

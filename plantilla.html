@@ -265,17 +265,27 @@
         <div class="eje-extremos"><span>Izquierda</span><span>Derecha</span></div>
       </div>
 
-      <ul class="notas">
-        {% for n in h.notas %}
-        <li>
-          <span class="medio">{{ n.medio }}</span>
-          <a href="{{ n.link }}" target="_blank" rel="noopener">{{ n.titulo }}</a>
-        </li>
-        {% endfor %}
-      </ul>
-      {% if h.medios_faltan %}
-      <p class="faltan">No lo cubrieron: {{ h.medios_faltan_texto }}</p>
-      {% endif %}
+      <div class="expandible">
+        <button type="button" class="btn-expandir" aria-expanded="false"
+          data-texto-colapsado="Ver {{ h.notas|length }} cobertura{{ 's' if h.notas|length != 1 else '' }}"
+          data-texto-expandido="Ocultar coberturas">
+          <span class="btn-expandir-texto">Ver {{ h.notas|length }} cobertura{{ 's' if h.notas|length != 1 else '' }}</span>
+          <svg class="btn-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="expandible-contenido">
+          <ul class="notas">
+            {% for n in h.notas %}
+            <li>
+              <span class="medio">{{ n.medio }}</span>
+              <a href="{{ n.link }}" target="_blank" rel="noopener">{{ n.titulo }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+          {% if h.medios_faltan %}
+          <p class="faltan">No lo cubrieron: {{ h.medios_faltan_texto }}</p>
+          {% endif %}
+        </div>
+      </div>
       <a href="historias/{{ h.id }}.html" class="cta-historia">Ver cobertura completa y tendencias →</a>
       <div class="acciones-historia">
         <button type="button" class="accion-icono btn-guardar" data-id="{{ h.id }}" aria-pressed="false" title="Guardar para después">

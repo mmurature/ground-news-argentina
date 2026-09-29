@@ -21,6 +21,23 @@
     setTimeout(ocultar, 3000);
   })();
 
+  // --- Bloques expandibles: coberturas colapsadas en el inicio, titulares en el lector ---
+  (function () {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-expandir');
+      if (!btn) return;
+      var cont = btn.closest('.expandible');
+      if (!cont) return;
+      var expandido = cont.classList.toggle('expandido');
+      btn.setAttribute('aria-expanded', expandido ? 'true' : 'false');
+      var texto = btn.querySelector('.btn-expandir-texto');
+      if (texto) {
+        var nuevo = expandido ? btn.dataset.textoExpandido : btn.dataset.textoColapsado;
+        if (nuevo) texto.textContent = nuevo;
+      }
+    });
+  })();
+
   (function () {
     var btn = document.getElementById('btn-tema');
     var sol = document.getElementById('icono-sol');
@@ -245,8 +262,9 @@
       });
     }
 
-    // Arma el contenido de una tarjeta del lector: el titular solo, y un botón
-    // para expandir y ver lo mismo que se ve en la tarjeta de la versión normal.
+    // Arma el contenido de una tarjeta del lector: de entrada, el resumen
+    // (titular), las inclinaciones y los medios que la cubrieron; el titular
+    // exacto de cada medio queda detrás de un botón para no saturar el swipe.
     function construirItem(nodo) {
       var wrapper = document.createElement('div');
       wrapper.className = 'lector-item';
@@ -255,40 +273,51 @@
       resumen.className = 'lector-resumen';
       var badges = nodo.querySelector('.badges');
       var titulo = nodo.querySelector('h2');
+      var indicador = nodo.querySelector('.indicador-politico');
+      var acciones = nodo.querySelector('.acciones-historia');
       if (badges) resumen.appendChild(badges.cloneNode(true));
       if (titulo) resumen.appendChild(titulo.cloneNode(true));
+      if (indicador) resumen.appendChild(indicador.cloneNode(true));
 
+      var nombresMedios = Array.prototype.map.call(nodo.querySelectorAll('.notas .medio'), function (el) {
+        return el.textContent.trim();
+      });
+      if (nombresMedios.length) {
+        var medios = document.createElement('p');
+        medios.className = 'lector-medios';
+        var TOPE = 6;
+        medios.textContent = nombresMedios.length <= TOPE
+          ? 'Medios: ' + nombresMedios.join(', ')
+          : 'Medios: ' + nombresMedios.slice(0, TOPE).join(', ') + ' y ' + (nombresMedios.length - TOPE) + ' más';
+        resumen.appendChild(medios);
+      }
+
+      if (acciones) resumen.appendChild(acciones.cloneNode(true));
+
+      var expandible = document.createElement('div');
+      expandible.className = 'expandible';
       var btnExpandir = document.createElement('button');
       btnExpandir.type = 'button';
-      btnExpandir.className = 'lector-expandir';
+      btnExpandir.className = 'btn-expandir';
       btnExpandir.setAttribute('aria-expanded', 'false');
+      btnExpandir.dataset.textoColapsado = 'Ver el titular de cada medio';
+      btnExpandir.dataset.textoExpandido = 'Ocultar los titulares';
       btnExpandir.innerHTML =
-        '<span class="lector-expandir-texto">Ver cobertura completa</span>' +
-        '<svg class="lector-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
-      btnExpandir.addEventListener('click', function () {
-        var expandido = wrapper.classList.toggle('expandido');
-        btnExpandir.setAttribute('aria-expanded', expandido ? 'true' : 'false');
-        btnExpandir.querySelector('.lector-expandir-texto').textContent =
-          expandido ? 'Ocultar cobertura completa' : 'Ver cobertura completa';
-      });
+        '<span class="btn-expandir-texto">Ver el titular de cada medio</span>' +
+        '<svg class="btn-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
 
-      var completaCont = document.createElement('div');
-      completaCont.className = 'lector-vista-completa';
-      var clonCompleta = nodo.cloneNode(true);
-      // el titular y las badges ya se muestran arriba, en el resumen: se sacan
-      // de la vista completa para no duplicarlos
-      var badgesCompleta = clonCompleta.querySelector('.badges');
-      var tituloCompleto = clonCompleta.querySelector('h2');
-      if (badgesCompleta) badgesCompleta.remove();
-      if (tituloCompleto) tituloCompleto.remove();
-      // sin data-id: evita que este clon se cuente como una tarjeta más
-      // la próxima vez que se calculen las historias visibles
-      clonCompleta.removeAttribute('data-id');
-      completaCont.appendChild(clonCompleta);
+      var contenidoExpandible = document.createElement('div');
+      contenidoExpandible.className = 'expandible-contenido';
+      var notas = nodo.querySelector('.notas');
+      var faltan = nodo.querySelector('.faltan');
+      if (notas) contenidoExpandible.appendChild(notas.cloneNode(true));
+      if (faltan) contenidoExpandible.appendChild(faltan.cloneNode(true));
+
+      expandible.appendChild(btnExpandir);
+      expandible.appendChild(contenidoExpandible);
 
       wrapper.appendChild(resumen);
-      wrapper.appendChild(btnExpandir);
-      wrapper.appendChild(completaCont);
+      wrapper.appendChild(expandible);
       return wrapper;
     }
 
