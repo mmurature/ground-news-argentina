@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>El embajador de EEUU en China afirma que Trump ofreció a Xi comprar armas estadounidenses — Puente</title>
-<meta name="description" content="Cobertura y tendencias políticas de esta historia, contada desde distintos medios argentinos.">
-<link rel="manifest" href="../manifest.json">
-<link rel="icon" href="../icono.svg?v=2" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../icono-180.png?v=2">
+<title>Guardadas — Puente</title>
+<meta name="description" content="Las historias que guardaste en Puente para leer más tarde.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png?v=2">
 <meta name="theme-color" content="#0f766e">
 <script>(function(){try{var t=localStorage.getItem('puente-tema');if(t==='oscuro')document.documentElement.setAttribute('data-theme','dark');else if(t==='claro')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <style>
@@ -166,46 +166,67 @@ a { text-decoration: none; }
   border-radius: 50%; border: none; background: rgba(var(--accent-rgb), 0.18); color: inherit;
   cursor: pointer; font-size: 0.7rem; line-height: 1; padding: 0;
 }
-  .contenedor { max-width: 720px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
+  .contenedor { max-width: 1240px; margin: 0 auto; padding-top: 22px; }
+  header.encabezado-guardadas { max-width: 720px; margin: 0 0 6px; }
+  header.encabezado-guardadas h1 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  header.encabezado-guardadas p { color: var(--text-muted); font-size: 0.9rem; margin: 8px 0 0; }
 
-  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
+    gap: 16px;
+    align-items: start;
+    margin-top: 20px;
+  }
+  .historia {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    min-width: 0;
+  }
+  @media (hover: hover) {
+    .historia:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+  }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
   .destacada, .badge-categoria {
-    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 999px; padding: 2px 9px;
+    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; border-radius: 999px; padding: 2px 9px;
   }
   .destacada { color: var(--highlight); border: 1px solid var(--highlight); }
   .badge-categoria { color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
+  .historia h2 { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.35; }
+  .historia h2 a { color: var(--text); }
+  .historia h2 a:hover { text-decoration: underline; }
 
-  h1 { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 700; margin: 0; line-height: 1.3; letter-spacing: -0.01em; }
-  .meta { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
-
-  h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; }
-  .subtitulo-seccion { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-muted); }
-
-  .indicador-politico { display: flex; flex-direction: column; gap: 6px; }
+  .indicador-politico { display: flex; flex-direction: column; gap: 6px; margin: 0 0 14px; }
   .indicador-header { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-  .indicador-etiqueta { font-family: var(--font-serif); font-weight: 700; color: var(--highlight); font-size: 1.1rem; }
-  .indicador-desc { color: var(--text-muted); font-size: 0.8rem; }
-  .indicador-eje { position: relative; height: 24px; }
-  .eje-linea { position: absolute; top: 10px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
-  .eje-marca { position: absolute; top: 8px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
+  .indicador-etiqueta { font-family: var(--font-serif); font-weight: 700; color: var(--highlight); font-size: 0.95rem; }
+  .indicador-desc { color: var(--text-muted); font-size: 0.78rem; }
+  .indicador-eje { position: relative; height: 20px; }
+  .eje-linea { position: absolute; top: 8px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
+  .eje-marca { position: absolute; top: 6px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
   .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--text-muted); opacity: 0.6; transform: translate(-50%, -50%); }
-  .eje-promedio { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; background: var(--highlight); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); box-shadow: 0 0 0 3px var(--bg); }
-  .eje-extremos { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .eje-promedio { position: absolute; top: 50%; left: 0; width: 12px; height: 12px; background: var(--highlight); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); box-shadow: 0 0 0 3px var(--card-bg); }
+  .eje-extremos { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
 
-  .coberturas { display: flex; flex-direction: column; gap: 10px; }
-  .cobertura {
-    border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 6px;
-  }
-  .cobertura .fila-medio { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .cobertura .medio { font-weight: 700; color: var(--accent); }
-  .cobertura .bucket { font-size: 0.68rem; font-weight: 600; color: var(--highlight); border: 1px solid var(--highlight); border-radius: 999px; padding: 1px 8px; }
-  .cobertura a { font-size: 0.92rem; color: var(--text); line-height: 1.35; overflow-wrap: break-word; }
-  .cobertura a:hover { text-decoration: underline; }
+  .notas { list-style: none; padding: 0; margin: 0; }
+  .notas li { padding: 7px 0; border-top: 1px solid var(--border); font-size: 0.92rem; line-height: 1.35; overflow-wrap: break-word; }
+  .notas li:first-child { border-top: none; }
+  .medio { font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
+  .notas a { color: inherit; text-decoration: none; }
+  .notas a:hover { text-decoration: underline; }
+  .faltan { font-size: 0.82rem; color: var(--text-muted); margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .cta-historia { display: inline-block; margin-top: 12px; font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+  .cta-historia:hover { text-decoration: underline; }
 
-  .faltan { margin: 0; font-size: 0.82rem; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed var(--border); }
-
-  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
+  .vacio-guardadas { max-width: 480px; margin: 60px auto; text-align: center; color: var(--text-muted); }
+  .vacio-guardadas svg { color: var(--border); margin-bottom: 12px; }
+  .vacio-guardadas p { margin: 6px 0 0; font-size: 0.92rem; line-height: 1.5; }
+  .vacio-guardadas a { color: var(--accent); font-weight: 600; }
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 28px 0 8px; }
 </style>
 </head>
 <body>
@@ -219,7 +240,7 @@ a { text-decoration: none; }
 </div>
 <nav class="nav-superior">
   <div class="nav-fila">
-    <a href="../index.html" class="nav-marca">
+    <a href="index.html" class="nav-marca">
       <svg width="26" height="19" viewBox="0 0 70 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <path d="M6 38 Q6 20 30 10 Q54 20 54 38" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
         <path d="M20 40 Q20 24 42 16 Q64 24 64 40" stroke="var(--highlight)" stroke-width="4.5" stroke-linecap="round"/>
@@ -235,106 +256,53 @@ a { text-decoration: none; }
     </div>
   </div>
   <div class="nav-links">
-    <a href="../index.html">Inicio</a>
-    <a href="../comparacion.html">Comparación</a>
-    <a href="../guardadas.html">Guardadas</a>
-    <a href="../nosotros.html">Nosotros</a>
+    <a href="index.html">Inicio</a>
+    <a href="comparacion.html">Comparación</a>
+    <a href="guardadas.html" class="activo">Guardadas</a>
+    <a href="nosotros.html">Nosotros</a>
   </div>
 </nav>
+<div id="lector" hidden>
+  <div class="lector-header">
+    <button type="button" class="lector-cerrar" id="lector-cerrar" aria-label="Cerrar modo lectura">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <span class="lector-contador" id="lector-contador"></span>
+    <span style="width: 34px;"></span>
+  </div>
+  <div class="lector-cuerpo" id="lector-cuerpo">
+    <div class="contenido-lector" id="lector-contenido"></div>
+  </div>
+  <div class="lector-nav">
+    <button type="button" class="lector-flecha" id="lector-anterior">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
+      Anterior
+    </button>
+    <button type="button" class="lector-flecha" id="lector-siguiente">
+      Siguiente
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
 <div class="contenedor">
-  <div style="display: flex; flex-direction: column; gap: 14px;">
-    <div class="badges">
-      
-      <span class="badge-categoria">Geopolítica</span>
-      <span class="badge-consenso mixta">Cobertura mixta</span>
-    </div>
-    <h1>El embajador de EEUU en China afirma que Trump ofreció a Xi comprar armas estadounidenses</h1>
-    <p class="meta">3 coberturas de 3 medios · 17 de 20 medios no la cubrieron · Actualizado 29/09/2026 22:09 UTC</p>
-    <div class="acciones-historia">
-      <button type="button" class="accion-icono btn-guardar" data-id="170419" aria-pressed="false" title="Guardar para después">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
-      </button>
-      <button type="button" class="accion-icono btn-compartir" data-id="170419" data-titulo="El embajador de EEUU en China afirma que Trump ofreció a Xi comprar armas estadounidenses" data-etiqueta="Centro" data-medios="Clarín, Infobae, Perfil" title="Compartir como imagen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
-      </button>
-    </div>
+  <header class="encabezado-guardadas">
+    <h1>Guardadas</h1>
+    <p>Las historias que marcaste para leer más tarde. Se guardan en este dispositivo — no se comparten ni se suben a ningún lado.</p>
+  </header>
+
+  <div class="grilla" id="grilla-guardadas" hidden></div>
+
+  <div class="vacio-guardadas" id="vacio-guardadas" hidden>
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+    <p>Todavía no guardaste ninguna historia.<br>Tocá el marcador en cualquier tarjeta de <a href="index.html">Inicio</a> para guardarla acá.</p>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-    <div>
-      <h2>Cobertura y tendencias políticas</h2>
-      <p class="subtitulo-seccion">Cómo se ubica editorialmente cada medio que cubrió esta historia, y qué tituló cada uno.</p>
-    </div>
-
-    <div class="indicador-politico">
-      <div class="indicador-header">
-        <span class="indicador-etiqueta">Centro</span>
-        <span class="indicador-desc">— promedio de 3 coberturas, leve inclinación a la derecha</span>
-      </div>
-      <div class="indicador-eje">
-        <div class="eje-linea"></div>
-        
-        <div class="eje-marca" style="left: 0%;"></div>
-        
-        <div class="eje-marca" style="left: 25%;"></div>
-        
-        <div class="eje-marca" style="left: 50%;"></div>
-        
-        <div class="eje-marca" style="left: 75%;"></div>
-        
-        <div class="eje-marca" style="left: 100%;"></div>
-        
-        
-        <div class="eje-punto" title="Infobae" style="left: 41.5%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-punto" title="Perfil" style="left: 49.0%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-punto" title="Clarín" style="left: 82.0%; width: 9px; height: 9px;"></div>
-        
-        <div class="eje-promedio" style="left: 57.5%;"></div>
-      </div>
-      <div class="eje-extremos"><span>Izquierda</span><span>Derecha</span></div>
-    </div>
-
-    <div class="coberturas">
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">Clarín</span>
-          <span class="bucket">Centro-derecha</span>
-        </div>
-        <a href="https://www.clarin.com/estados-unidos/el-embajador-de-eeuu-en-china-afirma-que-trump-ofrecio-a-xi-comprar-armas-estadounidenses_0_QLZYN58ovh.html" target="_blank" rel="noopener">El embajador de EEUU en China afirma que Trump ofreció a Xi comprar armas estadounidenses</a>
-      </div>
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">Infobae</span>
-          <span class="bucket">Centro</span>
-        </div>
-        <a href="https://www.infobae.com/america/agencias/2026/09/29/trump-desmiente-a-su-embajador-en-pekin-sobre-su-supuesta-oferta-de-armas-a-china-hablaba-de-taiwan/" target="_blank" rel="noopener">Trump desmiente a su embajador en Pekín sobre su supuesta oferta de armas a China: "Hablaba de Taiwán"</a>
-      </div>
-      
-      <div class="cobertura">
-        <div class="fila-medio">
-          <span class="medio">Perfil</span>
-          <span class="bucket">Centro</span>
-        </div>
-        <a href="https://www.perfil.com/noticias/internacional/el-embajador-de-estados-unidos-en-china-dice-que-trump-ofrecio-a-xi-jinping-venderle-armas-pero-la-casa-blanca-lo-niega.phtml" target="_blank" rel="noopener">El embajador de Estados Unidos en China dice que Trump ofreció a Xi Jinping venderle armas, pero la Casa Blanca lo niega</a>
-      </div>
-      
-    </div>
-
-    
-    <p class="faltan">No la cubrieron: La Nación, Ámbito, La Izquierda Diario, Página/12, Los Andes, Río Negro y 11 medios más — sin nota propia sobre esta historia al momento de esta actualización.</p>
-    
-  </div>
-
-  <footer>Puente · <a href="../comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
+  <footer>Puente · <a href="comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
 </div>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('../sw.js').catch(function () {});
+      navigator.serviceWorker.register('sw.js').catch(function () {});
     });
   }
 
@@ -678,6 +646,39 @@ a { text-decoration: none; }
       input.addEventListener('input', actualizarBotonSeguir);
     }
     pintar();
+  })();
+</script>
+<script>
+  (function () {
+    var grilla = document.getElementById('grilla-guardadas');
+    var vacio = document.getElementById('vacio-guardadas');
+
+    function mostrarVacio() {
+      vacio.hidden = false;
+      grilla.hidden = true;
+    }
+
+    if (!window.PuenteGuardadas) { mostrarVacio(); return; }
+    var ids = window.PuenteGuardadas.leer();
+    if (!ids.length) { mostrarVacio(); return; }
+
+    fetch('index.html')
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var encontradas = 0;
+        ids.forEach(function (id) {
+          var tarjeta = doc.querySelector('.historia[data-id="' + id + '"]');
+          if (tarjeta) {
+            grilla.appendChild(tarjeta.cloneNode(true));
+            encontradas++;
+          }
+        });
+        if (!encontradas) { mostrarVacio(); return; }
+        grilla.hidden = false;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(grilla);
+      })
+      .catch(function () { mostrarVacio(); });
   })();
 </script>
 </body>

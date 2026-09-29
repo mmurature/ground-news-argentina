@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guardadas — Puente</title>
+<meta name="description" content="Las historias que guardaste en Puente para leer más tarde.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png?v=2">
+<meta name="theme-color" content="#0f766e">
+{% include "_tema_temprano.html" %}
+<style>
+{% include "_estilos_base.html" %}
+  .contenedor { max-width: 1240px; margin: 0 auto; padding-top: 22px; }
+  header.encabezado-guardadas { max-width: 720px; margin: 0 0 6px; }
+  header.encabezado-guardadas h1 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  header.encabezado-guardadas p { color: var(--text-muted); font-size: 0.9rem; margin: 8px 0 0; }
+
+  .grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
+    gap: 16px;
+    align-items: start;
+    margin-top: 20px;
+  }
+  .historia {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    min-width: 0;
+  }
+  @media (hover: hover) {
+    .historia:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+  }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+  .destacada, .badge-categoria {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; border-radius: 999px; padding: 2px 9px;
+  }
+  .destacada { color: var(--highlight); border: 1px solid var(--highlight); }
+  .badge-categoria { color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
+  .historia h2 { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.35; }
+  .historia h2 a { color: var(--text); }
+  .historia h2 a:hover { text-decoration: underline; }
+
+  .indicador-politico { display: flex; flex-direction: column; gap: 6px; margin: 0 0 14px; }
+  .indicador-header { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .indicador-etiqueta { font-family: var(--font-serif); font-weight: 700; color: var(--highlight); font-size: 0.95rem; }
+  .indicador-desc { color: var(--text-muted); font-size: 0.78rem; }
+  .indicador-eje { position: relative; height: 20px; }
+  .eje-linea { position: absolute; top: 8px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
+  .eje-marca { position: absolute; top: 6px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
+  .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--text-muted); opacity: 0.6; transform: translate(-50%, -50%); }
+  .eje-promedio { position: absolute; top: 50%; left: 0; width: 12px; height: 12px; background: var(--highlight); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); box-shadow: 0 0 0 3px var(--card-bg); }
+  .eje-extremos { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .notas { list-style: none; padding: 0; margin: 0; }
+  .notas li { padding: 7px 0; border-top: 1px solid var(--border); font-size: 0.92rem; line-height: 1.35; overflow-wrap: break-word; }
+  .notas li:first-child { border-top: none; }
+  .medio { font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
+  .notas a { color: inherit; text-decoration: none; }
+  .notas a:hover { text-decoration: underline; }
+  .faltan { font-size: 0.82rem; color: var(--text-muted); margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .cta-historia { display: inline-block; margin-top: 12px; font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+  .cta-historia:hover { text-decoration: underline; }
+
+  .vacio-guardadas { max-width: 480px; margin: 60px auto; text-align: center; color: var(--text-muted); }
+  .vacio-guardadas svg { color: var(--border); margin-bottom: 12px; }
+  .vacio-guardadas p { margin: 6px 0 0; font-size: 0.92rem; line-height: 1.5; }
+  .vacio-guardadas a { color: var(--accent); font-weight: 600; }
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 28px 0 8px; }
+</style>
+</head>
+<body>
+{% set base = '' %}
+{% set pagina = 'guardadas' %}
+{% include "_splash.html" %}
+{% include "_nav.html" %}
+{% include "_lector.html" %}
+<div class="contenedor">
+  <header class="encabezado-guardadas">
+    <h1>Guardadas</h1>
+    <p>Las historias que marcaste para leer más tarde. Se guardan en este dispositivo — no se comparten ni se suben a ningún lado.</p>
+  </header>
+
+  <div class="grilla" id="grilla-guardadas" hidden></div>
+
+  <div class="vacio-guardadas" id="vacio-guardadas" hidden>
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+    <p>Todavía no guardaste ninguna historia.<br>Tocá el marcador en cualquier tarjeta de <a href="index.html">Inicio</a> para guardarla acá.</p>
+  </div>
+
+  <footer>Puente · <a href="comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
+</div>
+{% include "_scripts_base.html" %}
+<script>
+  (function () {
+    var grilla = document.getElementById('grilla-guardadas');
+    var vacio = document.getElementById('vacio-guardadas');
+
+    function mostrarVacio() {
+      vacio.hidden = false;
+      grilla.hidden = true;
+    }
+
+    if (!window.PuenteGuardadas) { mostrarVacio(); return; }
+    var ids = window.PuenteGuardadas.leer();
+    if (!ids.length) { mostrarVacio(); return; }
+
+    fetch('index.html')
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var encontradas = 0;
+        ids.forEach(function (id) {
+          var tarjeta = doc.querySelector('.historia[data-id="' + id + '"]');
+          if (tarjeta) {
+            grilla.appendChild(tarjeta.cloneNode(true));
+            encontradas++;
+          }
+        });
+        if (!encontradas) { mostrarVacio(); return; }
+        grilla.hidden = false;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(grilla);
+      })
+      .catch(function () { mostrarVacio(); });
+  })();
+</script>
+</body>
+</html>

@@ -67,4 +67,283 @@
       promptDiferido = null;
     });
   })();
+
+  // --- Guardar historias (bookmarks en localStorage) ---
+  (function () {
+    var CLAVE = 'puente-guardadas';
+    function leer() {
+      try { return JSON.parse(localStorage.getItem(CLAVE) || '[]'); } catch (e) { return []; }
+    }
+    function guardarLista(lista) {
+      try { localStorage.setItem(CLAVE, JSON.stringify(lista)); } catch (e) {}
+    }
+    function estaGuardada(id) { return leer().indexOf(String(id)) !== -1; }
+    function alternar(id) {
+      id = String(id);
+      var lista = leer();
+      var idx = lista.indexOf(id);
+      if (idx === -1) lista.push(id); else lista.splice(idx, 1);
+      guardarLista(lista);
+    }
+    function pintarBoton(btn) {
+      var guardada = estaGuardada(btn.dataset.id);
+      btn.classList.toggle('guardado', guardada);
+      btn.setAttribute('aria-pressed', guardada ? 'true' : 'false');
+      btn.title = guardada ? 'Quitar de guardadas' : 'Guardar para después';
+    }
+    function pintarTodos(raiz) {
+      (raiz || document).querySelectorAll('.btn-guardar[data-id]').forEach(pintarBoton);
+    }
+    pintarTodos();
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-guardar[data-id]');
+      if (!btn) return;
+      alternar(btn.dataset.id);
+      document.querySelectorAll('.btn-guardar[data-id="' + btn.dataset.id + '"]').forEach(pintarBoton);
+    });
+    window.PuenteGuardadas = { leer: leer, estaGuardada: estaGuardada, pintarTodos: pintarTodos };
+  })();
+
+  // --- Compartir tarjeta como imagen ---
+  (function () {
+    function envolverTexto(ctx, texto, x, y, maxWidth, lineHeight, maxLineas) {
+      var palabras = (texto || '').split(' ');
+      var linea = '';
+      var lineas = [];
+      for (var i = 0; i < palabras.length; i++) {
+        var prueba = linea + palabras[i] + ' ';
+        if (ctx.measureText(prueba).width > maxWidth && linea) {
+          lineas.push(linea.trim());
+          linea = palabras[i] + ' ';
+        } else {
+          linea = prueba;
+        }
+      }
+      lineas.push(linea.trim());
+      if (maxLineas && lineas.length > maxLineas) {
+        lineas = lineas.slice(0, maxLineas);
+        lineas[maxLineas - 1] = lineas[maxLineas - 1].replace(/\s*$/, '') + '…';
+      }
+      lineas.forEach(function (l, idx) { ctx.fillText(l, x, y + idx * lineHeight); });
+      return lineas.length;
+    }
+
+    function generarImagen(datos) {
+      var ancho = 1080, alto = 920;
+      var canvas = document.createElement('canvas');
+      canvas.width = ancho; canvas.height = alto;
+      var ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#121417';
+      ctx.fillRect(0, 0, ancho, alto);
+
+      ctx.save();
+      ctx.translate(70, 60);
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = '#2dd4bf';
+      ctx.beginPath();
+      ctx.moveTo(0, 60); ctx.quadraticCurveTo(0, 20, 48, 0); ctx.quadraticCurveTo(96, 20, 96, 60);
+      ctx.stroke();
+      ctx.strokeStyle = '#fb923c';
+      ctx.beginPath();
+      ctx.moveTo(28, 68); ctx.quadraticCurveTo(28, 34, 68, 20); ctx.quadraticCurveTo(108, 34, 108, 68);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#f2f1ee';
+      ctx.font = '700 34px Georgia, serif';
+      ctx.fillText('Puente', 210, 100);
+
+      ctx.font = '700 50px Georgia, serif';
+      ctx.fillStyle = '#f2f1ee';
+      var lineasTitulo = envolverTexto(ctx, datos.titulo, 70, 260, ancho - 140, 62, 5);
+
+      var yEtiqueta = 260 + lineasTitulo * 62 + 56;
+      ctx.font = '700 28px system-ui, sans-serif';
+      ctx.fillStyle = '#fb923c';
+      ctx.fillText((datos.etiqueta || '').toUpperCase(), 70, yEtiqueta);
+
+      ctx.font = '400 27px system-ui, sans-serif';
+      ctx.fillStyle = '#9a9ca3';
+      envolverTexto(ctx, 'Cobertura de: ' + (datos.medios || ''), 70, yEtiqueta + 56, ancho - 140, 37, 4);
+
+      ctx.font = '600 23px system-ui, sans-serif';
+      ctx.fillStyle = '#6b6875';
+      ctx.fillText('puente — comparación de medios argentinos', 70, alto - 60);
+
+      return canvas;
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-compartir[data-id]');
+      if (!btn) return;
+      var datos = {
+        titulo: btn.dataset.titulo || '',
+        etiqueta: btn.dataset.etiqueta || '',
+        medios: btn.dataset.medios || '',
+      };
+      var canvas = generarImagen(datos);
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        var archivo;
+        try { archivo = new File([blob], 'puente-historia.png', { type: 'image/png' }); } catch (e) { archivo = null; }
+        if (archivo && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+          navigator.share({ files: [archivo], title: 'Puente', text: datos.titulo }).catch(function () {});
+          return;
+        }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'puente-historia.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }, 'image/png');
+    });
+  })();
+
+  // --- Modo lectura (swipe entre historias) ---
+  (function () {
+    var lector = document.getElementById('lector');
+    if (!lector) return;
+    var cuerpo = document.getElementById('lector-cuerpo');
+    var contenido = document.getElementById('lector-contenido');
+    var contador = document.getElementById('lector-contador');
+    var btnCerrar = document.getElementById('lector-cerrar');
+    var btnAnt = document.getElementById('lector-anterior');
+    var btnSig = document.getElementById('lector-siguiente');
+    var lista = [];
+    var indice = 0;
+
+    function historiasVisibles() {
+      return Array.prototype.filter.call(document.querySelectorAll('.historia[data-id]'), function (el) {
+        return getComputedStyle(el).display !== 'none';
+      });
+    }
+
+    function render() {
+      if (!lista.length) {
+        contenido.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
+        contador.textContent = '';
+        return;
+      }
+      var nodo = lista[indice];
+      contenido.innerHTML = '';
+      contenido.appendChild(nodo.cloneNode(true));
+      contador.textContent = (indice + 1) + ' / ' + lista.length;
+      cuerpo.scrollTop = 0;
+      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+    }
+
+    function abrir(desdeId) {
+      lista = historiasVisibles();
+      if (!lista.length) return;
+      var idx = -1;
+      for (var i = 0; i < lista.length; i++) {
+        if (lista[i].dataset.id === desdeId) { idx = i; break; }
+      }
+      indice = idx === -1 ? 0 : idx;
+      lector.hidden = false;
+      document.body.style.overflow = 'hidden';
+      render();
+    }
+
+    function cerrar() {
+      lector.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    function siguiente() { if (lista.length) { indice = (indice + 1) % lista.length; render(); } }
+    function anterior() { if (lista.length) { indice = (indice - 1 + lista.length) % lista.length; render(); } }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-lector[data-id]');
+      if (!btn) return;
+      abrir(btn.dataset.id);
+    });
+    btnCerrar.addEventListener('click', cerrar);
+    btnSig.addEventListener('click', siguiente);
+    btnAnt.addEventListener('click', anterior);
+
+    document.addEventListener('keydown', function (e) {
+      if (lector.hidden) return;
+      if (e.key === 'Escape') cerrar();
+      else if (e.key === 'ArrowRight') siguiente();
+      else if (e.key === 'ArrowLeft') anterior();
+    });
+
+    var xInicio = null;
+    cuerpo.addEventListener('touchstart', function (e) { xInicio = e.touches[0].clientX; }, { passive: true });
+    cuerpo.addEventListener('touchend', function (e) {
+      if (xInicio === null) return;
+      var delta = e.changedTouches[0].clientX - xInicio;
+      if (Math.abs(delta) > 60) { if (delta < 0) siguiente(); else anterior(); }
+      xInicio = null;
+    }, { passive: true });
+  })();
+
+  // --- Búsquedas guardadas (no son notificaciones push, son atajos de filtro) ---
+  (function () {
+    var CLAVE = 'puente-alertas';
+    var input = document.getElementById('buscar-puente');
+    var btnSeguir = document.getElementById('btn-seguir-busqueda');
+    var cont = document.getElementById('chips-alertas');
+    if (!input || !cont) return;
+
+    function leer() {
+      try { return JSON.parse(localStorage.getItem(CLAVE) || '[]'); } catch (e) { return []; }
+    }
+    function guardarLista(lista) {
+      try { localStorage.setItem(CLAVE, JSON.stringify(lista)); } catch (e) {}
+    }
+    function actualizarBotonSeguir() {
+      if (!btnSeguir) return;
+      var termino = input.value.trim();
+      var ya = !!termino && leer().indexOf(termino) !== -1;
+      btnSeguir.classList.toggle('activo', ya);
+      btnSeguir.textContent = ya ? '✓ Siguiendo' : '+ Seguir';
+    }
+    function pintar() {
+      var lista = leer();
+      cont.innerHTML = '';
+      lista.forEach(function (termino) {
+        var chip = document.createElement('span');
+        chip.className = 'chip-alerta';
+        var texto = document.createElement('span');
+        texto.textContent = termino;
+        texto.style.cursor = 'pointer';
+        texto.addEventListener('click', function () {
+          input.value = termino;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          actualizarBotonSeguir();
+        });
+        var quitar = document.createElement('button');
+        quitar.type = 'button';
+        quitar.className = 'quitar';
+        quitar.setAttribute('aria-label', 'Quitar alerta ' + termino);
+        quitar.textContent = '×';
+        quitar.addEventListener('click', function (e) {
+          e.stopPropagation();
+          guardarLista(leer().filter(function (t) { return t !== termino; }));
+          pintar();
+        });
+        chip.appendChild(texto);
+        chip.appendChild(quitar);
+        cont.appendChild(chip);
+      });
+      actualizarBotonSeguir();
+    }
+    if (btnSeguir) {
+      btnSeguir.addEventListener('click', function () {
+        var termino = input.value.trim();
+        if (!termino) return;
+        var lista = leer();
+        var idx = lista.indexOf(termino);
+        if (idx === -1) lista.push(termino); else lista.splice(idx, 1);
+        guardarLista(lista);
+        pintar();
+      });
+      input.addEventListener('input', actualizarBotonSeguir);
+    }
+    pintar();
+  })();
 </script>

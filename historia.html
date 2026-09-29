@@ -64,9 +64,18 @@
     <div class="badges">
       {% if h.destacada %}<span class="destacada">Más cubierta</span>{% endif %}
       <span class="badge-categoria">{{ h.categoria }}</span>
+      <span class="badge-consenso {{ h.indicador.consenso_clase }}">{{ h.indicador.consenso_etiqueta }}</span>
     </div>
     <h1>{{ h.titulo }}</h1>
     <p class="meta">{{ h.notas|length }} cobertura{{ 's' if h.notas|length != 1 else '' }} de {{ h.n_medios }} medio{{ 's' if h.n_medios != 1 else '' }} · {{ h.medios_faltan|length }} de {{ total_medios }} medios no la cubrieron · Actualizado {{ generado }}</p>
+    <div class="acciones-historia">
+      <button type="button" class="accion-icono btn-guardar" data-id="{{ h.id }}" aria-pressed="false" title="Guardar para después">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+      </button>
+      <button type="button" class="accion-icono btn-compartir" data-id="{{ h.id }}" data-titulo="{{ h.titulo }}" data-etiqueta="{{ h.indicador.etiqueta }}" data-medios="{{ h.notas[:5]|map(attribute='medio')|join(', ') }}{% if h.notas|length > 5 %} y {{ h.notas|length - 5 }} más{% endif %}" title="Compartir como imagen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
+      </button>
+    </div>
   </div>
 
   <div style="display: flex; flex-direction: column; gap: 16px;">

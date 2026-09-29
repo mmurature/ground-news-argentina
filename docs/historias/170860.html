@@ -20,21 +20,27 @@
   --highlight: #ea580c;
   --border: #e7e3dc;
   --accent-rgb: 15,118,110;
+  --c-consenso: #15803d;
+  --c-mixta: #b45309;
+  --c-polarizada: #b91c1c;
   --font-serif: Georgia, "Times New Roman", Times, serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3;
     --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; --accent-rgb: 45,212,191;
+    --c-consenso: #4ade80; --c-mixta: #fbbf24; --c-polarizada: #f87171;
   }
 }
 :root[data-theme="light"] {
   --bg: #f7f5f2; --card-bg: #ffffff; --text: #1c1b1f; --text-muted: #6b6875;
   --accent: #0f766e; --highlight: #ea580c; --border: #e7e3dc; --accent-rgb: 15,118,110;
+  --c-consenso: #15803d; --c-mixta: #b45309; --c-polarizada: #b91c1c;
 }
 :root[data-theme="dark"] {
   --bg: #121417; --card-bg: #1b1f23; --text: #f2f1ee; --text-muted: #9a9ca3;
   --accent: #2dd4bf; --highlight: #fb923c; --border: #2a2e33; --accent-rgb: 45,212,191;
+  --c-consenso: #4ade80; --c-mixta: #fbbf24; --c-polarizada: #f87171;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -90,6 +96,75 @@ a { text-decoration: none; }
 @keyframes splash-trazo { 0% { stroke-dashoffset: 96; } 55%, 100% { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .splash .trazo { animation: none; stroke-dashoffset: 0; }
+}
+
+/* --- badge de consenso / disenso --- */
+.badge-consenso {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  border-radius: 999px; padding: 2px 9px 2px 7px; border: 1px solid var(--border); color: var(--text-muted);
+}
+.badge-consenso::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.badge-consenso.consenso { color: var(--c-consenso); }
+.badge-consenso.mixta { color: var(--c-mixta); }
+.badge-consenso.polarizada { color: var(--c-polarizada); }
+
+/* --- acciones por tarjeta: guardar, compartir, modo lectura --- */
+.acciones-historia { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+.accion-icono {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted); cursor: pointer; padding: 0; font-family: inherit;
+}
+.accion-icono:hover { color: var(--text); border-color: var(--accent); }
+.accion-icono svg { width: 16px; height: 16px; }
+.btn-guardar.guardado { color: var(--highlight); border-color: var(--highlight); }
+.btn-guardar.guardado svg { fill: currentColor; }
+
+/* --- modo lectura (swipe entre historias) --- */
+#lector { position: fixed; inset: 0; z-index: 90; background: var(--bg); display: flex; flex-direction: column; }
+.lector-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.lector-contador { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+.lector-cerrar {
+  width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--border); background: transparent;
+  color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+}
+.lector-cerrar:hover { color: var(--text); border-color: var(--accent); }
+.lector-cuerpo { flex-grow: 1; overflow-y: auto; padding: 20px; touch-action: pan-y; }
+.lector-cuerpo .contenido-lector { max-width: 620px; margin: 0 auto; }
+#lector-contenido .historia { border: none; box-shadow: none; padding: 0; background: transparent; }
+#lector-contenido .historia h2 { font-size: 1.4rem; }
+#lector-contenido .btn-lector { display: none; }
+.lector-nav { display: flex; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; gap: 10px; }
+.lector-flecha {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 42px; border-radius: 10px; border: 1px solid var(--border); background: transparent;
+  color: var(--text); font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: inherit;
+}
+.lector-flecha:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.lector-flecha:disabled { opacity: 0.35; cursor: default; }
+.lector-vacio { text-align: center; color: var(--text-muted); padding: 60px 0; }
+
+/* --- búsqueda + "seguir esta búsqueda" --- */
+.busqueda-fila { display: flex; align-items: center; gap: 8px; max-width: 720px; margin: 20px 0 0; }
+.busqueda-fila .buscador-row { max-width: none; margin: 0; flex-grow: 1; }
+.btn-seguir {
+  flex-shrink: 0; white-space: nowrap; font-size: 0.8rem; font-weight: 600;
+  padding: 0 14px; height: 42px; border-radius: 10px; cursor: pointer; font-family: inherit;
+  border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+}
+.btn-seguir:hover { border-color: var(--accent); color: var(--accent); }
+.btn-seguir.activo { border-color: var(--accent); background: var(--accent); color: var(--bg); }
+.chips-alertas { display: flex; gap: 6px; flex-wrap: wrap; max-width: 720px; margin: 10px 0 0; }
+.chip-alerta {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 600;
+  padding: 5px 6px 5px 12px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent);
+  background: transparent; cursor: pointer; font-family: inherit;
+}
+.chip-alerta .quitar {
+  display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+  border-radius: 50%; border: none; background: rgba(var(--accent-rgb), 0.18); color: inherit;
+  cursor: pointer; font-size: 0.7rem; line-height: 1; padding: 0;
 }
   .contenedor { max-width: 720px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
 
@@ -162,6 +237,7 @@ a { text-decoration: none; }
   <div class="nav-links">
     <a href="../index.html">Inicio</a>
     <a href="../comparacion.html">Comparación</a>
+    <a href="../guardadas.html">Guardadas</a>
     <a href="../nosotros.html">Nosotros</a>
   </div>
 </nav>
@@ -170,9 +246,18 @@ a { text-decoration: none; }
     <div class="badges">
       
       <span class="badge-categoria">Política nacional</span>
+      <span class="badge-consenso mixta">Cobertura mixta</span>
     </div>
     <h1>Morosidad: Diputados analizan dos iniciativas para una problemática que golpea a casi 6 millones de argentinos</h1>
-    <p class="meta">3 coberturas de 3 medios · 17 de 20 medios no la cubrieron · Actualizado 29/09/2026 21:53 UTC</p>
+    <p class="meta">3 coberturas de 3 medios · 17 de 20 medios no la cubrieron · Actualizado 29/09/2026 22:09 UTC</p>
+    <div class="acciones-historia">
+      <button type="button" class="accion-icono btn-guardar" data-id="170860" aria-pressed="false" title="Guardar para después">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+      </button>
+      <button type="button" class="accion-icono btn-compartir" data-id="170860" data-titulo="Morosidad: Diputados analizan dos iniciativas para una problemática que golpea a casi 6 millones de argentinos" data-etiqueta="Centro" data-medios="Crónica, El Intransigente, Perfil" title="Compartir como imagen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
+      </button>
+    </div>
   </div>
 
   <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -314,6 +399,285 @@ a { text-decoration: none; }
       if (btnInstalar) btnInstalar.hidden = true;
       promptDiferido = null;
     });
+  })();
+
+  // --- Guardar historias (bookmarks en localStorage) ---
+  (function () {
+    var CLAVE = 'puente-guardadas';
+    function leer() {
+      try { return JSON.parse(localStorage.getItem(CLAVE) || '[]'); } catch (e) { return []; }
+    }
+    function guardarLista(lista) {
+      try { localStorage.setItem(CLAVE, JSON.stringify(lista)); } catch (e) {}
+    }
+    function estaGuardada(id) { return leer().indexOf(String(id)) !== -1; }
+    function alternar(id) {
+      id = String(id);
+      var lista = leer();
+      var idx = lista.indexOf(id);
+      if (idx === -1) lista.push(id); else lista.splice(idx, 1);
+      guardarLista(lista);
+    }
+    function pintarBoton(btn) {
+      var guardada = estaGuardada(btn.dataset.id);
+      btn.classList.toggle('guardado', guardada);
+      btn.setAttribute('aria-pressed', guardada ? 'true' : 'false');
+      btn.title = guardada ? 'Quitar de guardadas' : 'Guardar para después';
+    }
+    function pintarTodos(raiz) {
+      (raiz || document).querySelectorAll('.btn-guardar[data-id]').forEach(pintarBoton);
+    }
+    pintarTodos();
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-guardar[data-id]');
+      if (!btn) return;
+      alternar(btn.dataset.id);
+      document.querySelectorAll('.btn-guardar[data-id="' + btn.dataset.id + '"]').forEach(pintarBoton);
+    });
+    window.PuenteGuardadas = { leer: leer, estaGuardada: estaGuardada, pintarTodos: pintarTodos };
+  })();
+
+  // --- Compartir tarjeta como imagen ---
+  (function () {
+    function envolverTexto(ctx, texto, x, y, maxWidth, lineHeight, maxLineas) {
+      var palabras = (texto || '').split(' ');
+      var linea = '';
+      var lineas = [];
+      for (var i = 0; i < palabras.length; i++) {
+        var prueba = linea + palabras[i] + ' ';
+        if (ctx.measureText(prueba).width > maxWidth && linea) {
+          lineas.push(linea.trim());
+          linea = palabras[i] + ' ';
+        } else {
+          linea = prueba;
+        }
+      }
+      lineas.push(linea.trim());
+      if (maxLineas && lineas.length > maxLineas) {
+        lineas = lineas.slice(0, maxLineas);
+        lineas[maxLineas - 1] = lineas[maxLineas - 1].replace(/\s*$/, '') + '…';
+      }
+      lineas.forEach(function (l, idx) { ctx.fillText(l, x, y + idx * lineHeight); });
+      return lineas.length;
+    }
+
+    function generarImagen(datos) {
+      var ancho = 1080, alto = 920;
+      var canvas = document.createElement('canvas');
+      canvas.width = ancho; canvas.height = alto;
+      var ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#121417';
+      ctx.fillRect(0, 0, ancho, alto);
+
+      ctx.save();
+      ctx.translate(70, 60);
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = '#2dd4bf';
+      ctx.beginPath();
+      ctx.moveTo(0, 60); ctx.quadraticCurveTo(0, 20, 48, 0); ctx.quadraticCurveTo(96, 20, 96, 60);
+      ctx.stroke();
+      ctx.strokeStyle = '#fb923c';
+      ctx.beginPath();
+      ctx.moveTo(28, 68); ctx.quadraticCurveTo(28, 34, 68, 20); ctx.quadraticCurveTo(108, 34, 108, 68);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#f2f1ee';
+      ctx.font = '700 34px Georgia, serif';
+      ctx.fillText('Puente', 210, 100);
+
+      ctx.font = '700 50px Georgia, serif';
+      ctx.fillStyle = '#f2f1ee';
+      var lineasTitulo = envolverTexto(ctx, datos.titulo, 70, 260, ancho - 140, 62, 5);
+
+      var yEtiqueta = 260 + lineasTitulo * 62 + 56;
+      ctx.font = '700 28px system-ui, sans-serif';
+      ctx.fillStyle = '#fb923c';
+      ctx.fillText((datos.etiqueta || '').toUpperCase(), 70, yEtiqueta);
+
+      ctx.font = '400 27px system-ui, sans-serif';
+      ctx.fillStyle = '#9a9ca3';
+      envolverTexto(ctx, 'Cobertura de: ' + (datos.medios || ''), 70, yEtiqueta + 56, ancho - 140, 37, 4);
+
+      ctx.font = '600 23px system-ui, sans-serif';
+      ctx.fillStyle = '#6b6875';
+      ctx.fillText('puente — comparación de medios argentinos', 70, alto - 60);
+
+      return canvas;
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-compartir[data-id]');
+      if (!btn) return;
+      var datos = {
+        titulo: btn.dataset.titulo || '',
+        etiqueta: btn.dataset.etiqueta || '',
+        medios: btn.dataset.medios || '',
+      };
+      var canvas = generarImagen(datos);
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        var archivo;
+        try { archivo = new File([blob], 'puente-historia.png', { type: 'image/png' }); } catch (e) { archivo = null; }
+        if (archivo && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+          navigator.share({ files: [archivo], title: 'Puente', text: datos.titulo }).catch(function () {});
+          return;
+        }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'puente-historia.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }, 'image/png');
+    });
+  })();
+
+  // --- Modo lectura (swipe entre historias) ---
+  (function () {
+    var lector = document.getElementById('lector');
+    if (!lector) return;
+    var cuerpo = document.getElementById('lector-cuerpo');
+    var contenido = document.getElementById('lector-contenido');
+    var contador = document.getElementById('lector-contador');
+    var btnCerrar = document.getElementById('lector-cerrar');
+    var btnAnt = document.getElementById('lector-anterior');
+    var btnSig = document.getElementById('lector-siguiente');
+    var lista = [];
+    var indice = 0;
+
+    function historiasVisibles() {
+      return Array.prototype.filter.call(document.querySelectorAll('.historia[data-id]'), function (el) {
+        return getComputedStyle(el).display !== 'none';
+      });
+    }
+
+    function render() {
+      if (!lista.length) {
+        contenido.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
+        contador.textContent = '';
+        return;
+      }
+      var nodo = lista[indice];
+      contenido.innerHTML = '';
+      contenido.appendChild(nodo.cloneNode(true));
+      contador.textContent = (indice + 1) + ' / ' + lista.length;
+      cuerpo.scrollTop = 0;
+      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+    }
+
+    function abrir(desdeId) {
+      lista = historiasVisibles();
+      if (!lista.length) return;
+      var idx = -1;
+      for (var i = 0; i < lista.length; i++) {
+        if (lista[i].dataset.id === desdeId) { idx = i; break; }
+      }
+      indice = idx === -1 ? 0 : idx;
+      lector.hidden = false;
+      document.body.style.overflow = 'hidden';
+      render();
+    }
+
+    function cerrar() {
+      lector.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    function siguiente() { if (lista.length) { indice = (indice + 1) % lista.length; render(); } }
+    function anterior() { if (lista.length) { indice = (indice - 1 + lista.length) % lista.length; render(); } }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-lector[data-id]');
+      if (!btn) return;
+      abrir(btn.dataset.id);
+    });
+    btnCerrar.addEventListener('click', cerrar);
+    btnSig.addEventListener('click', siguiente);
+    btnAnt.addEventListener('click', anterior);
+
+    document.addEventListener('keydown', function (e) {
+      if (lector.hidden) return;
+      if (e.key === 'Escape') cerrar();
+      else if (e.key === 'ArrowRight') siguiente();
+      else if (e.key === 'ArrowLeft') anterior();
+    });
+
+    var xInicio = null;
+    cuerpo.addEventListener('touchstart', function (e) { xInicio = e.touches[0].clientX; }, { passive: true });
+    cuerpo.addEventListener('touchend', function (e) {
+      if (xInicio === null) return;
+      var delta = e.changedTouches[0].clientX - xInicio;
+      if (Math.abs(delta) > 60) { if (delta < 0) siguiente(); else anterior(); }
+      xInicio = null;
+    }, { passive: true });
+  })();
+
+  // --- Búsquedas guardadas (no son notificaciones push, son atajos de filtro) ---
+  (function () {
+    var CLAVE = 'puente-alertas';
+    var input = document.getElementById('buscar-puente');
+    var btnSeguir = document.getElementById('btn-seguir-busqueda');
+    var cont = document.getElementById('chips-alertas');
+    if (!input || !cont) return;
+
+    function leer() {
+      try { return JSON.parse(localStorage.getItem(CLAVE) || '[]'); } catch (e) { return []; }
+    }
+    function guardarLista(lista) {
+      try { localStorage.setItem(CLAVE, JSON.stringify(lista)); } catch (e) {}
+    }
+    function actualizarBotonSeguir() {
+      if (!btnSeguir) return;
+      var termino = input.value.trim();
+      var ya = !!termino && leer().indexOf(termino) !== -1;
+      btnSeguir.classList.toggle('activo', ya);
+      btnSeguir.textContent = ya ? '✓ Siguiendo' : '+ Seguir';
+    }
+    function pintar() {
+      var lista = leer();
+      cont.innerHTML = '';
+      lista.forEach(function (termino) {
+        var chip = document.createElement('span');
+        chip.className = 'chip-alerta';
+        var texto = document.createElement('span');
+        texto.textContent = termino;
+        texto.style.cursor = 'pointer';
+        texto.addEventListener('click', function () {
+          input.value = termino;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          actualizarBotonSeguir();
+        });
+        var quitar = document.createElement('button');
+        quitar.type = 'button';
+        quitar.className = 'quitar';
+        quitar.setAttribute('aria-label', 'Quitar alerta ' + termino);
+        quitar.textContent = '×';
+        quitar.addEventListener('click', function (e) {
+          e.stopPropagation();
+          guardarLista(leer().filter(function (t) { return t !== termino; }));
+          pintar();
+        });
+        chip.appendChild(texto);
+        chip.appendChild(quitar);
+        cont.appendChild(chip);
+      });
+      actualizarBotonSeguir();
+    }
+    if (btnSeguir) {
+      btnSeguir.addEventListener('click', function () {
+        var termino = input.value.trim();
+        if (!termino) return;
+        var lista = leer();
+        var idx = lista.indexOf(termino);
+        if (idx === -1) lista.push(termino); else lista.splice(idx, 1);
+        guardarLista(lista);
+        pintar();
+      });
+      input.addEventListener('input', actualizarBotonSeguir);
+    }
+    pintar();
   })();
 </script>
 </body>

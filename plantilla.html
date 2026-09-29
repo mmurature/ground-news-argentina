@@ -61,6 +61,19 @@
   .franja-eje .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--highlight); border: 2px solid var(--bg); transform: translate(-50%, -50%); cursor: default; }
   .franja-extremos { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
 
+  .destacada-dia {
+    max-width: 720px; margin: 22px 0 0; background: var(--card-bg);
+    border: 1px solid var(--accent); border-radius: 14px; padding: 20px 22px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px;
+  }
+  .kicker-destacada { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--highlight); }
+  .destacada-dia h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin: 2px 0 0; }
+  .destacada-dia h2 a { color: var(--text); }
+  .destacada-dia h2 a:hover { text-decoration: underline; }
+  .destacada-dia-meta { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
+  .destacada-dia .indicador-eje { margin-top: 4px; }
+  .destacada-dia .cta-historia { margin-top: 4px; }
+
   .grilla {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
@@ -132,6 +145,7 @@
 {% set pagina = 'inicio' %}
 {% include "_splash.html" %}
 {% include "_nav.html" %}
+{% include "_lector.html" %}
 <div class="contenedor">
   <header class="hero">
     <span class="kicker">Medios argentinos, comparados</span>
@@ -160,11 +174,15 @@
   </div>
   {% endif %}
 
-  <div class="buscador-row">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
-    <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
+  <div class="busqueda-fila">
+    <div class="buscador-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <label for="buscar-puente" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar historias</label>
+      <input id="buscar-puente" type="search" placeholder="Buscar por palabra clave, medio o tema…">
+    </div>
+    <button type="button" class="btn-seguir" id="btn-seguir-busqueda" title="Guardar esta búsqueda como acceso rápido">+ Seguir</button>
   </div>
+  <div class="chips-alertas" id="chips-alertas"></div>
 
   <div class="chip-row" id="chips">
     {% for cat in ["Todas"] + categorias %}
@@ -186,13 +204,34 @@
     <div class="franja-extremos"><span>Izquierda</span><span>Derecha</span></div>
   </div>
 
+  {% if historia_destacada %}
+  <div class="destacada-dia">
+    <span class="kicker-destacada">Lo más cubierto hoy</span>
+    <h2><a href="historias/{{ historia_destacada.id }}.html">{{ historia_destacada.titulo }}</a></h2>
+    <p class="destacada-dia-meta">{{ historia_destacada.n_medios }} medios la cubrieron — {{ historia_destacada.indicador.descripcion }}</p>
+    <div class="indicador-eje">
+      <div class="eje-linea"></div>
+      {% for marca in [0, 25, 50, 75, 100] %}
+      <div class="eje-marca" style="left: {{ marca }}%;"></div>
+      {% endfor %}
+      {% for p in historia_destacada.indicador.puntos %}
+      <div class="eje-punto" title="{{ p.titulo }}" style="left: {{ p.x_pct }}%; width: {{ p.size }}px; height: {{ p.size }}px;"></div>
+      {% endfor %}
+      <div class="eje-promedio" style="left: {{ historia_destacada.indicador.promedio_x_pct }}%;"></div>
+    </div>
+    <div class="eje-extremos"><span>Izquierda</span><span>Derecha</span></div>
+    <a href="historias/{{ historia_destacada.id }}.html" class="cta-historia">Ver cobertura completa y tendencias →</a>
+  </div>
+  {% endif %}
+
   {% if historias %}
   <div class="grilla" id="grilla">
     {% for h in historias %}
-    <article class="historia" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}">
+    <article class="historia" data-id="{{ h.id }}" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}">
       <div class="badges">
         {% if h.destacada %}<span class="destacada">Más cubierta</span>{% endif %}
         <span class="badge-categoria">{{ h.categoria }}</span>
+        <span class="badge-consenso {{ h.indicador.consenso_clase }}">{{ h.indicador.consenso_etiqueta }}</span>
       </div>
       <h2><a href="historias/{{ h.id }}.html">{{ h.titulo }}</a></h2>
 
@@ -226,6 +265,17 @@
       <p class="faltan">No lo cubrieron: {{ h.medios_faltan_texto }}</p>
       {% endif %}
       <a href="historias/{{ h.id }}.html" class="cta-historia">Ver cobertura completa y tendencias →</a>
+      <div class="acciones-historia">
+        <button type="button" class="accion-icono btn-guardar" data-id="{{ h.id }}" aria-pressed="false" title="Guardar para después">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+        </button>
+        <button type="button" class="accion-icono btn-compartir" data-id="{{ h.id }}" data-titulo="{{ h.titulo }}" data-etiqueta="{{ h.indicador.etiqueta }}" data-medios="{{ h.notas[:5]|map(attribute='medio')|join(', ') }}{% if h.notas|length > 5 %} y {{ h.notas|length - 5 }} más{% endif %}" title="Compartir como imagen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
+        </button>
+        <button type="button" class="accion-icono btn-lector" data-id="{{ h.id }}" title="Modo lectura">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V6a2 2 0 0 1 2-2h5v17H6a2 2 0 0 1-2-2z"/><path d="M20 19V6a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 0 2-2z"/></svg>
+        </button>
+      </div>
     </article>
     {% endfor %}
   </div>

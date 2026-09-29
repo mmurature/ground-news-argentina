@@ -40,6 +40,28 @@
   table.matriz tr.activa th.rotulo-fila, table.matriz th.rotulo-col.activa { color: var(--text); font-weight: 700; }
   table.matriz td.celda.activa { box-shadow: inset 0 0 0 2px var(--accent); font-weight: 700; }
 
+  .comparador-1a1 {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .selects-comparador { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .selects-comparador select {
+    flex: 1; min-width: 160px; height: 40px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.88rem; padding: 0 10px;
+  }
+  .selects-comparador .vs { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); flex-shrink: 0; }
+  .comparador-msg { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+  .par-historias {
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+    border-top: 1px solid var(--border); padding-top: 12px; margin-top: 2px;
+  }
+  @media (min-width: 640px) {
+    .par-historias { grid-template-columns: 1fr 1fr; }
+  }
+  .par-medio { display: flex; flex-direction: column; gap: 3px; font-size: 0.88rem; line-height: 1.35; }
+  .par-medio .medio { font-weight: 700; color: var(--accent); font-size: 0.78rem; }
+  .par-medio a { color: var(--text); }
+  .par-medio a:hover { text-decoration: underline; }
   .nota { margin: 0; font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
 </style>
@@ -95,6 +117,22 @@
 
   <p class="nota">Diagonal: total de historias (con 2+ coberturas agrupadas) donde participó el medio. Resto de las celdas: % de historias en común entre ambos, sobre el total de historias que cubrió al menos uno de los dos.</p>
 
+  <div class="comparador-1a1">
+    <span class="etiqueta-chica">Comparar dos medios, titular por titular</span>
+    <div class="selects-comparador">
+      <select id="select-medio-a" aria-label="Primer medio a comparar">
+        <option value="">Elegí un medio…</option>
+        {% for n in nombres %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+      </select>
+      <span class="vs">vs.</span>
+      <select id="select-medio-b" aria-label="Segundo medio a comparar">
+        <option value="">Elegí un medio…</option>
+        {% for n in nombres %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+      </select>
+    </div>
+    <div id="resultado-comparador"></div>
+  </div>
+
   <footer>Puente · metodología pública</footer>
 </div>
 {% include "_scripts_base.html" %}
@@ -134,6 +172,82 @@
     document.querySelectorAll('#tabla-matriz th.rotulo-fila').forEach(function (r) {
       r.addEventListener('click', function () { toggle(r.dataset.idx); });
     });
+  })();
+
+  (function () {
+    var selA = document.getElementById('select-medio-a');
+    var selB = document.getElementById('select-medio-b');
+    var resultado = document.getElementById('resultado-comparador');
+    if (!selA || !selB || !resultado) return;
+    var datos = null;
+
+    function cargarDatos() {
+      if (datos) return Promise.resolve(datos);
+      return fetch('datos_comparacion.json')
+        .then(function (r) { return r.json(); })
+        .then(function (d) { datos = d; return d; });
+    }
+
+    function limpiarNodo(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+
+    function mensaje(texto) {
+      limpiarNodo(resultado);
+      var p = document.createElement('p');
+      p.className = 'comparador-msg';
+      p.textContent = texto;
+      resultado.appendChild(p);
+    }
+
+    function filaPar(nombreA, nombreB, datoA, datoB) {
+      var fila = document.createElement('div');
+      fila.className = 'par-historias';
+      [[nombreA, datoA], [nombreB, datoB]].forEach(function (par) {
+        var col = document.createElement('div');
+        col.className = 'par-medio';
+        var medio = document.createElement('span');
+        medio.className = 'medio';
+        medio.textContent = par[0];
+        var link = document.createElement('a');
+        link.href = par[1].l || '#';
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = par[1].t;
+        col.appendChild(medio);
+        col.appendChild(link);
+        fila.appendChild(col);
+      });
+      return fila;
+    }
+
+    function render() {
+      var a = selA.value, b = selB.value;
+      if (!a || !b) { limpiarNodo(resultado); return; }
+      if (a === b) { mensaje('Elegí dos medios distintos.'); return; }
+      mensaje('Buscando historias en común…');
+      cargarDatos().then(function (d) {
+        var na = d[a] || {}, nb = d[b] || {};
+        var comunes = Object.keys(na).filter(function (id) { return Object.prototype.hasOwnProperty.call(nb, id); });
+        if (!comunes.length) {
+          mensaje('No encontramos historias en común entre estos dos medios en los últimos días.');
+          return;
+        }
+        comunes.sort(function (x, y) { return (na[y].f || '').localeCompare(na[x].f || ''); });
+        comunes = comunes.slice(0, 20);
+        limpiarNodo(resultado);
+        var encabezado = document.createElement('p');
+        encabezado.className = 'comparador-msg';
+        encabezado.textContent = comunes.length + ' historia' + (comunes.length !== 1 ? 's' : '') + ' en común (las más recientes primero):';
+        resultado.appendChild(encabezado);
+        comunes.forEach(function (id) {
+          resultado.appendChild(filaPar(a, b, na[id], nb[id]));
+        });
+      }).catch(function () {
+        mensaje('No se pudo cargar la comparación en este momento.');
+      });
+    }
+
+    selA.addEventListener('change', render);
+    selB.addEventListener('change', render);
   })();
 </script>
 </body>

@@ -18,9 +18,11 @@ Uso:
     python generar_pagina.py
 """
 
+import json
 import os
 import re
 import sqlite3
+import statistics
 import unicodedata
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
@@ -35,6 +37,8 @@ DOCS_DIR = "docs"
 SALIDA = os.path.join(DOCS_DIR, "index.html")
 SALIDA_COMPARACION = os.path.join(DOCS_DIR, "comparacion.html")
 SALIDA_NOSOTROS = os.path.join(DOCS_DIR, "nosotros.html")
+SALIDA_GUARDADAS = os.path.join(DOCS_DIR, "guardadas.html")
+SALIDA_DATOS_COMPARACION = os.path.join(DOCS_DIR, "datos_comparacion.json")
 DIR_HISTORIAS = os.path.join(DOCS_DIR, "historias")
 
 MEDIOS_MINIMOS = 3  # una historia solo entra a la página si la cubrieron al menos estos medios distintos
@@ -265,6 +269,22 @@ def descripcion_promedio(promedio: float, n_coberturas: int) -> str:
     return f"{base}, {calificador} {direccion}"
 
 
+def calcular_consenso(valores):
+    """Qué tan de acuerdo están, en términos de ubicación editorial, los medios
+    que cubrieron una historia. No mide si el hecho es verdadero ni si hay
+    coincidencia de opinión real — solo la dispersión de las posiciones
+    editoriales (1-21) de quienes la cubrieron. Umbrales elegidos a ojo sobre
+    la escala de 20 puntos; se pueden ajustar con más datos reales."""
+    if len(valores) < 2:
+        return {"etiqueta": "Cobertura única", "clase": "unica"}
+    dispersion = statistics.pstdev(valores)
+    if dispersion < 1.8:
+        return {"etiqueta": "Consenso", "clase": "consenso"}
+    if dispersion < 4.2:
+        return {"etiqueta": "Cobertura mixta", "clase": "mixta"}
+    return {"etiqueta": "Cobertura polarizada", "clase": "polarizada"}
+
+
 def armar_indicador(notas, posiciones):
     """Strip-plot: agrupa las notas por la posición editorial de su medio,
     y calcula el promedio ponderado por cantidad de coberturas."""
@@ -289,12 +309,16 @@ def armar_indicador(notas, posiciones):
             }
         )
 
+    consenso = calcular_consenso(valores)
+
     return {
         "promedio": promedio,
         "promedio_x_pct": round((promedio - ESCALA_MIN) / rango * 100, 2),
         "etiqueta": bucket_de_posicion(promedio),
         "descripcion": descripcion_promedio(promedio, len(notas)),
         "puntos": puntos,
+        "consenso_etiqueta": consenso["etiqueta"],
+        "consenso_clase": consenso["clase"],
     }
 
 
@@ -344,6 +368,29 @@ def armar_matriz_comparacion(historias_todas, medios_confirmados):
         matriz.append(fila)
 
     return nombres, totales, matriz
+
+
+# --- Datos para el comparador 1 a 1 (cliente) --------------------------------
+
+
+def armar_datos_comparacion(historias_todas):
+    """Para cada medio, sus titulares en las historias con 2+ coberturas —
+    lo mínimo para que dos medios puedan tener algo en común. Se usa en
+    comparacion.html para mostrar, lado a lado, cómo tituló cada uno la
+    misma historia. Las historias con una sola cobertura se descartan acá
+    porque nunca pueden aparecer en un cruce entre dos medios, y así el
+    JSON no carga con datos que ningún par va a usar."""
+    por_medio = {}
+    for hid, notas in historias_todas.items():
+        if len(notas) < 2:
+            continue
+        for n in notas:
+            por_medio.setdefault(n["medio"], {})[str(hid)] = {
+                "t": n["titulo"],
+                "f": n["fecha"] or "",
+                "l": n["link"],
+            }
+    return por_medio
 
 
 # --- Armado de contexto -------------------------------------------------------
@@ -408,6 +455,7 @@ def main():
 
     generado = datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC")
     indicador_global = armar_indicador_global(medios_confirmados, posiciones)
+    historia_destacada = contexto_historias[0] if contexto_historias else None
 
     env = Environment(loader=FileSystemLoader("."))
 
@@ -421,6 +469,7 @@ def main():
         categorias=CATEGORIAS,
         palabra_del_dia=palabra_del_dia,
         indicador_global=indicador_global,
+        historia_destacada=historia_destacada,
     )
     os.makedirs(DOCS_DIR, exist_ok=True)
     with open(SALIDA, "w", encoding="utf-8") as f:
@@ -458,11 +507,22 @@ def main():
     with open(SALIDA_COMPARACION, "w", encoding="utf-8") as f:
         f.write(html_c)
 
+    # --- Datos para el comparador 1 a 1 (JSON que consume comparacion.html) ---
+    datos_comparacion = armar_datos_comparacion(historias)
+    with open(SALIDA_DATOS_COMPARACION, "w", encoding="utf-8") as f:
+        json.dump(datos_comparacion, f, ensure_ascii=False, separators=(",", ":"))
+
     # --- Nosotros ---
     plantilla_nosotros = env.get_template("nosotros.html")
     html_n = plantilla_nosotros.render()
     with open(SALIDA_NOSOTROS, "w", encoding="utf-8") as f:
         f.write(html_n)
+
+    # --- Guardadas (la página en sí no lleva datos: filtra index.html en el navegador) ---
+    plantilla_guardadas = env.get_template("guardadas.html")
+    html_g = plantilla_guardadas.render()
+    with open(SALIDA_GUARDADAS, "w", encoding="utf-8") as f:
+        f.write(html_g)
 
     print(
         f"Listo: {SALIDA} generado con {len(contexto_historias)} historias "
