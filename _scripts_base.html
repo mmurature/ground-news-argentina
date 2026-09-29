@@ -218,14 +218,13 @@
     });
   })();
 
-  // --- Modo lectura (swipe animado entre historias, con titular colapsable) ---
+  // --- Vista Swipe (feature principal: selector Feed/Swipe arriba del feed) ---
   (function () {
     var lector = document.getElementById('lector');
     if (!lector) return;
     var cuerpo = document.getElementById('lector-cuerpo');
     var contenido = document.getElementById('lector-contenido');
     var contador = document.getElementById('lector-contador');
-    var btnCerrar = document.getElementById('lector-cerrar');
     var btnAnt = document.getElementById('lector-anterior');
     var btnSig = document.getElementById('lector-siguiente');
     var lista = [];
@@ -233,26 +232,22 @@
     var animando = false;
     var DURACION_ANIM = 220;
 
-    var CLAVE_MODO = 'puente-modo-lectura';
-    function modoLecturaActivo() {
-      try { return localStorage.getItem(CLAVE_MODO) === '1'; } catch (e) { return false; }
+    var CLAVE_VISTA = 'puente-vista';
+    function vistaGuardada() {
+      try { return localStorage.getItem(CLAVE_VISTA) || 'feed'; } catch (e) { return 'feed'; }
     }
-    function guardarModoLectura(activo) {
-      try { localStorage.setItem(CLAVE_MODO, activo ? '1' : '0'); } catch (e) {}
+    function guardarVista(v) {
+      try { localStorage.setItem(CLAVE_VISTA, v); } catch (e) {}
     }
 
-    // --- switch "Modo lectura" (aparece en el inicio, pero el estado es global) ---
-    var switchModo = document.getElementById('switch-modo-lectura');
-    var switchPista = document.getElementById('switch-pista');
-    function pintarSwitch() {
-      if (switchPista) switchPista.classList.toggle('activo', modoLecturaActivo());
-    }
-    if (switchModo) {
-      switchModo.checked = modoLecturaActivo();
-      pintarSwitch();
-      switchModo.addEventListener('change', function () {
-        guardarModoLectura(switchModo.checked);
-        pintarSwitch();
+    // --- selector Feed / Swipe: hay dos copias (una arriba del feed, otra
+    // adentro del header del propio swipe) para que siempre se pueda
+    // cambiar de vista sin importar en cuál estés parado ---
+    function marcarVista(v) {
+      document.querySelectorAll('[data-vista]').forEach(function (btn) {
+        var activo = btn.dataset.vista === v;
+        btn.classList.toggle('activo', activo);
+        btn.setAttribute('aria-selected', activo ? 'true' : 'false');
       });
     }
 
@@ -262,9 +257,45 @@
       });
     }
 
-    // Arma el contenido de una tarjeta del lector: de entrada, el resumen
-    // (titular), las inclinaciones y los medios que la cubrieron; el titular
-    // exacto de cada medio queda detrás de un botón para no saturar el swipe.
+    // Barra de tendencia editorial de tres colores (izquierda/centro/derecha),
+    // a partir de los porcentajes ya calculados en el pipeline.
+    function construirBarraLcr(nodo) {
+      var izq = parseFloat(nodo.dataset.lcrIzq || '0');
+      var cen = parseFloat(nodo.dataset.lcrCen || '0');
+      var der = parseFloat(nodo.dataset.lcrDer || '0');
+
+      var bloque = document.createElement('div');
+      bloque.className = 'barra-lcr-bloque';
+
+      var barra = document.createElement('div');
+      barra.className = 'barra-lcr';
+      barra.setAttribute('role', 'img');
+      barra.setAttribute('aria-label', 'Cobertura por tendencia: ' + izq + '% izquierda, ' + cen + '% centro, ' + der + '% derecha');
+
+      [['izq', izq], ['cen', cen], ['der', der]].forEach(function (par) {
+        var seg = document.createElement('div');
+        seg.className = 'barra-lcr-seg ' + par[0];
+        seg.style.width = par[1] + '%';
+        if (par[1] >= 10) {
+          var span = document.createElement('span');
+          span.textContent = Math.round(par[1]) + '%';
+          seg.appendChild(span);
+        }
+        barra.appendChild(seg);
+      });
+      bloque.appendChild(barra);
+
+      var leyenda = document.createElement('div');
+      leyenda.className = 'barra-lcr-leyenda';
+      leyenda.innerHTML = '<span>Izquierda</span><span>Centro</span><span>Derecha</span>';
+      bloque.appendChild(leyenda);
+
+      return bloque;
+    }
+
+    // Tarjeta simplificada del swipe: titular, un resumen corto, la barra
+    // de tendencia y las acciones. El desglose titular-por-medio queda solo
+    // en la vista Feed (ahi si con el detalle completo).
     function construirItem(nodo) {
       var wrapper = document.createElement('div');
       wrapper.className = 'lector-item';
@@ -273,51 +304,23 @@
       resumen.className = 'lector-resumen';
       var badges = nodo.querySelector('.badges');
       var titulo = nodo.querySelector('h2');
-      var indicador = nodo.querySelector('.indicador-politico');
-      var acciones = nodo.querySelector('.acciones-historia');
       if (badges) resumen.appendChild(badges.cloneNode(true));
       if (titulo) resumen.appendChild(titulo.cloneNode(true));
-      if (indicador) resumen.appendChild(indicador.cloneNode(true));
 
-      var nombresMedios = Array.prototype.map.call(nodo.querySelectorAll('.notas .medio'), function (el) {
-        return el.textContent.trim();
-      });
-      if (nombresMedios.length) {
-        var medios = document.createElement('p');
-        medios.className = 'lector-medios';
-        var TOPE = 6;
-        medios.textContent = nombresMedios.length <= TOPE
-          ? 'Medios: ' + nombresMedios.join(', ')
-          : 'Medios: ' + nombresMedios.slice(0, TOPE).join(', ') + ' y ' + (nombresMedios.length - TOPE) + ' más';
-        resumen.appendChild(medios);
+      var textoResumen = nodo.dataset.resumen;
+      if (textoResumen) {
+        var p = document.createElement('p');
+        p.className = 'lector-resumen-texto';
+        p.textContent = textoResumen;
+        resumen.appendChild(p);
       }
 
+      resumen.appendChild(construirBarraLcr(nodo));
+
+      var acciones = nodo.querySelector('.acciones-historia');
       if (acciones) resumen.appendChild(acciones.cloneNode(true));
 
-      var expandible = document.createElement('div');
-      expandible.className = 'expandible';
-      var btnExpandir = document.createElement('button');
-      btnExpandir.type = 'button';
-      btnExpandir.className = 'btn-expandir';
-      btnExpandir.setAttribute('aria-expanded', 'false');
-      btnExpandir.dataset.textoColapsado = 'Ver el titular de cada medio';
-      btnExpandir.dataset.textoExpandido = 'Ocultar los titulares';
-      btnExpandir.innerHTML =
-        '<span class="btn-expandir-texto">Ver el titular de cada medio</span>' +
-        '<svg class="btn-expandir-icono" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
-
-      var contenidoExpandible = document.createElement('div');
-      contenidoExpandible.className = 'expandible-contenido';
-      var notas = nodo.querySelector('.notas');
-      var faltan = nodo.querySelector('.faltan');
-      if (notas) contenidoExpandible.appendChild(notas.cloneNode(true));
-      if (faltan) contenidoExpandible.appendChild(faltan.cloneNode(true));
-
-      expandible.appendChild(btnExpandir);
-      expandible.appendChild(contenidoExpandible);
-
       wrapper.appendChild(resumen);
-      wrapper.appendChild(expandible);
       return wrapper;
     }
 
@@ -360,41 +363,46 @@
       }, DURACION_ANIM);
     }
 
+    // desdeId es opcional: sin el, arranca siempre en la primera historia
+    // visible (respetando el filtro de busqueda/categoria activo)
     function abrir(desdeId) {
       lista = historiasVisibles();
       if (!lista.length) return;
-      var idx = -1;
-      for (var i = 0; i < lista.length; i++) {
-        if (lista[i].dataset.id === desdeId) { idx = i; break; }
+      var idx = 0;
+      if (desdeId) {
+        for (var i = 0; i < lista.length; i++) {
+          if (lista[i].dataset.id === desdeId) { idx = i; break; }
+        }
       }
-      indice = idx === -1 ? 0 : idx;
+      indice = idx;
       lector.hidden = false;
       document.body.style.overflow = 'hidden';
       render(null);
+    }
+
+    function abrirSwipe() {
+      guardarVista('swipe');
+      marcarVista('swipe');
+      abrir();
     }
 
     function cerrar() {
       lector.hidden = true;
       document.body.style.overflow = '';
       contenido.innerHTML = '';
+      guardarVista('feed');
+      marcarVista('feed');
     }
 
     function siguiente() { if (!lista.length || animando) return; indice = (indice + 1) % lista.length; render('sig'); }
     function anterior() { if (!lista.length || animando) return; indice = (indice - 1 + lista.length) % lista.length; render('ant'); }
 
-    // con el modo lectura activado, tocar el título o "Ver cobertura completa"
-    // de una tarjeta abre el lector en vez de navegar a la página de la historia
     document.addEventListener('click', function (e) {
-      if (!modoLecturaActivo()) return;
-      if (e.target.closest('#lector')) return;
-      var link = e.target.closest('.historia h2 a, .historia .cta-historia');
-      if (!link) return;
-      var tarjeta = link.closest('.historia[data-id]');
-      if (!tarjeta) return;
-      e.preventDefault();
-      abrir(tarjeta.dataset.id);
+      var btn = e.target.closest('[data-vista]');
+      if (!btn) return;
+      if (btn.dataset.vista === 'swipe') abrirSwipe();
+      else cerrar();
     });
-    btnCerrar.addEventListener('click', cerrar);
     btnSig.addEventListener('click', siguiente);
     btnAnt.addEventListener('click', anterior);
 
@@ -413,6 +421,9 @@
       if (Math.abs(delta) > 60) { if (delta < 0) siguiente(); else anterior(); }
       xInicio = null;
     }, { passive: true });
+
+    // recordar la vista elegida la última vez
+    if (vistaGuardada() === 'swipe') abrirSwipe();
   })();
 
   // --- Búsquedas guardadas (no son notificaciones push, son atajos de filtro) ---

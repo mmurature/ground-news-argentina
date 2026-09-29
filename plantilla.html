@@ -225,21 +225,19 @@
   {% endif %}
 
   {% if historias %}
-  <div class="modo-lectura-fila">
-    <label class="switch-lectura" for="switch-modo-lectura">
-      <span class="switch-texto">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V6a2 2 0 0 1 2-2h5v17H6a2 2 0 0 1-2-2z"/><path d="M20 19V6a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 0 2-2z"/></svg>
-        Modo lectura: deslizá entre historias
-      </span>
-      <span class="switch-pista" id="switch-pista">
-        <input type="checkbox" id="switch-modo-lectura">
-        <span class="switch-cursor"></span>
-      </span>
-    </label>
+  <div class="vista-switch" role="tablist" aria-label="Elegir cómo ver las historias">
+    <button type="button" class="vista-opcion activo" id="vista-feed" data-vista="feed" role="tab" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Feed
+    </button>
+    <button type="button" class="vista-opcion" id="vista-swipe-btn" data-vista="swipe" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="4" width="13" height="17" rx="2" transform="rotate(-6 12.5 12.5)"/><rect x="5" y="3.5" width="13" height="17" rx="2"/></svg>
+      Swipe
+    </button>
   </div>
   <div class="grilla" id="grilla">
     {% for h in historias %}
-    <article class="historia" data-id="{{ h.id }}" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}">
+    <article class="historia" data-id="{{ h.id }}" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}"{% if h.resumen_representativo %} data-resumen="{{ h.resumen_representativo.texto }}"{% endif %} data-lcr-izq="{{ h.distribucion_lcr.izquierda_pct }}" data-lcr-cen="{{ h.distribucion_lcr.centro_pct }}" data-lcr-der="{{ h.distribucion_lcr.derecha_pct }}">
       <div class="badges">
         {% if h.destacada %}<span class="destacada">Más cubierta</span>{% endif %}
         <span class="badge-categoria">{{ h.categoria }}</span>

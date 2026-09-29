@@ -19,6 +19,7 @@ Uso:
 """
 
 import json
+from html import unescape as desescapar_html
 import os
 import re
 import sqlite3
@@ -213,7 +214,7 @@ def cargar_medios_confirmados():
 def cargar_historias(con):
     filas = con.execute(
         """
-        SELECT h.id, n.medio, n.titulo, n.link, n.fecha_publicacion
+        SELECT h.id, n.medio, n.titulo, n.link, n.fecha_publicacion, n.resumen
         FROM historias h
         JOIN notas n ON n.historia_id = h.id
         ORDER BY h.id, n.medio
@@ -221,9 +222,9 @@ def cargar_historias(con):
     ).fetchall()
 
     historias = {}
-    for hid, medio, titulo, link, fecha in filas:
+    for hid, medio, titulo, link, fecha, resumen in filas:
         historias.setdefault(hid, []).append(
-            {"medio": medio, "titulo": titulo, "link": link, "fecha": fecha}
+            {"medio": medio, "titulo": titulo, "link": link, "fecha": fecha, "resumen": resumen}
         )
 
     # Un mismo medio puede publicar más de una nota sobre la misma historia
@@ -319,6 +320,82 @@ def armar_indicador(notas, posiciones):
         "puntos": puntos,
         "consenso_etiqueta": consenso["etiqueta"],
         "consenso_clase": consenso["clase"],
+    }
+
+
+_RE_ETIQUETAS_HTML = re.compile(r"<[^>]+>")
+_RE_ESPACIOS = re.compile(r"\s+")
+
+
+def limpiar_resumen(texto):
+    """Los resumenes vienen crudos del RSS de cada medio: algunos traen
+    HTML metido adentro (hasta un <img> en el medio del texto). Se sacan
+    las etiquetas y se desescapan las entidades (&amp; -> &, etc)."""
+    if not texto:
+        return ""
+    sin_etiquetas = _RE_ETIQUETAS_HTML.sub(" ", texto)
+    sin_entidades = desescapar_html(sin_etiquetas)
+    return _RE_ESPACIOS.sub(" ", sin_entidades).strip()
+
+
+def truncar_en_limite_natural(texto, tope):
+    """Corta un texto largo tratando de terminar en una oración completa
+    (si hay un punto razonablemente cerca del límite); si no, corta en el
+    último espacio y agrega puntos suspensivos."""
+    if len(texto) <= tope:
+        return texto
+    ventana = texto[:tope]
+    corte_oracion = max(ventana.rfind(". "), ventana.rfind("? "), ventana.rfind("! "))
+    if corte_oracion >= tope * 0.55:
+        return ventana[: corte_oracion + 1].rstrip()
+    corte_palabra = ventana.rsplit(" ", 1)[0]
+    return corte_palabra.rstrip(",.;:") + "…"
+
+
+def elegir_resumen(notas, tope=240):
+    """Un resumen representativo de la cobertura para el modo swipe: no es
+    una síntesis de lo que dicen todos los medios (eso requeriría IA), es
+    el resumen más largo/completo entre los que mandó cada medio por RSS."""
+    candidatos = []
+    for n in notas:
+        limpio = limpiar_resumen(n.get("resumen", ""))
+        if limpio:
+            candidatos.append((len(limpio), limpio, n["medio"]))
+    if not candidatos:
+        return None
+    candidatos.sort(key=lambda c: c[0], reverse=True)
+    _, texto, medio = candidatos[0]
+    return {"texto": truncar_en_limite_natural(texto, tope), "medio": medio}
+
+
+def armar_distribucion_lcr(notas, posiciones):
+    """% de coberturas por bloque editorial ancho (izquierda incluye
+    centro-izquierda, derecha incluye centro-derecha) para la barra de
+    tres colores del modo swipe. Los porcentajes se redondean con el
+    método del resto mayor para que siempre sumen 100."""
+    conteo = {"izquierda": 0, "centro": 0, "derecha": 0}
+    for n in notas:
+        pos = posiciones.get(n["medio"], ESCALA_CENTRO)
+        bucket = bucket_de_posicion(pos)
+        if bucket in (ETIQUETAS_POSICION[1], ETIQUETAS_POSICION[2]):
+            conteo["izquierda"] += 1
+        elif bucket == ETIQUETAS_POSICION[3]:
+            conteo["centro"] += 1
+        else:
+            conteo["derecha"] += 1
+
+    total = sum(conteo.values()) or 1
+    crudos = {k: v / total * 100 for k, v in conteo.items()}
+    enteros = {k: int(v) for k, v in crudos.items()}
+    restante = 100 - sum(enteros.values())
+    por_resto = sorted(crudos, key=lambda k: crudos[k] - enteros[k], reverse=True)
+    for i in range(restante):
+        enteros[por_resto[i % len(por_resto)]] += 1
+
+    return {
+        "izquierda_pct": enteros["izquierda"],
+        "centro_pct": enteros["centro"],
+        "derecha_pct": enteros["derecha"],
     }
 
 
@@ -424,6 +501,8 @@ def armar_contexto(historias, medios_confirmados, posiciones):
                 "medios_faltan": medios_faltan,
                 "medios_faltan_texto": texto_medios_faltan(medios_faltan),
                 "indicador": armar_indicador(notas, posiciones),
+                "resumen_representativo": elegir_resumen(notas),
+                "distribucion_lcr": armar_distribucion_lcr(notas, posiciones),
             }
         )
     # más medios primero (lo más compartido arriba); entre empatados, más notas primero
@@ -457,7 +536,7 @@ def main():
     indicador_global = armar_indicador_global(medios_confirmados, posiciones)
     historia_destacada = contexto_historias[0] if contexto_historias else None
 
-    env = Environment(loader=FileSystemLoader("."))
+    env = Environment(loader=FileSystemLoader("."), autoescape=True)
 
     # --- Home ---
     plantilla = env.get_template("plantilla.html")
