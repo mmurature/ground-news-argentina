@@ -1,22 +1,26 @@
 <div id="lector" hidden>
-  <div class="lector-header">
-    <div class="vista-switch vista-switch--compacta" role="tablist" aria-label="Elegir cómo ver las historias">
-      <button type="button" class="vista-opcion" data-vista="feed" role="tab" aria-selected="false">Feed</button>
-      <button type="button" class="vista-opcion activo" data-vista="swipe" role="tab" aria-selected="true">Swipe</button>
+  <div class="lector-velo" id="lector-velo"></div>
+  <div class="lector-panel">
+    <div class="lector-header">
+      <div class="vista-switch vista-switch--compacta" role="tablist" aria-label="Elegir cómo ver las historias">
+        <button type="button" class="vista-opcion" data-vista="feed" role="tab" aria-selected="false">Feed</button>
+        <button type="button" class="vista-opcion activo" data-vista="swipe" role="tab" aria-selected="true">Swipe</button>
+      </div>
+      <span class="lector-contador" id="lector-contador"></span>
     </div>
-    <span class="lector-contador" id="lector-contador"></span>
-  </div>
-  <div class="lector-cuerpo" id="lector-cuerpo">
-    <div class="contenido-lector" id="lector-contenido"></div>
-  </div>
-  <div class="lector-nav">
-    <button type="button" class="lector-flecha" id="lector-anterior">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
-      Anterior
-    </button>
-    <button type="button" class="lector-flecha" id="lector-siguiente">
-      Siguiente
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18l6-6-6-6"/></svg>
-    </button>
+    <div class="lector-pila" id="lector-pila">
+      <div class="tarjeta-swipe tarjeta-swipe--peek" id="tarjeta-peek"></div>
+      <div class="tarjeta-swipe tarjeta-swipe--activa" id="tarjeta-activa"></div>
+    </div>
+    <div class="lector-nav">
+      <button type="button" class="lector-flecha" id="lector-anterior">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
+        Anterior
+      </button>
+      <button type="button" class="lector-flecha" id="lector-siguiente">
+        Siguiente
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
   </div>
 </div>

@@ -141,26 +141,48 @@ a { text-decoration: none; }
 .vista-opcion:hover { color: var(--text); }
 .vista-opcion.activo { background: var(--accent); color: var(--bg); }
 
-/* --- modo lectura (swipe animado entre historias) --- */
-#lector { position: fixed; inset: 0; z-index: 90; background: var(--bg); display: flex; flex-direction: column; }
-.lector-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.lector-contador { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+/* --- modo lectura (pila flotante de tarjetas sobre el feed) --- */
+#lector {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.lector-velo { position: fixed; inset: 0; z-index: 89; background: rgba(10, 11, 13, 0.52); pointer-events: none; }
+.lector-panel {
+  position: relative; z-index: 90; width: 100%; max-width: 460px; height: 100%; max-height: 760px;
+  display: flex; flex-direction: column; pointer-events: auto;
+}
+.lector-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px 12px; flex-shrink: 0; }
+.lector-contador { font-size: 0.78rem; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
 .vista-switch--compacta { padding: 3px; }
 .vista-switch--compacta .vista-opcion { padding: 6px 13px; font-size: 0.78rem; }
 .vista-switch--compacta .vista-opcion svg { width: 14px; height: 14px; }
-.lector-cuerpo { flex-grow: 1; overflow-y: auto; padding: 20px; touch-action: pan-y; }
-.lector-cuerpo .contenido-lector { max-width: 620px; margin: 0 auto; transition: transform 0.22s ease, opacity 0.22s ease; }
-.contenido-lector.lector-sale-izq { transform: translateX(-28px); opacity: 0; }
-.contenido-lector.lector-sale-der { transform: translateX(28px); opacity: 0; }
-.contenido-lector.lector-sin-anim { transition: none !important; }
+
+.lector-pila { position: relative; flex: 1 1 auto; min-height: 0; }
+.tarjeta-swipe {
+  position: absolute; inset: 0; overflow-y: auto; padding: 22px;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  will-change: transform, opacity;
+}
+.tarjeta-swipe--activa { z-index: 2; touch-action: pan-y; cursor: grab; }
+.tarjeta-swipe--peek { z-index: 1; pointer-events: none; overflow: hidden; transform: translateY(16px) scale(0.94); opacity: 0.85; }
+.tarjeta-swipe.tarjeta-arrastrando { transition: none !important; cursor: grabbing; }
+.tarjeta-swipe.tarjeta-transicion { transition: transform 0.26s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.22s ease; }
+.tarjeta-swipe.tarjeta-cayendo { transition: transform 0.36s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
+.tarjeta-swipe.tarjeta-sin-anim { transition: none !important; }
+.tarjeta-swipe--activa.tarjeta-cae-inicio { transform: translateY(-64px) scale(0.98); opacity: 0; }
+.tarjeta-swipe--peek.tarjeta-cae-inicio { transform: translateY(-64px) scale(0.9); opacity: 0; }
+
 .lector-item { display: flex; flex-direction: column; }
 .lector-resumen { display: flex; flex-direction: column; gap: 4px; }
 .lector-resumen .badges { margin-bottom: 4px; }
-.lector-resumen h2 { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin: 8px 0 0; line-height: 1.32; }
+.lector-resumen h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin: 8px 0 0; line-height: 1.3; }
 .lector-resumen h2 a { color: var(--text); }
 .lector-resumen h2 a:hover { text-decoration: underline; }
-.lector-resumen-texto { font-size: 1rem; line-height: 1.55; color: var(--text); margin: 14px 0 0; }
-.barra-lcr-bloque { margin: 20px 0 0; }
+.lector-resumen-texto { font-size: 0.96rem; line-height: 1.5; color: var(--text); margin: 12px 0 0; }
+.barra-lcr-bloque { margin: 18px 0 0; }
 .barra-lcr { display: flex; width: 100%; height: 34px; border-radius: 8px; overflow: hidden; }
 .barra-lcr-seg { display: flex; align-items: center; justify-content: center; min-width: 0; transition: width 0.3s ease; }
 .barra-lcr-seg span { font-size: 0.76rem; font-weight: 700; color: #fff; white-space: nowrap; }
@@ -169,7 +191,10 @@ a { text-decoration: none; }
 .barra-lcr-seg.cen span { color: #1a1a1a; }
 .barra-lcr-seg.der { background: var(--lcr-der); }
 .barra-lcr-leyenda { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-top: 6px; }
-.lector-resumen .acciones-historia { margin-top: 20px; }
+.lector-resumen .acciones-historia { margin-top: 18px; }
+.tarjeta-peek-contenido { display: flex; flex-direction: column; }
+.tarjeta-peek-contenido .badges { margin-bottom: 4px; }
+.tarjeta-peek-contenido h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 8px 0 0; line-height: 1.28; color: var(--text); }
 
 /* --- bloque expandible: coberturas colapsadas en el inicio, titulares en el lector --- */
 .btn-expandir {
@@ -183,10 +208,11 @@ a { text-decoration: none; }
 .expandible-contenido { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
 .expandible.expandido .expandible-contenido { max-height: 3000px; opacity: 1; }
 .expandible .notas { margin-top: 14px; }
-.lector-nav { display: flex; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; gap: 10px; }
+.lector-nav { display: flex; justify-content: space-between; padding: 12px 4px 4px; flex-shrink: 0; gap: 10px; }
 .lector-flecha {
   flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: 42px; border-radius: 10px; border: 1px solid var(--border); background: transparent;
+  height: 42px; border-radius: 10px; border: 1px solid var(--border); background: var(--card-bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   color: var(--text); font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: inherit;
 }
 .lector-flecha:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
@@ -304,7 +330,7 @@ a { text-decoration: none; }
 <div class="contenedor">
   <div>
     <h1>Comparación de medios</h1>
-    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado 30/09/2026 12:26 UTC.</p>
+    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado 30/09/2026 14:22 UTC.</p>
   </div>
 
   <div class="leyenda">
@@ -351,6 +377,16 @@ a { text-decoration: none; }
       <button type="button" class="punto-medio" data-idx="18" aria-label="Crónica" title="Crónica" style="left: 40.0%;"></button>
       
       <button type="button" class="punto-medio" data-idx="19" aria-label="Cadena 3" title="Cadena 3" style="left: 67.5%;"></button>
+      
+      <button type="button" class="punto-medio" data-idx="20" aria-label="El Cohete a la Luna" title="El Cohete a la Luna" style="left: 11.5%;"></button>
+      
+      <button type="button" class="punto-medio" data-idx="21" aria-label="Canal Abierto" title="Canal Abierto" style="left: 13.0%;"></button>
+      
+      <button type="button" class="punto-medio" data-idx="22" aria-label="Contraeditorial" title="Contraeditorial" style="left: 16.5%;"></button>
+      
+      <button type="button" class="punto-medio" data-idx="23" aria-label="El Grito del Sur" title="El Grito del Sur" style="left: 13.5%;"></button>
+      
+      <button type="button" class="punto-medio" data-idx="24" aria-label="Infocielo" title="Infocielo" style="left: 19.0%;"></button>
       
     </div>
   </div>
@@ -400,6 +436,16 @@ a { text-decoration: none; }
           <th class="rotulo-col" data-idx="18" title="Crónica">Crónica</th>
           
           <th class="rotulo-col" data-idx="19" title="Cadena 3">Cadena 3</th>
+          
+          <th class="rotulo-col" data-idx="20" title="El Cohete a la Luna">Luna</th>
+          
+          <th class="rotulo-col" data-idx="21" title="Canal Abierto">Abierto</th>
+          
+          <th class="rotulo-col" data-idx="22" title="Contraeditorial">Contraedit…</th>
+          
+          <th class="rotulo-col" data-idx="23" title="El Grito del Sur">Sur</th>
+          
+          <th class="rotulo-col" data-idx="24" title="Infocielo">Infocielo</th>
           
         </tr>
       </thead>
@@ -507,6 +553,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="0" data-col="19" title="La Nación / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="0" data-col="20" title="La Nación / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="0" data-col="21" title="La Nación / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="0" data-col="22" title="La Nación / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="0" data-col="23" title="La Nación / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="0" data-col="24" title="La Nación / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="1">
@@ -609,6 +680,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="1" data-col="19" title="Perfil / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="1" data-col="20" title="Perfil / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="1" data-col="21" title="Perfil / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="1" data-col="22" title="Perfil / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="1" data-col="23" title="Perfil / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="1" data-col="24" title="Perfil / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -715,6 +811,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="2" data-col="19" title="Ámbito / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="2" data-col="20" title="Ámbito / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="2" data-col="21" title="Ámbito / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="2" data-col="22" title="Ámbito / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="2" data-col="23" title="Ámbito / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="2" data-col="24" title="Ámbito / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="3">
@@ -817,6 +938,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="3" data-col="19" title="La Izquierda Diario / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="3" data-col="20" title="La Izquierda Diario / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="3" data-col="21" title="La Izquierda Diario / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="3" data-col="22" title="La Izquierda Diario / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="3" data-col="23" title="La Izquierda Diario / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="3" data-col="24" title="La Izquierda Diario / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -923,6 +1069,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="4" data-col="19" title="Infobae / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="4" data-col="20" title="Infobae / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="4" data-col="21" title="Infobae / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="4" data-col="22" title="Infobae / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="4" data-col="23" title="Infobae / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="4" data-col="24" title="Infobae / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="5">
@@ -1025,6 +1196,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="5" data-col="19" title="Página/12 / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="5" data-col="20" title="Página/12 / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="5" data-col="21" title="Página/12 / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="5" data-col="22" title="Página/12 / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="5" data-col="23" title="Página/12 / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="5" data-col="24" title="Página/12 / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -1131,6 +1327,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="6" data-col="19" title="Los Andes / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="6" data-col="20" title="Los Andes / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="6" data-col="21" title="Los Andes / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="6" data-col="22" title="Los Andes / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="6" data-col="23" title="Los Andes / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="6" data-col="24" title="Los Andes / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="7">
@@ -1233,6 +1454,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="7" data-col="19" title="Río Negro / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="7" data-col="20" title="Río Negro / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="7" data-col="21" title="Río Negro / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="7" data-col="22" title="Río Negro / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="7" data-col="23" title="Río Negro / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="7" data-col="24" title="Río Negro / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -1339,6 +1585,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="8" data-col="19" title="La Gaceta / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="8" data-col="20" title="La Gaceta / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="8" data-col="21" title="La Gaceta / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="8" data-col="22" title="La Gaceta / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="8" data-col="23" title="La Gaceta / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="8" data-col="24" title="La Gaceta / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="9">
@@ -1441,6 +1712,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="9" data-col="19" title="Misiones Online / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="9" data-col="20" title="Misiones Online / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="9" data-col="21" title="Misiones Online / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="9" data-col="22" title="Misiones Online / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="9" data-col="23" title="Misiones Online / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="9" data-col="24" title="Misiones Online / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -1547,6 +1843,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="10" data-col="19" title="Diario Registrado / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="10" data-col="20" title="Diario Registrado / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="10" data-col="21" title="Diario Registrado / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="10" data-col="22" title="Diario Registrado / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="10" data-col="23" title="Diario Registrado / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="10" data-col="24" title="Diario Registrado / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="11">
@@ -1649,6 +1970,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="11" data-col="19" title="El Día / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="11" data-col="20" title="El Día / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="11" data-col="21" title="El Día / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="11" data-col="22" title="El Día / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="11" data-col="23" title="El Día / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="11" data-col="24" title="El Día / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -1755,6 +2101,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="12" data-col="19" title="El Intransigente / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="12" data-col="20" title="El Intransigente / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="12" data-col="21" title="El Intransigente / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="12" data-col="22" title="El Intransigente / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="12" data-col="23" title="El Intransigente / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="12" data-col="24" title="El Intransigente / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="13">
@@ -1857,6 +2228,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="13" data-col="19" title="Clarín / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="13" data-col="20" title="Clarín / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="13" data-col="21" title="Clarín / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="13" data-col="22" title="Clarín / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="13" data-col="23" title="Clarín / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="13" data-col="24" title="Clarín / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -1963,6 +2359,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="14" data-col="19" title="TN / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="14" data-col="20" title="TN / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="14" data-col="21" title="TN / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="14" data-col="22" title="TN / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="14" data-col="23" title="TN / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="14" data-col="24" title="TN / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="15">
@@ -2065,6 +2486,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="15" data-col="19" title="Buenos Aires Times / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="15" data-col="20" title="Buenos Aires Times / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="15" data-col="21" title="Buenos Aires Times / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="15" data-col="22" title="Buenos Aires Times / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="15" data-col="23" title="Buenos Aires Times / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="15" data-col="24" title="Buenos Aires Times / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -2171,6 +2617,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="16" data-col="19" title="MercoPress / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="16" data-col="20" title="MercoPress / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="16" data-col="21" title="MercoPress / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="16" data-col="22" title="MercoPress / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="16" data-col="23" title="MercoPress / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="16" data-col="24" title="MercoPress / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="17">
@@ -2273,6 +2744,31 @@ a { text-decoration: none; }
             
             
             <td class="celda" data-fila="17" data-col="19" title="La Capital / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="17" data-col="20" title="La Capital / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="17" data-col="21" title="La Capital / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="17" data-col="22" title="La Capital / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="17" data-col="23" title="La Capital / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="17" data-col="24" title="La Capital / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -2379,6 +2875,31 @@ a { text-decoration: none; }
             <td class="celda" data-fila="18" data-col="19" title="Crónica / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
+            
+            
+            <td class="celda" data-fila="18" data-col="20" title="Crónica / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="18" data-col="21" title="Crónica / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="18" data-col="22" title="Crónica / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="18" data-col="23" title="Crónica / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="18" data-col="24" title="Crónica / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
         </tr>
         
         <tr data-idx="19">
@@ -2483,6 +3004,676 @@ a { text-decoration: none; }
             <td class="celda diagonal" title="Cadena 3: 0 historias cubiertas">0</td>
             
           
+            
+            
+            <td class="celda" data-fila="19" data-col="20" title="Cadena 3 / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="19" data-col="21" title="Cadena 3 / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="19" data-col="22" title="Cadena 3 / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="19" data-col="23" title="Cadena 3 / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="19" data-col="24" title="Cadena 3 / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+        </tr>
+        
+        <tr data-idx="20">
+          <th class="rotulo-fila" data-idx="20" title="El Cohete a la Luna">Luna</th>
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="0" title="El Cohete a la Luna / La Nación: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="1" title="El Cohete a la Luna / Perfil: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="2" title="El Cohete a la Luna / Ámbito: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="3" title="El Cohete a la Luna / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="4" title="El Cohete a la Luna / Infobae: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="5" title="El Cohete a la Luna / Página/12: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="6" title="El Cohete a la Luna / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="7" title="El Cohete a la Luna / Río Negro: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="8" title="El Cohete a la Luna / La Gaceta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="9" title="El Cohete a la Luna / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="10" title="El Cohete a la Luna / Diario Registrado: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="11" title="El Cohete a la Luna / El Día: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="12" title="El Cohete a la Luna / El Intransigente: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="13" title="El Cohete a la Luna / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="14" title="El Cohete a la Luna / TN: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="15" title="El Cohete a la Luna / Buenos Aires Times: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="16" title="El Cohete a la Luna / MercoPress: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="17" title="El Cohete a la Luna / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="18" title="El Cohete a la Luna / Crónica: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="19" title="El Cohete a la Luna / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            <td class="celda diagonal" title="El Cohete a la Luna: 0 historias cubiertas">0</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="21" title="El Cohete a la Luna / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="22" title="El Cohete a la Luna / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="23" title="El Cohete a la Luna / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="20" data-col="24" title="El Cohete a la Luna / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+        </tr>
+        
+        <tr data-idx="21">
+          <th class="rotulo-fila" data-idx="21" title="Canal Abierto">Abierto</th>
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="0" title="Canal Abierto / La Nación: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="1" title="Canal Abierto / Perfil: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="2" title="Canal Abierto / Ámbito: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="3" title="Canal Abierto / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="4" title="Canal Abierto / Infobae: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="5" title="Canal Abierto / Página/12: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="6" title="Canal Abierto / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="7" title="Canal Abierto / Río Negro: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="8" title="Canal Abierto / La Gaceta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="9" title="Canal Abierto / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="10" title="Canal Abierto / Diario Registrado: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="11" title="Canal Abierto / El Día: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="12" title="Canal Abierto / El Intransigente: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="13" title="Canal Abierto / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="14" title="Canal Abierto / TN: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="15" title="Canal Abierto / Buenos Aires Times: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="16" title="Canal Abierto / MercoPress: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="17" title="Canal Abierto / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="18" title="Canal Abierto / Crónica: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="19" title="Canal Abierto / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="20" title="Canal Abierto / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            <td class="celda diagonal" title="Canal Abierto: 0 historias cubiertas">0</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="22" title="Canal Abierto / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="23" title="Canal Abierto / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="21" data-col="24" title="Canal Abierto / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+        </tr>
+        
+        <tr data-idx="22">
+          <th class="rotulo-fila" data-idx="22" title="Contraeditorial">Contraedit…</th>
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="0" title="Contraeditorial / La Nación: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="1" title="Contraeditorial / Perfil: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="2" title="Contraeditorial / Ámbito: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="3" title="Contraeditorial / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="4" title="Contraeditorial / Infobae: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="5" title="Contraeditorial / Página/12: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="6" title="Contraeditorial / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="7" title="Contraeditorial / Río Negro: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="8" title="Contraeditorial / La Gaceta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="9" title="Contraeditorial / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="10" title="Contraeditorial / Diario Registrado: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="11" title="Contraeditorial / El Día: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="12" title="Contraeditorial / El Intransigente: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="13" title="Contraeditorial / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="14" title="Contraeditorial / TN: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="15" title="Contraeditorial / Buenos Aires Times: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="16" title="Contraeditorial / MercoPress: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="17" title="Contraeditorial / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="18" title="Contraeditorial / Crónica: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="19" title="Contraeditorial / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="20" title="Contraeditorial / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="21" title="Contraeditorial / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            <td class="celda diagonal" title="Contraeditorial: 0 historias cubiertas">0</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="23" title="Contraeditorial / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="22" data-col="24" title="Contraeditorial / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+        </tr>
+        
+        <tr data-idx="23">
+          <th class="rotulo-fila" data-idx="23" title="El Grito del Sur">Sur</th>
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="0" title="El Grito del Sur / La Nación: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="1" title="El Grito del Sur / Perfil: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="2" title="El Grito del Sur / Ámbito: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="3" title="El Grito del Sur / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="4" title="El Grito del Sur / Infobae: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="5" title="El Grito del Sur / Página/12: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="6" title="El Grito del Sur / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="7" title="El Grito del Sur / Río Negro: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="8" title="El Grito del Sur / La Gaceta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="9" title="El Grito del Sur / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="10" title="El Grito del Sur / Diario Registrado: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="11" title="El Grito del Sur / El Día: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="12" title="El Grito del Sur / El Intransigente: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="13" title="El Grito del Sur / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="14" title="El Grito del Sur / TN: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="15" title="El Grito del Sur / Buenos Aires Times: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="16" title="El Grito del Sur / MercoPress: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="17" title="El Grito del Sur / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="18" title="El Grito del Sur / Crónica: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="19" title="El Grito del Sur / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="20" title="El Grito del Sur / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="21" title="El Grito del Sur / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="22" title="El Grito del Sur / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            <td class="celda diagonal" title="El Grito del Sur: 0 historias cubiertas">0</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="23" data-col="24" title="El Grito del Sur / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+        </tr>
+        
+        <tr data-idx="24">
+          <th class="rotulo-fila" data-idx="24" title="Infocielo">Infocielo</th>
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="0" title="Infocielo / La Nación: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="1" title="Infocielo / Perfil: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="2" title="Infocielo / Ámbito: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="3" title="Infocielo / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="4" title="Infocielo / Infobae: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="5" title="Infocielo / Página/12: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="6" title="Infocielo / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="7" title="Infocielo / Río Negro: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="8" title="Infocielo / La Gaceta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="9" title="Infocielo / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="10" title="Infocielo / Diario Registrado: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="11" title="Infocielo / El Día: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="12" title="Infocielo / El Intransigente: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="13" title="Infocielo / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="14" title="Infocielo / TN: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="15" title="Infocielo / Buenos Aires Times: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="16" title="Infocielo / MercoPress: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="17" title="Infocielo / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="18" title="Infocielo / Crónica: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="19" title="Infocielo / Cadena 3: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="20" title="Infocielo / El Cohete a la Luna: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="21" title="Infocielo / Canal Abierto: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="22" title="Infocielo / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            
+            <td class="celda" data-fila="24" data-col="23" title="Infocielo / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            
+          
+            
+            <td class="celda diagonal" title="Infocielo: 0 historias cubiertas">0</td>
+            
+          
         </tr>
         
       </tbody>
@@ -2496,12 +3687,12 @@ a { text-decoration: none; }
     <div class="selects-comparador">
       <select id="select-medio-a" aria-label="Primer medio a comparar">
         <option value="">Elegí un medio…</option>
-        <option value="La Nación">La Nación</option><option value="Perfil">Perfil</option><option value="Ámbito">Ámbito</option><option value="La Izquierda Diario">La Izquierda Diario</option><option value="Infobae">Infobae</option><option value="Página/12">Página/12</option><option value="Los Andes">Los Andes</option><option value="Río Negro">Río Negro</option><option value="La Gaceta">La Gaceta</option><option value="Misiones Online">Misiones Online</option><option value="Diario Registrado">Diario Registrado</option><option value="El Día">El Día</option><option value="El Intransigente">El Intransigente</option><option value="Clarín">Clarín</option><option value="TN">TN</option><option value="Buenos Aires Times">Buenos Aires Times</option><option value="MercoPress">MercoPress</option><option value="La Capital">La Capital</option><option value="Crónica">Crónica</option><option value="Cadena 3">Cadena 3</option>
+        <option value="La Nación">La Nación</option><option value="Perfil">Perfil</option><option value="Ámbito">Ámbito</option><option value="La Izquierda Diario">La Izquierda Diario</option><option value="Infobae">Infobae</option><option value="Página/12">Página/12</option><option value="Los Andes">Los Andes</option><option value="Río Negro">Río Negro</option><option value="La Gaceta">La Gaceta</option><option value="Misiones Online">Misiones Online</option><option value="Diario Registrado">Diario Registrado</option><option value="El Día">El Día</option><option value="El Intransigente">El Intransigente</option><option value="Clarín">Clarín</option><option value="TN">TN</option><option value="Buenos Aires Times">Buenos Aires Times</option><option value="MercoPress">MercoPress</option><option value="La Capital">La Capital</option><option value="Crónica">Crónica</option><option value="Cadena 3">Cadena 3</option><option value="El Cohete a la Luna">El Cohete a la Luna</option><option value="Canal Abierto">Canal Abierto</option><option value="Contraeditorial">Contraeditorial</option><option value="El Grito del Sur">El Grito del Sur</option><option value="Infocielo">Infocielo</option>
       </select>
       <span class="vs">vs.</span>
       <select id="select-medio-b" aria-label="Segundo medio a comparar">
         <option value="">Elegí un medio…</option>
-        <option value="La Nación">La Nación</option><option value="Perfil">Perfil</option><option value="Ámbito">Ámbito</option><option value="La Izquierda Diario">La Izquierda Diario</option><option value="Infobae">Infobae</option><option value="Página/12">Página/12</option><option value="Los Andes">Los Andes</option><option value="Río Negro">Río Negro</option><option value="La Gaceta">La Gaceta</option><option value="Misiones Online">Misiones Online</option><option value="Diario Registrado">Diario Registrado</option><option value="El Día">El Día</option><option value="El Intransigente">El Intransigente</option><option value="Clarín">Clarín</option><option value="TN">TN</option><option value="Buenos Aires Times">Buenos Aires Times</option><option value="MercoPress">MercoPress</option><option value="La Capital">La Capital</option><option value="Crónica">Crónica</option><option value="Cadena 3">Cadena 3</option>
+        <option value="La Nación">La Nación</option><option value="Perfil">Perfil</option><option value="Ámbito">Ámbito</option><option value="La Izquierda Diario">La Izquierda Diario</option><option value="Infobae">Infobae</option><option value="Página/12">Página/12</option><option value="Los Andes">Los Andes</option><option value="Río Negro">Río Negro</option><option value="La Gaceta">La Gaceta</option><option value="Misiones Online">Misiones Online</option><option value="Diario Registrado">Diario Registrado</option><option value="El Día">El Día</option><option value="El Intransigente">El Intransigente</option><option value="Clarín">Clarín</option><option value="TN">TN</option><option value="Buenos Aires Times">Buenos Aires Times</option><option value="MercoPress">MercoPress</option><option value="La Capital">La Capital</option><option value="Crónica">Crónica</option><option value="Cadena 3">Cadena 3</option><option value="El Cohete a la Luna">El Cohete a la Luna</option><option value="Canal Abierto">Canal Abierto</option><option value="Contraeditorial">Contraeditorial</option><option value="El Grito del Sur">El Grito del Sur</option><option value="Infocielo">Infocielo</option>
       </select>
     </div>
     <div id="resultado-comparador"></div>
@@ -2729,19 +3920,20 @@ a { text-decoration: none; }
     });
   })();
 
-  // --- Vista Swipe (feature principal: selector Feed/Swipe arriba del feed) ---
+  // --- Vista Swipe (feature principal: pila flotante sobre el feed) ---
   (function () {
     var lector = document.getElementById('lector');
     if (!lector) return;
-    var cuerpo = document.getElementById('lector-cuerpo');
-    var contenido = document.getElementById('lector-contenido');
+    var pila = document.getElementById('lector-pila');
     var contador = document.getElementById('lector-contador');
     var btnAnt = document.getElementById('lector-anterior');
     var btnSig = document.getElementById('lector-siguiente');
     var lista = [];
     var indice = 0;
     var animando = false;
-    var DURACION_ANIM = 220;
+    var DURACION_SALIDA = 260;
+    var DURACION_CAIDA = 380;
+    var UMBRAL_COMMIT = 100;
 
     var CLAVE_VISTA = 'puente-vista';
     function vistaGuardada() {
@@ -2767,6 +3959,10 @@ a { text-decoration: none; }
         return getComputedStyle(el).display !== 'none';
       });
     }
+
+    function nodoActivo() { return pila.querySelector('.tarjeta-swipe--activa'); }
+    function nodoPeek() { return pila.querySelector('.tarjeta-swipe--peek'); }
+    function siguienteIndice(i) { return lista.length ? (i + 1) % lista.length : 0; }
 
     // Barra de tendencia editorial de tres colores (izquierda/centro/derecha),
     // a partir de los porcentajes ya calculados en el pipeline.
@@ -2804,9 +4000,9 @@ a { text-decoration: none; }
       return bloque;
     }
 
-    // Tarjeta simplificada del swipe: titular, un resumen corto, la barra
-    // de tendencia y las acciones. El desglose titular-por-medio queda solo
-    // en la vista Feed (ahi si con el detalle completo).
+    // Tarjeta activa: titular, un resumen corto, la barra de tendencia y
+    // las acciones. El desglose titular-por-medio queda solo en la vista
+    // Feed (ahi si con el detalle completo).
     function construirItem(nodo) {
       var wrapper = document.createElement('div');
       wrapper.className = 'lector-item';
@@ -2835,50 +4031,126 @@ a { text-decoration: none; }
       return wrapper;
     }
 
-    function pintarContenido(nodo) {
-      contenido.innerHTML = '';
-      contenido.appendChild(construirItem(nodo));
-      contador.textContent = (indice + 1) + ' / ' + lista.length;
-      cuerpo.scrollTop = 0;
-      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+    // Tarjeta que asoma detrás en la pila: liviana a propósito (no es
+    // interactiva, solo insinúa que hay más para ver).
+    function construirPeek(nodo) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'tarjeta-peek-contenido';
+      var badges = nodo.querySelector('.badges');
+      var titulo = nodo.querySelector('h2');
+      if (badges) wrapper.appendChild(badges.cloneNode(true));
+      if (titulo) wrapper.appendChild(titulo.cloneNode(true));
+      return wrapper;
     }
 
-    // direccion: null (sin animación, primera apertura) | 'sig' | 'ant'
-    function render(direccion) {
-      if (!lista.length) {
-        contenido.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
-        contador.textContent = '';
-        return;
+    function pintarEnNodo(nodo, esActiva) {
+      nodo.innerHTML = '';
+      if (esActiva) {
+        if (!lista.length) {
+          nodo.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
+          contador.textContent = '';
+          return;
+        }
+        nodo.style.display = '';
+        nodo.appendChild(construirItem(lista[indice]));
+        contador.textContent = (indice + 1) + ' / ' + lista.length;
+        nodo.scrollTop = 0;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(nodo);
+      } else {
+        if (lista.length < 2) { nodo.style.display = 'none'; return; }
+        nodo.style.display = '';
+        nodo.appendChild(construirPeek(lista[siguienteIndice(indice)]));
       }
-      var nodo = lista[indice];
-      if (!direccion) {
-        contenido.classList.add('lector-sin-anim');
-        contenido.classList.remove('lector-sale-izq', 'lector-sale-der');
-        pintarContenido(nodo);
-        void contenido.offsetWidth;
-        contenido.classList.remove('lector-sin-anim');
-        return;
+    }
+
+    // Hace "caer" un elemento desde arriba hasta su posición de reposo
+    // (definida por su clase --activa o --peek). Mismo truco de reflow que
+    // usaba el slide+fade viejo, aplicado a dos elementos en vez de uno.
+    function hacerCaer(el) {
+      el.classList.add('tarjeta-sin-anim', 'tarjeta-cae-inicio');
+      void el.offsetWidth;
+      el.classList.remove('tarjeta-sin-anim', 'tarjeta-cae-inicio');
+      el.classList.add('tarjeta-cayendo');
+      setTimeout(function () { el.classList.remove('tarjeta-cayendo'); }, DURACION_CAIDA);
+    }
+
+    // Anima la salida de la tarjeta activa hacia un costado (volando),
+    // ya sea por botón/teclado (arranca en reposo) o al soltar un arrastre
+    // (arranca desde la posición donde quedó el dedo, sin saltos).
+    function despedir(nodo, direccion) {
+      nodo.classList.add('tarjeta-transicion');
+      void nodo.offsetWidth;
+      var x = direccion === 'sig' ? '-130%' : '130%';
+      var rot = direccion === 'sig' ? -16 : 16;
+      nodo.style.transform = 'translate(' + x + ', 16px) rotate(' + rot + 'deg)';
+      nodo.style.opacity = '0';
+    }
+
+    // Se llama cuando la tarjeta activa ya terminó de volar afuera:
+    // promueve la que asomaba detrás (ya tiene el contenido correcto) al
+    // frente, y hace caer contenido nuevo en el lugar que quedó atrás.
+    function promover(nodoSaliente, direccion) {
+      indice = direccion === 'ant' ? (indice - 1 + lista.length) % lista.length : siguienteIndice(indice);
+      var peekActual = nodoPeek();
+
+      if (lista.length > 1 && peekActual) {
+        peekActual.classList.remove('tarjeta-swipe--peek');
+        peekActual.classList.add('tarjeta-swipe--activa', 'tarjeta-transicion');
+        peekActual.innerHTML = '';
+        peekActual.appendChild(construirItem(lista[indice]));
+        peekActual.scrollTop = 0;
+        contador.textContent = (indice + 1) + ' / ' + lista.length;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(peekActual);
+        setTimeout(function () { peekActual.classList.remove('tarjeta-transicion'); }, DURACION_CAIDA);
       }
+
+      nodoSaliente.classList.remove('tarjeta-swipe--activa', 'tarjeta-transicion', 'tarjeta-arrastrando');
+      nodoSaliente.style.transform = '';
+      nodoSaliente.style.opacity = '';
+      nodoSaliente.classList.add('tarjeta-swipe--peek');
+
+      if (lista.length > 1) {
+        nodoSaliente.style.display = '';
+        nodoSaliente.innerHTML = '';
+        nodoSaliente.appendChild(construirPeek(lista[siguienteIndice(indice)]));
+        hacerCaer(nodoSaliente);
+      } else {
+        nodoSaliente.style.display = 'none';
+        nodoSaliente.innerHTML = '';
+      }
+
+      btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+      setTimeout(function () { animando = false; }, DURACION_CAIDA);
+    }
+
+    function avanzar(direccion) {
+      if (!lista.length || animando || lista.length <= 1) return;
       animando = true;
-      var claseSalida = direccion === 'sig' ? 'lector-sale-izq' : 'lector-sale-der';
-      var claseEntrada = direccion === 'sig' ? 'lector-sale-der' : 'lector-sale-izq';
-      contenido.classList.add(claseSalida);
-      setTimeout(function () {
-        pintarContenido(nodo);
-        contenido.classList.add('lector-sin-anim');
-        contenido.classList.remove(claseSalida);
-        contenido.classList.add(claseEntrada);
-        void contenido.offsetWidth;
-        contenido.classList.remove('lector-sin-anim', claseEntrada);
-        setTimeout(function () { animando = false; }, DURACION_ANIM);
-      }, DURACION_ANIM);
+      var activa = nodoActivo();
+      despedir(activa, direccion);
+      setTimeout(function () { promover(activa, direccion); }, DURACION_SALIDA);
+    }
+
+    // direccion: null (apertura, cae la tarjeta activa y después la que
+    // asoma detrás) | 'sig' | 'ant' (delegado a avanzar)
+    function render(direccion) {
+      if (!direccion) {
+        var activa = nodoActivo(), peek = nodoPeek();
+        pintarEnNodo(activa, true);
+        pintarEnNodo(peek, false);
+        btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+        if (!lista.length) return;
+        hacerCaer(activa);
+        if (lista.length > 1) setTimeout(function () { hacerCaer(peek); }, 100);
+        return;
+      }
+      avanzar(direccion);
     }
 
     // desdeId es opcional: sin el, arranca siempre en la primera historia
     // visible (respetando el filtro de busqueda/categoria activo)
     function abrir(desdeId) {
       lista = historiasVisibles();
-      if (!lista.length) return;
       var idx = 0;
       if (desdeId) {
         for (var i = 0; i < lista.length; i++) {
@@ -2887,7 +4159,6 @@ a { text-decoration: none; }
       }
       indice = idx;
       lector.hidden = false;
-      document.body.style.overflow = 'hidden';
       render(null);
     }
 
@@ -2899,14 +4170,15 @@ a { text-decoration: none; }
 
     function cerrar() {
       lector.hidden = true;
-      document.body.style.overflow = '';
-      contenido.innerHTML = '';
       guardarVista('feed');
       marcarVista('feed');
+      var nodos = pila.querySelectorAll('.tarjeta-swipe');
+      if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
+      if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
     }
 
-    function siguiente() { if (!lista.length || animando) return; indice = (indice + 1) % lista.length; render('sig'); }
-    function anterior() { if (!lista.length || animando) return; indice = (indice - 1 + lista.length) % lista.length; render('ant'); }
+    function siguiente() { avanzar('sig'); }
+    function anterior() { avanzar('ant'); }
 
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-vista]');
@@ -2924,14 +4196,59 @@ a { text-decoration: none; }
       else if (e.key === 'ArrowLeft') anterior();
     });
 
-    var xInicio = null;
-    cuerpo.addEventListener('touchstart', function (e) { xInicio = e.touches[0].clientX; }, { passive: true });
-    cuerpo.addEventListener('touchend', function (e) {
-      if (xInicio === null) return;
-      var delta = e.changedTouches[0].clientX - xInicio;
-      if (Math.abs(delta) > 60) { if (delta < 0) siguiente(); else anterior(); }
-      xInicio = null;
-    }, { passive: true });
+    // --- arrastre en vivo: la tarjeta activa sigue al dedo/mouse en tiempo
+    // real (Pointer Events, así también anda con mouse). Si el gesto resulta
+    // mayormente vertical se deja pasar (para que el scroll del contenido
+    // largo funcione normal); solo se toma como swipe si es horizontal. ---
+    var arrastre = null;
+
+    pila.addEventListener('pointerdown', function (e) {
+      if (animando || lista.length <= 1) return;
+      if (e.target.closest('a, button, input, textarea, select, label')) return;
+      var activa = nodoActivo();
+      if (!activa || !activa.contains(e.target)) return;
+      arrastre = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, decidido: false, horizontal: false, el: activa };
+    });
+
+    document.addEventListener('pointermove', function (e) {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      var dx = e.clientX - arrastre.x0, dy = e.clientY - arrastre.y0;
+      arrastre.dx = dx; arrastre.dy = dy;
+      if (!arrastre.decidido) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          arrastre.decidido = true;
+          arrastre.horizontal = Math.abs(dx) > Math.abs(dy);
+          if (arrastre.horizontal) {
+            arrastre.el.classList.add('tarjeta-arrastrando');
+            try { arrastre.el.setPointerCapture(arrastre.id); } catch (err) {}
+          }
+        }
+      }
+      if (arrastre.decidido && arrastre.horizontal) {
+        e.preventDefault();
+        var rot = Math.max(-16, Math.min(16, dx / 14));
+        arrastre.el.style.transform = 'translate(' + dx + 'px, ' + (dy * 0.05) + 'px) rotate(' + rot + 'deg)';
+      }
+    }, { passive: false });
+
+    function soltar(e) {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      var el = arrastre.el, horizontal = arrastre.horizontal, dx = arrastre.dx;
+      arrastre = null;
+      el.classList.remove('tarjeta-arrastrando');
+      if (horizontal && Math.abs(dx) > UMBRAL_COMMIT) {
+        var direccion = dx < 0 ? 'sig' : 'ant';
+        animando = true;
+        despedir(el, direccion);
+        setTimeout(function () { promover(el, direccion); }, DURACION_SALIDA);
+      } else if (horizontal) {
+        el.classList.add('tarjeta-transicion');
+        el.style.transform = '';
+        setTimeout(function () { el.classList.remove('tarjeta-transicion'); }, 240);
+      }
+    }
+    document.addEventListener('pointerup', soltar);
+    document.addEventListener('pointercancel', soltar);
 
     // recordar la vista elegida la última vez
     if (vistaGuardada() === 'swipe') abrirSwipe();

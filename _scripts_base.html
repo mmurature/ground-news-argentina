@@ -218,19 +218,20 @@
     });
   })();
 
-  // --- Vista Swipe (feature principal: selector Feed/Swipe arriba del feed) ---
+  // --- Vista Swipe (feature principal: pila flotante sobre el feed) ---
   (function () {
     var lector = document.getElementById('lector');
     if (!lector) return;
-    var cuerpo = document.getElementById('lector-cuerpo');
-    var contenido = document.getElementById('lector-contenido');
+    var pila = document.getElementById('lector-pila');
     var contador = document.getElementById('lector-contador');
     var btnAnt = document.getElementById('lector-anterior');
     var btnSig = document.getElementById('lector-siguiente');
     var lista = [];
     var indice = 0;
     var animando = false;
-    var DURACION_ANIM = 220;
+    var DURACION_SALIDA = 260;
+    var DURACION_CAIDA = 380;
+    var UMBRAL_COMMIT = 100;
 
     var CLAVE_VISTA = 'puente-vista';
     function vistaGuardada() {
@@ -256,6 +257,10 @@
         return getComputedStyle(el).display !== 'none';
       });
     }
+
+    function nodoActivo() { return pila.querySelector('.tarjeta-swipe--activa'); }
+    function nodoPeek() { return pila.querySelector('.tarjeta-swipe--peek'); }
+    function siguienteIndice(i) { return lista.length ? (i + 1) % lista.length : 0; }
 
     // Barra de tendencia editorial de tres colores (izquierda/centro/derecha),
     // a partir de los porcentajes ya calculados en el pipeline.
@@ -293,9 +298,9 @@
       return bloque;
     }
 
-    // Tarjeta simplificada del swipe: titular, un resumen corto, la barra
-    // de tendencia y las acciones. El desglose titular-por-medio queda solo
-    // en la vista Feed (ahi si con el detalle completo).
+    // Tarjeta activa: titular, un resumen corto, la barra de tendencia y
+    // las acciones. El desglose titular-por-medio queda solo en la vista
+    // Feed (ahi si con el detalle completo).
     function construirItem(nodo) {
       var wrapper = document.createElement('div');
       wrapper.className = 'lector-item';
@@ -324,50 +329,126 @@
       return wrapper;
     }
 
-    function pintarContenido(nodo) {
-      contenido.innerHTML = '';
-      contenido.appendChild(construirItem(nodo));
-      contador.textContent = (indice + 1) + ' / ' + lista.length;
-      cuerpo.scrollTop = 0;
-      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+    // Tarjeta que asoma detrás en la pila: liviana a propósito (no es
+    // interactiva, solo insinúa que hay más para ver).
+    function construirPeek(nodo) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'tarjeta-peek-contenido';
+      var badges = nodo.querySelector('.badges');
+      var titulo = nodo.querySelector('h2');
+      if (badges) wrapper.appendChild(badges.cloneNode(true));
+      if (titulo) wrapper.appendChild(titulo.cloneNode(true));
+      return wrapper;
     }
 
-    // direccion: null (sin animación, primera apertura) | 'sig' | 'ant'
-    function render(direccion) {
-      if (!lista.length) {
-        contenido.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
-        contador.textContent = '';
-        return;
+    function pintarEnNodo(nodo, esActiva) {
+      nodo.innerHTML = '';
+      if (esActiva) {
+        if (!lista.length) {
+          nodo.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
+          contador.textContent = '';
+          return;
+        }
+        nodo.style.display = '';
+        nodo.appendChild(construirItem(lista[indice]));
+        contador.textContent = (indice + 1) + ' / ' + lista.length;
+        nodo.scrollTop = 0;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(nodo);
+      } else {
+        if (lista.length < 2) { nodo.style.display = 'none'; return; }
+        nodo.style.display = '';
+        nodo.appendChild(construirPeek(lista[siguienteIndice(indice)]));
       }
-      var nodo = lista[indice];
-      if (!direccion) {
-        contenido.classList.add('lector-sin-anim');
-        contenido.classList.remove('lector-sale-izq', 'lector-sale-der');
-        pintarContenido(nodo);
-        void contenido.offsetWidth;
-        contenido.classList.remove('lector-sin-anim');
-        return;
+    }
+
+    // Hace "caer" un elemento desde arriba hasta su posición de reposo
+    // (definida por su clase --activa o --peek). Mismo truco de reflow que
+    // usaba el slide+fade viejo, aplicado a dos elementos en vez de uno.
+    function hacerCaer(el) {
+      el.classList.add('tarjeta-sin-anim', 'tarjeta-cae-inicio');
+      void el.offsetWidth;
+      el.classList.remove('tarjeta-sin-anim', 'tarjeta-cae-inicio');
+      el.classList.add('tarjeta-cayendo');
+      setTimeout(function () { el.classList.remove('tarjeta-cayendo'); }, DURACION_CAIDA);
+    }
+
+    // Anima la salida de la tarjeta activa hacia un costado (volando),
+    // ya sea por botón/teclado (arranca en reposo) o al soltar un arrastre
+    // (arranca desde la posición donde quedó el dedo, sin saltos).
+    function despedir(nodo, direccion) {
+      nodo.classList.add('tarjeta-transicion');
+      void nodo.offsetWidth;
+      var x = direccion === 'sig' ? '-130%' : '130%';
+      var rot = direccion === 'sig' ? -16 : 16;
+      nodo.style.transform = 'translate(' + x + ', 16px) rotate(' + rot + 'deg)';
+      nodo.style.opacity = '0';
+    }
+
+    // Se llama cuando la tarjeta activa ya terminó de volar afuera:
+    // promueve la que asomaba detrás (ya tiene el contenido correcto) al
+    // frente, y hace caer contenido nuevo en el lugar que quedó atrás.
+    function promover(nodoSaliente, direccion) {
+      indice = direccion === 'ant' ? (indice - 1 + lista.length) % lista.length : siguienteIndice(indice);
+      var peekActual = nodoPeek();
+
+      if (lista.length > 1 && peekActual) {
+        peekActual.classList.remove('tarjeta-swipe--peek');
+        peekActual.classList.add('tarjeta-swipe--activa', 'tarjeta-transicion');
+        peekActual.innerHTML = '';
+        peekActual.appendChild(construirItem(lista[indice]));
+        peekActual.scrollTop = 0;
+        contador.textContent = (indice + 1) + ' / ' + lista.length;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(peekActual);
+        setTimeout(function () { peekActual.classList.remove('tarjeta-transicion'); }, DURACION_CAIDA);
       }
+
+      nodoSaliente.classList.remove('tarjeta-swipe--activa', 'tarjeta-transicion', 'tarjeta-arrastrando');
+      nodoSaliente.style.transform = '';
+      nodoSaliente.style.opacity = '';
+      nodoSaliente.classList.add('tarjeta-swipe--peek');
+
+      if (lista.length > 1) {
+        nodoSaliente.style.display = '';
+        nodoSaliente.innerHTML = '';
+        nodoSaliente.appendChild(construirPeek(lista[siguienteIndice(indice)]));
+        hacerCaer(nodoSaliente);
+      } else {
+        nodoSaliente.style.display = 'none';
+        nodoSaliente.innerHTML = '';
+      }
+
+      btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+      setTimeout(function () { animando = false; }, DURACION_CAIDA);
+    }
+
+    function avanzar(direccion) {
+      if (!lista.length || animando || lista.length <= 1) return;
       animando = true;
-      var claseSalida = direccion === 'sig' ? 'lector-sale-izq' : 'lector-sale-der';
-      var claseEntrada = direccion === 'sig' ? 'lector-sale-der' : 'lector-sale-izq';
-      contenido.classList.add(claseSalida);
-      setTimeout(function () {
-        pintarContenido(nodo);
-        contenido.classList.add('lector-sin-anim');
-        contenido.classList.remove(claseSalida);
-        contenido.classList.add(claseEntrada);
-        void contenido.offsetWidth;
-        contenido.classList.remove('lector-sin-anim', claseEntrada);
-        setTimeout(function () { animando = false; }, DURACION_ANIM);
-      }, DURACION_ANIM);
+      var activa = nodoActivo();
+      despedir(activa, direccion);
+      setTimeout(function () { promover(activa, direccion); }, DURACION_SALIDA);
+    }
+
+    // direccion: null (apertura, cae la tarjeta activa y después la que
+    // asoma detrás) | 'sig' | 'ant' (delegado a avanzar)
+    function render(direccion) {
+      if (!direccion) {
+        var activa = nodoActivo(), peek = nodoPeek();
+        pintarEnNodo(activa, true);
+        pintarEnNodo(peek, false);
+        btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+        if (!lista.length) return;
+        hacerCaer(activa);
+        if (lista.length > 1) setTimeout(function () { hacerCaer(peek); }, 100);
+        return;
+      }
+      avanzar(direccion);
     }
 
     // desdeId es opcional: sin el, arranca siempre en la primera historia
     // visible (respetando el filtro de busqueda/categoria activo)
     function abrir(desdeId) {
       lista = historiasVisibles();
-      if (!lista.length) return;
       var idx = 0;
       if (desdeId) {
         for (var i = 0; i < lista.length; i++) {
@@ -376,7 +457,6 @@
       }
       indice = idx;
       lector.hidden = false;
-      document.body.style.overflow = 'hidden';
       render(null);
     }
 
@@ -388,14 +468,15 @@
 
     function cerrar() {
       lector.hidden = true;
-      document.body.style.overflow = '';
-      contenido.innerHTML = '';
       guardarVista('feed');
       marcarVista('feed');
+      var nodos = pila.querySelectorAll('.tarjeta-swipe');
+      if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
+      if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
     }
 
-    function siguiente() { if (!lista.length || animando) return; indice = (indice + 1) % lista.length; render('sig'); }
-    function anterior() { if (!lista.length || animando) return; indice = (indice - 1 + lista.length) % lista.length; render('ant'); }
+    function siguiente() { avanzar('sig'); }
+    function anterior() { avanzar('ant'); }
 
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-vista]');
@@ -413,14 +494,59 @@
       else if (e.key === 'ArrowLeft') anterior();
     });
 
-    var xInicio = null;
-    cuerpo.addEventListener('touchstart', function (e) { xInicio = e.touches[0].clientX; }, { passive: true });
-    cuerpo.addEventListener('touchend', function (e) {
-      if (xInicio === null) return;
-      var delta = e.changedTouches[0].clientX - xInicio;
-      if (Math.abs(delta) > 60) { if (delta < 0) siguiente(); else anterior(); }
-      xInicio = null;
-    }, { passive: true });
+    // --- arrastre en vivo: la tarjeta activa sigue al dedo/mouse en tiempo
+    // real (Pointer Events, así también anda con mouse). Si el gesto resulta
+    // mayormente vertical se deja pasar (para que el scroll del contenido
+    // largo funcione normal); solo se toma como swipe si es horizontal. ---
+    var arrastre = null;
+
+    pila.addEventListener('pointerdown', function (e) {
+      if (animando || lista.length <= 1) return;
+      if (e.target.closest('a, button, input, textarea, select, label')) return;
+      var activa = nodoActivo();
+      if (!activa || !activa.contains(e.target)) return;
+      arrastre = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, decidido: false, horizontal: false, el: activa };
+    });
+
+    document.addEventListener('pointermove', function (e) {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      var dx = e.clientX - arrastre.x0, dy = e.clientY - arrastre.y0;
+      arrastre.dx = dx; arrastre.dy = dy;
+      if (!arrastre.decidido) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          arrastre.decidido = true;
+          arrastre.horizontal = Math.abs(dx) > Math.abs(dy);
+          if (arrastre.horizontal) {
+            arrastre.el.classList.add('tarjeta-arrastrando');
+            try { arrastre.el.setPointerCapture(arrastre.id); } catch (err) {}
+          }
+        }
+      }
+      if (arrastre.decidido && arrastre.horizontal) {
+        e.preventDefault();
+        var rot = Math.max(-16, Math.min(16, dx / 14));
+        arrastre.el.style.transform = 'translate(' + dx + 'px, ' + (dy * 0.05) + 'px) rotate(' + rot + 'deg)';
+      }
+    }, { passive: false });
+
+    function soltar(e) {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      var el = arrastre.el, horizontal = arrastre.horizontal, dx = arrastre.dx;
+      arrastre = null;
+      el.classList.remove('tarjeta-arrastrando');
+      if (horizontal && Math.abs(dx) > UMBRAL_COMMIT) {
+        var direccion = dx < 0 ? 'sig' : 'ant';
+        animando = true;
+        despedir(el, direccion);
+        setTimeout(function () { promover(el, direccion); }, DURACION_SALIDA);
+      } else if (horizontal) {
+        el.classList.add('tarjeta-transicion');
+        el.style.transform = '';
+        setTimeout(function () { el.classList.remove('tarjeta-transicion'); }, 240);
+      }
+    }
+    document.addEventListener('pointerup', soltar);
+    document.addEventListener('pointercancel', soltar);
 
     // recordar la vista elegida la última vez
     if (vistaGuardada() === 'swipe') abrirSwipe();

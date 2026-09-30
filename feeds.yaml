@@ -137,6 +137,36 @@ confirmados:
     posicion_editorial: 14.5
     fuente_posicion: "Cobertura periodística documenta línea consistentemente crítica del kirchnerismo (entrevistas de Mario Pereyra) y audiencia en una Córdoba caracterizada como opositora al gobierno nacional peronista; propietario ligado a círculos agroindustriales cordobeses"
 
+  - medio: "El Cohete a la Luna"
+    tipo: "Portal de análisis/opinión"
+    feed_url: "https://www.elcohetealaluna.com/feed/"
+    posicion_editorial: 3.3
+    fuente_posicion: "Portal fundado y dirigido por Horacio Verbitsky (ex Página/12), con editoriales que también se emiten en AM530 (radio popular identificada con el kirchnerismo); línea de investigación/opinión consistentemente alineada al campo nacional-popular"
+
+  - medio: "Canal Abierto"
+    tipo: "Portal sindical/DDHH"
+    feed_url: "https://canalabierto.com.ar/feed/"
+    posicion_editorial: 3.6
+    fuente_posicion: "Vínculo institucional documentado con la CTA Autónoma (aparece como \"Agencia CTA\" en su propio sitio); cobertura centrada en sindicalismo y derechos humanos desde una perspectiva de izquierda sindical"
+
+  - medio: "Contraeditorial"
+    tipo: "Portal de opinión política"
+    feed_url: "https://contraeditorial.com/feed/"
+    posicion_editorial: 4.3
+    fuente_posicion: "Autodescripción en su página \"Quiénes somos\": periodismo \"contrahegemónico\" frente al \"poder corporativo del neoliberalismo\"; dirigido por Roberto Caballero (ex director de Tiempo Argentino y El Destape TV), figura identificada con el kirchnerismo"
+
+  - medio: "El Grito del Sur"
+    tipo: "Portal de política y sociedad"
+    feed_url: "https://elgritodelsur.com.ar/feed/"
+    posicion_editorial: 3.7
+    fuente_posicion: "Medio vinculado a Ofelia Fernández (ex legisladora porteña de La Cámpora); cobertura periodística (Nota al Pie, abril-mayo 2025) sobre intentos del gobierno de Milei de desalojarlos de su oficina, consistente con un alineamiento kirchnerista de izquierda"
+
+  - medio: "Infocielo"
+    tipo: "Portal de política y economía (Buenos Aires)"
+    feed_url: "https://infocielo.com/feed"
+    posicion_editorial: 4.8
+    fuente_posicion: "Medio cercano al Sindicato de Camioneros (Moyano); notas propias con enfoque sindical-crítico de los medios tradicionales (ej. \"Doble vara de Clarín y sus satélites al 'fuck you' de Pablo Moyano\"). Izquierda sindical/de poder más que ideológica, por eso más cerca del centro que los otros medios de izquierda del roster"
+
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.
 candidatos:

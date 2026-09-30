@@ -141,26 +141,48 @@ a { text-decoration: none; }
 .vista-opcion:hover { color: var(--text); }
 .vista-opcion.activo { background: var(--accent); color: var(--bg); }
 
-/* --- modo lectura (swipe animado entre historias) --- */
-#lector { position: fixed; inset: 0; z-index: 90; background: var(--bg); display: flex; flex-direction: column; }
-.lector-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.lector-contador { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+/* --- modo lectura (pila flotante de tarjetas sobre el feed) --- */
+#lector {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.lector-velo { position: fixed; inset: 0; z-index: 89; background: rgba(10, 11, 13, 0.52); pointer-events: none; }
+.lector-panel {
+  position: relative; z-index: 90; width: 100%; max-width: 460px; height: 100%; max-height: 760px;
+  display: flex; flex-direction: column; pointer-events: auto;
+}
+.lector-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px 12px; flex-shrink: 0; }
+.lector-contador { font-size: 0.78rem; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
 .vista-switch--compacta { padding: 3px; }
 .vista-switch--compacta .vista-opcion { padding: 6px 13px; font-size: 0.78rem; }
 .vista-switch--compacta .vista-opcion svg { width: 14px; height: 14px; }
-.lector-cuerpo { flex-grow: 1; overflow-y: auto; padding: 20px; touch-action: pan-y; }
-.lector-cuerpo .contenido-lector { max-width: 620px; margin: 0 auto; transition: transform 0.22s ease, opacity 0.22s ease; }
-.contenido-lector.lector-sale-izq { transform: translateX(-28px); opacity: 0; }
-.contenido-lector.lector-sale-der { transform: translateX(28px); opacity: 0; }
-.contenido-lector.lector-sin-anim { transition: none !important; }
+
+.lector-pila { position: relative; flex: 1 1 auto; min-height: 0; }
+.tarjeta-swipe {
+  position: absolute; inset: 0; overflow-y: auto; padding: 22px;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  will-change: transform, opacity;
+}
+.tarjeta-swipe--activa { z-index: 2; touch-action: pan-y; cursor: grab; }
+.tarjeta-swipe--peek { z-index: 1; pointer-events: none; overflow: hidden; transform: translateY(16px) scale(0.94); opacity: 0.85; }
+.tarjeta-swipe.tarjeta-arrastrando { transition: none !important; cursor: grabbing; }
+.tarjeta-swipe.tarjeta-transicion { transition: transform 0.26s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.22s ease; }
+.tarjeta-swipe.tarjeta-cayendo { transition: transform 0.36s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
+.tarjeta-swipe.tarjeta-sin-anim { transition: none !important; }
+.tarjeta-swipe--activa.tarjeta-cae-inicio { transform: translateY(-64px) scale(0.98); opacity: 0; }
+.tarjeta-swipe--peek.tarjeta-cae-inicio { transform: translateY(-64px) scale(0.9); opacity: 0; }
+
 .lector-item { display: flex; flex-direction: column; }
 .lector-resumen { display: flex; flex-direction: column; gap: 4px; }
 .lector-resumen .badges { margin-bottom: 4px; }
-.lector-resumen h2 { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin: 8px 0 0; line-height: 1.32; }
+.lector-resumen h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin: 8px 0 0; line-height: 1.3; }
 .lector-resumen h2 a { color: var(--text); }
 .lector-resumen h2 a:hover { text-decoration: underline; }
-.lector-resumen-texto { font-size: 1rem; line-height: 1.55; color: var(--text); margin: 14px 0 0; }
-.barra-lcr-bloque { margin: 20px 0 0; }
+.lector-resumen-texto { font-size: 0.96rem; line-height: 1.5; color: var(--text); margin: 12px 0 0; }
+.barra-lcr-bloque { margin: 18px 0 0; }
 .barra-lcr { display: flex; width: 100%; height: 34px; border-radius: 8px; overflow: hidden; }
 .barra-lcr-seg { display: flex; align-items: center; justify-content: center; min-width: 0; transition: width 0.3s ease; }
 .barra-lcr-seg span { font-size: 0.76rem; font-weight: 700; color: #fff; white-space: nowrap; }
@@ -169,7 +191,10 @@ a { text-decoration: none; }
 .barra-lcr-seg.cen span { color: #1a1a1a; }
 .barra-lcr-seg.der { background: var(--lcr-der); }
 .barra-lcr-leyenda { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-top: 6px; }
-.lector-resumen .acciones-historia { margin-top: 20px; }
+.lector-resumen .acciones-historia { margin-top: 18px; }
+.tarjeta-peek-contenido { display: flex; flex-direction: column; }
+.tarjeta-peek-contenido .badges { margin-bottom: 4px; }
+.tarjeta-peek-contenido h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 8px 0 0; line-height: 1.28; color: var(--text); }
 
 /* --- bloque expandible: coberturas colapsadas en el inicio, titulares en el lector --- */
 .btn-expandir {
@@ -183,10 +208,11 @@ a { text-decoration: none; }
 .expandible-contenido { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
 .expandible.expandido .expandible-contenido { max-height: 3000px; opacity: 1; }
 .expandible .notas { margin-top: 14px; }
-.lector-nav { display: flex; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; gap: 10px; }
+.lector-nav { display: flex; justify-content: space-between; padding: 12px 4px 4px; flex-shrink: 0; gap: 10px; }
 .lector-flecha {
   flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: 42px; border-radius: 10px; border: 1px solid var(--border); background: transparent;
+  height: 42px; border-radius: 10px; border: 1px solid var(--border); background: var(--card-bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   color: var(--text); font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: inherit;
 }
 .lector-flecha:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
@@ -297,7 +323,7 @@ a { text-decoration: none; }
       <span class="badge-consenso mixta">Cobertura mixta</span>
     </div>
     <h1>Papelera de WhatsApp: cómo vaciarla y para qué sirve</h1>
-    <p class="meta">3 coberturas de 3 medios · 17 de 20 medios no la cubrieron · Actualizado 30/09/2026 12:26 UTC</p>
+    <p class="meta">3 coberturas de 3 medios · 22 de 25 medios no la cubrieron · Actualizado 30/09/2026 14:22 UTC</p>
     <div class="acciones-historia">
       <button type="button" class="accion-icono btn-guardar" data-id="188675" aria-pressed="false" title="Guardar para después">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
@@ -373,7 +399,7 @@ a { text-decoration: none; }
     </div>
 
     
-    <p class="faltan">No la cubrieron: La Nación, Ámbito, La Izquierda Diario, Infobae, Página/12, Los Andes y 11 medios más — sin nota propia sobre esta historia al momento de esta actualización.</p>
+    <p class="faltan">No la cubrieron: La Nación, Ámbito, La Izquierda Diario, Infobae, Página/12, Los Andes y 16 medios más — sin nota propia sobre esta historia al momento de esta actualización.</p>
     
   </div>
 
@@ -599,19 +625,20 @@ a { text-decoration: none; }
     });
   })();
 
-  // --- Vista Swipe (feature principal: selector Feed/Swipe arriba del feed) ---
+  // --- Vista Swipe (feature principal: pila flotante sobre el feed) ---
   (function () {
     var lector = document.getElementById('lector');
     if (!lector) return;
-    var cuerpo = document.getElementById('lector-cuerpo');
-    var contenido = document.getElementById('lector-contenido');
+    var pila = document.getElementById('lector-pila');
     var contador = document.getElementById('lector-contador');
     var btnAnt = document.getElementById('lector-anterior');
     var btnSig = document.getElementById('lector-siguiente');
     var lista = [];
     var indice = 0;
     var animando = false;
-    var DURACION_ANIM = 220;
+    var DURACION_SALIDA = 260;
+    var DURACION_CAIDA = 380;
+    var UMBRAL_COMMIT = 100;
 
     var CLAVE_VISTA = 'puente-vista';
     function vistaGuardada() {
@@ -637,6 +664,10 @@ a { text-decoration: none; }
         return getComputedStyle(el).display !== 'none';
       });
     }
+
+    function nodoActivo() { return pila.querySelector('.tarjeta-swipe--activa'); }
+    function nodoPeek() { return pila.querySelector('.tarjeta-swipe--peek'); }
+    function siguienteIndice(i) { return lista.length ? (i + 1) % lista.length : 0; }
 
     // Barra de tendencia editorial de tres colores (izquierda/centro/derecha),
     // a partir de los porcentajes ya calculados en el pipeline.
@@ -674,9 +705,9 @@ a { text-decoration: none; }
       return bloque;
     }
 
-    // Tarjeta simplificada del swipe: titular, un resumen corto, la barra
-    // de tendencia y las acciones. El desglose titular-por-medio queda solo
-    // en la vista Feed (ahi si con el detalle completo).
+    // Tarjeta activa: titular, un resumen corto, la barra de tendencia y
+    // las acciones. El desglose titular-por-medio queda solo en la vista
+    // Feed (ahi si con el detalle completo).
     function construirItem(nodo) {
       var wrapper = document.createElement('div');
       wrapper.className = 'lector-item';
@@ -705,50 +736,126 @@ a { text-decoration: none; }
       return wrapper;
     }
 
-    function pintarContenido(nodo) {
-      contenido.innerHTML = '';
-      contenido.appendChild(construirItem(nodo));
-      contador.textContent = (indice + 1) + ' / ' + lista.length;
-      cuerpo.scrollTop = 0;
-      if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(contenido);
+    // Tarjeta que asoma detrás en la pila: liviana a propósito (no es
+    // interactiva, solo insinúa que hay más para ver).
+    function construirPeek(nodo) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'tarjeta-peek-contenido';
+      var badges = nodo.querySelector('.badges');
+      var titulo = nodo.querySelector('h2');
+      if (badges) wrapper.appendChild(badges.cloneNode(true));
+      if (titulo) wrapper.appendChild(titulo.cloneNode(true));
+      return wrapper;
     }
 
-    // direccion: null (sin animación, primera apertura) | 'sig' | 'ant'
-    function render(direccion) {
-      if (!lista.length) {
-        contenido.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
-        contador.textContent = '';
-        return;
+    function pintarEnNodo(nodo, esActiva) {
+      nodo.innerHTML = '';
+      if (esActiva) {
+        if (!lista.length) {
+          nodo.innerHTML = '<p class="lector-vacio">No hay más historias para mostrar acá.</p>';
+          contador.textContent = '';
+          return;
+        }
+        nodo.style.display = '';
+        nodo.appendChild(construirItem(lista[indice]));
+        contador.textContent = (indice + 1) + ' / ' + lista.length;
+        nodo.scrollTop = 0;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(nodo);
+      } else {
+        if (lista.length < 2) { nodo.style.display = 'none'; return; }
+        nodo.style.display = '';
+        nodo.appendChild(construirPeek(lista[siguienteIndice(indice)]));
       }
-      var nodo = lista[indice];
-      if (!direccion) {
-        contenido.classList.add('lector-sin-anim');
-        contenido.classList.remove('lector-sale-izq', 'lector-sale-der');
-        pintarContenido(nodo);
-        void contenido.offsetWidth;
-        contenido.classList.remove('lector-sin-anim');
-        return;
+    }
+
+    // Hace "caer" un elemento desde arriba hasta su posición de reposo
+    // (definida por su clase --activa o --peek). Mismo truco de reflow que
+    // usaba el slide+fade viejo, aplicado a dos elementos en vez de uno.
+    function hacerCaer(el) {
+      el.classList.add('tarjeta-sin-anim', 'tarjeta-cae-inicio');
+      void el.offsetWidth;
+      el.classList.remove('tarjeta-sin-anim', 'tarjeta-cae-inicio');
+      el.classList.add('tarjeta-cayendo');
+      setTimeout(function () { el.classList.remove('tarjeta-cayendo'); }, DURACION_CAIDA);
+    }
+
+    // Anima la salida de la tarjeta activa hacia un costado (volando),
+    // ya sea por botón/teclado (arranca en reposo) o al soltar un arrastre
+    // (arranca desde la posición donde quedó el dedo, sin saltos).
+    function despedir(nodo, direccion) {
+      nodo.classList.add('tarjeta-transicion');
+      void nodo.offsetWidth;
+      var x = direccion === 'sig' ? '-130%' : '130%';
+      var rot = direccion === 'sig' ? -16 : 16;
+      nodo.style.transform = 'translate(' + x + ', 16px) rotate(' + rot + 'deg)';
+      nodo.style.opacity = '0';
+    }
+
+    // Se llama cuando la tarjeta activa ya terminó de volar afuera:
+    // promueve la que asomaba detrás (ya tiene el contenido correcto) al
+    // frente, y hace caer contenido nuevo en el lugar que quedó atrás.
+    function promover(nodoSaliente, direccion) {
+      indice = direccion === 'ant' ? (indice - 1 + lista.length) % lista.length : siguienteIndice(indice);
+      var peekActual = nodoPeek();
+
+      if (lista.length > 1 && peekActual) {
+        peekActual.classList.remove('tarjeta-swipe--peek');
+        peekActual.classList.add('tarjeta-swipe--activa', 'tarjeta-transicion');
+        peekActual.innerHTML = '';
+        peekActual.appendChild(construirItem(lista[indice]));
+        peekActual.scrollTop = 0;
+        contador.textContent = (indice + 1) + ' / ' + lista.length;
+        if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(peekActual);
+        setTimeout(function () { peekActual.classList.remove('tarjeta-transicion'); }, DURACION_CAIDA);
       }
+
+      nodoSaliente.classList.remove('tarjeta-swipe--activa', 'tarjeta-transicion', 'tarjeta-arrastrando');
+      nodoSaliente.style.transform = '';
+      nodoSaliente.style.opacity = '';
+      nodoSaliente.classList.add('tarjeta-swipe--peek');
+
+      if (lista.length > 1) {
+        nodoSaliente.style.display = '';
+        nodoSaliente.innerHTML = '';
+        nodoSaliente.appendChild(construirPeek(lista[siguienteIndice(indice)]));
+        hacerCaer(nodoSaliente);
+      } else {
+        nodoSaliente.style.display = 'none';
+        nodoSaliente.innerHTML = '';
+      }
+
+      btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+      setTimeout(function () { animando = false; }, DURACION_CAIDA);
+    }
+
+    function avanzar(direccion) {
+      if (!lista.length || animando || lista.length <= 1) return;
       animando = true;
-      var claseSalida = direccion === 'sig' ? 'lector-sale-izq' : 'lector-sale-der';
-      var claseEntrada = direccion === 'sig' ? 'lector-sale-der' : 'lector-sale-izq';
-      contenido.classList.add(claseSalida);
-      setTimeout(function () {
-        pintarContenido(nodo);
-        contenido.classList.add('lector-sin-anim');
-        contenido.classList.remove(claseSalida);
-        contenido.classList.add(claseEntrada);
-        void contenido.offsetWidth;
-        contenido.classList.remove('lector-sin-anim', claseEntrada);
-        setTimeout(function () { animando = false; }, DURACION_ANIM);
-      }, DURACION_ANIM);
+      var activa = nodoActivo();
+      despedir(activa, direccion);
+      setTimeout(function () { promover(activa, direccion); }, DURACION_SALIDA);
+    }
+
+    // direccion: null (apertura, cae la tarjeta activa y después la que
+    // asoma detrás) | 'sig' | 'ant' (delegado a avanzar)
+    function render(direccion) {
+      if (!direccion) {
+        var activa = nodoActivo(), peek = nodoPeek();
+        pintarEnNodo(activa, true);
+        pintarEnNodo(peek, false);
+        btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+        if (!lista.length) return;
+        hacerCaer(activa);
+        if (lista.length > 1) setTimeout(function () { hacerCaer(peek); }, 100);
+        return;
+      }
+      avanzar(direccion);
     }
 
     // desdeId es opcional: sin el, arranca siempre en la primera historia
     // visible (respetando el filtro de busqueda/categoria activo)
     function abrir(desdeId) {
       lista = historiasVisibles();
-      if (!lista.length) return;
       var idx = 0;
       if (desdeId) {
         for (var i = 0; i < lista.length; i++) {
@@ -757,7 +864,6 @@ a { text-decoration: none; }
       }
       indice = idx;
       lector.hidden = false;
-      document.body.style.overflow = 'hidden';
       render(null);
     }
 
@@ -769,14 +875,15 @@ a { text-decoration: none; }
 
     function cerrar() {
       lector.hidden = true;
-      document.body.style.overflow = '';
-      contenido.innerHTML = '';
       guardarVista('feed');
       marcarVista('feed');
+      var nodos = pila.querySelectorAll('.tarjeta-swipe');
+      if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
+      if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
     }
 
-    function siguiente() { if (!lista.length || animando) return; indice = (indice + 1) % lista.length; render('sig'); }
-    function anterior() { if (!lista.length || animando) return; indice = (indice - 1 + lista.length) % lista.length; render('ant'); }
+    function siguiente() { avanzar('sig'); }
+    function anterior() { avanzar('ant'); }
 
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-vista]');
@@ -794,14 +901,59 @@ a { text-decoration: none; }
       else if (e.key === 'ArrowLeft') anterior();
     });
 
-    var xInicio = null;
-    cuerpo.addEventListener('touchstart', function (e) { xInicio = e.touches[0].clientX; }, { passive: true });
-    cuerpo.addEventListener('touchend', function (e) {
-      if (xInicio === null) return;
-      var delta = e.changedTouches[0].clientX - xInicio;
-      if (Math.abs(delta) > 60) { if (delta < 0) siguiente(); else anterior(); }
-      xInicio = null;
-    }, { passive: true });
+    // --- arrastre en vivo: la tarjeta activa sigue al dedo/mouse en tiempo
+    // real (Pointer Events, así también anda con mouse). Si el gesto resulta
+    // mayormente vertical se deja pasar (para que el scroll del contenido
+    // largo funcione normal); solo se toma como swipe si es horizontal. ---
+    var arrastre = null;
+
+    pila.addEventListener('pointerdown', function (e) {
+      if (animando || lista.length <= 1) return;
+      if (e.target.closest('a, button, input, textarea, select, label')) return;
+      var activa = nodoActivo();
+      if (!activa || !activa.contains(e.target)) return;
+      arrastre = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, decidido: false, horizontal: false, el: activa };
+    });
+
+    document.addEventListener('pointermove', function (e) {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      var dx = e.clientX - arrastre.x0, dy = e.clientY - arrastre.y0;
+      arrastre.dx = dx; arrastre.dy = dy;
+      if (!arrastre.decidido) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          arrastre.decidido = true;
+          arrastre.horizontal = Math.abs(dx) > Math.abs(dy);
+          if (arrastre.horizontal) {
+            arrastre.el.classList.add('tarjeta-arrastrando');
+            try { arrastre.el.setPointerCapture(arrastre.id); } catch (err) {}
+          }
+        }
+      }
+      if (arrastre.decidido && arrastre.horizontal) {
+        e.preventDefault();
+        var rot = Math.max(-16, Math.min(16, dx / 14));
+        arrastre.el.style.transform = 'translate(' + dx + 'px, ' + (dy * 0.05) + 'px) rotate(' + rot + 'deg)';
+      }
+    }, { passive: false });
+
+    function soltar(e) {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      var el = arrastre.el, horizontal = arrastre.horizontal, dx = arrastre.dx;
+      arrastre = null;
+      el.classList.remove('tarjeta-arrastrando');
+      if (horizontal && Math.abs(dx) > UMBRAL_COMMIT) {
+        var direccion = dx < 0 ? 'sig' : 'ant';
+        animando = true;
+        despedir(el, direccion);
+        setTimeout(function () { promover(el, direccion); }, DURACION_SALIDA);
+      } else if (horizontal) {
+        el.classList.add('tarjeta-transicion');
+        el.style.transform = '';
+        setTimeout(function () { el.classList.remove('tarjeta-transicion'); }, 240);
+      }
+    }
+    document.addEventListener('pointerup', soltar);
+    document.addEventListener('pointercancel', soltar);
 
     // recordar la vista elegida la última vez
     if (vistaGuardada() === 'swipe') abrirSwipe();
