@@ -48,6 +48,21 @@
   --c-consenso: #4ade80; --c-mixta: #fbbf24; --c-polarizada: #f87171;
   --lcr-izq: #e2685a; --lcr-cen: #838a96; --lcr-der: #5b8cf0;
 }
+
+/* --- transiciones nativas entre paginas: fundido cruzado automatico del
+   navegador entre navegaciones (Chrome/Edge; en el resto no pasa nada,
+   es progresivo). El cambio de tema usa su propio efecto (mas abajo,
+   ".transicion-tema") y apaga este fundido por defecto para no duplicarse. --- */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 0.36s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+html.transicion-tema::view-transition-old(root) { animation: none; }
+html.transicion-tema::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { color-scheme: light dark; }
@@ -88,6 +103,10 @@ a { text-decoration: none; }
 }
 .btn-tema { width: 34px; height: 34px; padding: 0; }
 .btn-tema:hover { color: var(--text); border-color: var(--accent); }
+.btn-tema svg { transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease; }
+.btn-tema svg.icono-sin-anim { transition: none !important; }
+.btn-tema svg.icono-saliendo { transform: rotate(-110deg) scale(0.3); opacity: 0; }
+.btn-tema svg.icono-entrando-desde { transform: rotate(110deg) scale(0.3); opacity: 0; }
 .btn-instalar { padding: 0 14px; height: 34px; font-size: 0.8rem; font-weight: 600; color: var(--accent); border-color: var(--accent); }
 .btn-instalar:hover { background: var(--accent); color: var(--card-bg); }
 
@@ -165,11 +184,15 @@ a { text-decoration: none; }
   padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
   pointer-events: none;
 }
-.lector-velo { position: fixed; inset: 0; z-index: 89; background: rgba(10, 11, 13, 0.52); pointer-events: none; }
+.lector-velo { position: fixed; inset: 0; z-index: 89; background: rgba(10, 11, 13, 0.52); pointer-events: none; opacity: 0; transition: opacity 0.28s ease; }
 .lector-panel {
   position: relative; z-index: 90; width: 100%; max-width: 460px; height: 100%; max-height: 760px;
   display: flex; flex-direction: column; pointer-events: auto;
+  transform: translateY(24px) scale(0.97); opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.24s ease;
 }
+#lector.lector-abierto .lector-velo { opacity: 1; }
+#lector.lector-abierto .lector-panel { transform: translateY(0) scale(1); opacity: 1; }
 .lector-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px 12px; flex-shrink: 0; }
 .lector-contador { font-size: 0.78rem; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
 .vista-switch--compacta { padding: 3px; }
@@ -199,6 +222,9 @@ a { text-decoration: none; }
 .lector-resumen h2 a { color: var(--text); }
 .lector-resumen h2 a:hover { text-decoration: underline; }
 .lector-resumen-texto { font-size: 0.96rem; line-height: 1.5; color: var(--text); margin: 12px 0 0; }
+.lector-fecha { font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 0; }
+.lector-cobertura { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
+.lector-cobertura strong { color: var(--text); font-weight: 700; }
 .barra-lcr-bloque { margin: 18px 0 0; }
 .barra-lcr { display: flex; width: 100%; height: 34px; border-radius: 8px; overflow: hidden; }
 .barra-lcr-seg { display: flex; align-items: center; justify-content: center; min-width: 0; transition: width 0.3s ease; }
@@ -366,7 +392,7 @@ a { text-decoration: none; }
 <div class="contenedor">
   <div>
     <h1>Comparación de medios</h1>
-    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado 30/09/2026 21:20 UTC.</p>
+    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado 30/09/2026 21:56 UTC.</p>
   </div>
 
   <div class="leyenda">
@@ -519,7 +545,7 @@ a { text-decoration: none; }
           <th class="rotulo-fila" data-idx="0" title="La Nación">La Nación</th>
           
             
-            <td class="celda diagonal" title="La Nación: 481 historias cubiertas">481</td>
+            <td class="celda diagonal" title="La Nación: 450 historias cubiertas">450</td>
             
           
             
@@ -529,7 +555,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="0" data-col="2" title="La Nación / Ámbito: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="0" data-col="2" title="La Nación / Ámbito: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -549,7 +575,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="0" data-col="6" title="La Nación / Los Andes: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="0" data-col="6" title="La Nación / Los Andes: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -574,7 +600,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="0" data-col="11" title="La Nación / El Día: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="0" data-col="11" title="La Nación / El Día: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -639,7 +665,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="0" data-col="24" title="La Nación / Infocielo: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="0" data-col="24" title="La Nación / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -688,12 +714,12 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Perfil: 340 historias cubiertas">340</td>
+            <td class="celda diagonal" title="Perfil: 320 historias cubiertas">320</td>
             
           
             
             
-            <td class="celda" data-fila="1" data-col="2" title="Perfil / Ámbito: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="1" data-col="2" title="Perfil / Ámbito: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -703,12 +729,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="1" data-col="4" title="Perfil / Infobae: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="1" data-col="4" title="Perfil / Infobae: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
             
-            <td class="celda" data-fila="1" data-col="5" title="Perfil / Página/12: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="1" data-col="5" title="Perfil / Página/12: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -808,7 +834,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="1" data-col="25" title="Perfil / Periodismo de Izquierda: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="1" data-col="25" title="Perfil / Periodismo de Izquierda: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -848,16 +874,16 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="2" data-col="0" title="Ámbito / La Nación: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="2" data-col="0" title="Ámbito / La Nación: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
             
-            <td class="celda" data-fila="2" data-col="1" title="Ámbito / Perfil: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="2" data-col="1" title="Ámbito / Perfil: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
-            <td class="celda diagonal" title="Ámbito: 101 historias cubiertas">101</td>
+            <td class="celda diagonal" title="Ámbito: 98 historias cubiertas">98</td>
             
           
             
@@ -872,7 +898,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="2" data-col="5" title="Ámbito / Página/12: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="2" data-col="5" title="Ámbito / Página/12: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -892,7 +918,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="2" data-col="9" title="Ámbito / Misiones Online: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="2" data-col="9" title="Ámbito / Misiones Online: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -932,12 +958,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="2" data-col="17" title="Ámbito / La Capital: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="2" data-col="17" title="Ámbito / La Capital: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
             
-            <td class="celda" data-fila="2" data-col="18" title="Ámbito / Crónica: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="2" data-col="18" title="Ámbito / Crónica: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -1026,7 +1052,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="La Izquierda Diario: 77 historias cubiertas">77</td>
+            <td class="celda diagonal" title="La Izquierda Diario: 71 historias cubiertas">71</td>
             
           
             
@@ -1051,12 +1077,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="3" data-col="8" title="La Izquierda Diario / La Gaceta: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="3" data-col="8" title="La Izquierda Diario / La Gaceta: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
             
-            <td class="celda" data-fila="3" data-col="9" title="La Izquierda Diario / Misiones Online: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="3" data-col="9" title="La Izquierda Diario / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -1076,7 +1102,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="3" data-col="13" title="La Izquierda Diario / Clarín: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="3" data-col="13" title="La Izquierda Diario / Clarín: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -1096,7 +1122,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="3" data-col="17" title="La Izquierda Diario / La Capital: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="3" data-col="17" title="La Izquierda Diario / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -1131,7 +1157,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="3" data-col="24" title="La Izquierda Diario / Infocielo: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="3" data-col="24" title="La Izquierda Diario / Infocielo: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -1151,12 +1177,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="3" data-col="28" title="La Izquierda Diario / DiarioAR: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="3" data-col="28" title="La Izquierda Diario / DiarioAR: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
             
-            <td class="celda" data-fila="3" data-col="29" title="La Izquierda Diario / La Retaguardia: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="3" data-col="29" title="La Izquierda Diario / La Retaguardia: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -1166,7 +1192,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="3" data-col="31" title="La Izquierda Diario / Indymedia Argentina: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="3" data-col="31" title="La Izquierda Diario / Indymedia Argentina: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -1181,7 +1207,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="4" data-col="1" title="Infobae / Perfil: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="4" data-col="1" title="Infobae / Perfil: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -1195,7 +1221,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Infobae: 1551 historias cubiertas">1551</td>
+            <td class="celda diagonal" title="Infobae: 1537 historias cubiertas">1537</td>
             
           
             
@@ -1345,12 +1371,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="5" data-col="1" title="Página/12 / Perfil: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="5" data-col="1" title="Página/12 / Perfil: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
             
-            <td class="celda" data-fila="5" data-col="2" title="Página/12 / Ámbito: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="5" data-col="2" title="Página/12 / Ámbito: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -1394,7 +1420,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="5" data-col="11" title="Página/12 / El Día: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="5" data-col="11" title="Página/12 / El Día: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -1424,12 +1450,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="5" data-col="17" title="Página/12 / La Capital: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="5" data-col="17" title="Página/12 / La Capital: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
             
-            <td class="celda" data-fila="5" data-col="18" title="Página/12 / Crónica: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="5" data-col="18" title="Página/12 / Crónica: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -1464,7 +1490,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="5" data-col="25" title="Página/12 / Periodismo de Izquierda: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="5" data-col="25" title="Página/12 / Periodismo de Izquierda: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -1479,7 +1505,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="5" data-col="28" title="Página/12 / DiarioAR: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="5" data-col="28" title="Página/12 / DiarioAR: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -1504,7 +1530,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="0" title="Los Andes / La Nación: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="6" data-col="0" title="Los Andes / La Nación: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -1533,7 +1559,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Los Andes: 177 historias cubiertas">177</td>
+            <td class="celda diagonal" title="Los Andes: 173 historias cubiertas">173</td>
             
           
             
@@ -1543,7 +1569,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="8" title="Los Andes / La Gaceta: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="6" data-col="8" title="Los Andes / La Gaceta: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -1563,7 +1589,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="12" title="Los Andes / El Intransigente: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="6" data-col="12" title="Los Andes / El Intransigente: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -1573,7 +1599,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="14" title="Los Andes / TN: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="6" data-col="14" title="Los Andes / TN: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -1618,7 +1644,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="23" title="Los Andes / El Grito del Sur: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="6" data-col="23" title="Los Andes / El Grito del Sur: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -1628,7 +1654,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="25" title="Los Andes / Periodismo de Izquierda: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="6" data-col="25" title="Los Andes / Periodismo de Izquierda: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -1702,7 +1728,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Río Negro: 226 historias cubiertas">226</td>
+            <td class="celda diagonal" title="Río Negro: 218 historias cubiertas">218</td>
             
           
             
@@ -1712,7 +1738,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="7" data-col="9" title="Río Negro / Misiones Online: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="7" data-col="9" title="Río Negro / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -1722,7 +1748,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="7" data-col="11" title="Río Negro / El Día: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="7" data-col="11" title="Río Negro / El Día: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -1847,7 +1873,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="3" title="La Gaceta / La Izquierda Diario: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="8" data-col="3" title="La Gaceta / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -1862,7 +1888,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="6" title="La Gaceta / Los Andes: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="8" data-col="6" title="La Gaceta / Los Andes: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -1871,7 +1897,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="La Gaceta: 256 historias cubiertas">256</td>
+            <td class="celda diagonal" title="La Gaceta: 229 historias cubiertas">229</td>
             
           
             
@@ -1886,12 +1912,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="11" title="La Gaceta / El Día: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="8" data-col="11" title="La Gaceta / El Día: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
             
-            <td class="celda" data-fila="8" data-col="12" title="La Gaceta / El Intransigente: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="8" data-col="12" title="La Gaceta / El Intransigente: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -1901,7 +1927,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="14" title="La Gaceta / TN: 9% de historias en común" style="background: rgba(var(--accent-rgb), 0.05);">9%</td>
+            <td class="celda" data-fila="8" data-col="14" title="La Gaceta / TN: 8% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">8%</td>
             
           
             
@@ -1961,7 +1987,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="26" title="La Gaceta / La Tinta: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="8" data-col="26" title="La Gaceta / La Tinta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -1971,7 +1997,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="28" title="La Gaceta / DiarioAR: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="8" data-col="28" title="La Gaceta / DiarioAR: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -2006,12 +2032,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="9" data-col="2" title="Misiones Online / Ámbito: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="9" data-col="2" title="Misiones Online / Ámbito: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
             
-            <td class="celda" data-fila="9" data-col="3" title="Misiones Online / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="9" data-col="3" title="Misiones Online / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2031,7 +2057,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="9" data-col="7" title="Misiones Online / Río Negro: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="9" data-col="7" title="Misiones Online / Río Negro: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2040,7 +2066,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Misiones Online: 79 historias cubiertas">79</td>
+            <td class="celda diagonal" title="Misiones Online: 73 historias cubiertas">73</td>
             
           
             
@@ -2060,7 +2086,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="9" data-col="13" title="Misiones Online / Clarín: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="9" data-col="13" title="Misiones Online / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2075,12 +2101,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="9" data-col="16" title="Misiones Online / MercoPress: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="9" data-col="16" title="Misiones Online / MercoPress: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
             
-            <td class="celda" data-fila="9" data-col="17" title="Misiones Online / La Capital: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="9" data-col="17" title="Misiones Online / La Capital: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2105,7 +2131,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="9" data-col="22" title="Misiones Online / Contraeditorial: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="9" data-col="22" title="Misiones Online / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2324,7 +2350,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="0" title="El Día / La Nación: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="11" data-col="0" title="El Día / La Nación: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -2349,7 +2375,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="5" title="El Día / Página/12: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="11" data-col="5" title="El Día / Página/12: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2359,12 +2385,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="7" title="El Día / Río Negro: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="11" data-col="7" title="El Día / Río Negro: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
             
-            <td class="celda" data-fila="11" data-col="8" title="El Día / La Gaceta: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="11" data-col="8" title="El Día / La Gaceta: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -2378,7 +2404,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="El Día: 258 historias cubiertas">258</td>
+            <td class="celda diagonal" title="El Día: 246 historias cubiertas">246</td>
             
           
             
@@ -2388,12 +2414,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="13" title="El Día / Clarín: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="11" data-col="13" title="El Día / Clarín: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
             
-            <td class="celda" data-fila="11" data-col="14" title="El Día / TN: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="11" data-col="14" title="El Día / TN: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -2413,7 +2439,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="18" title="El Día / Crónica: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
+            <td class="celda" data-fila="11" data-col="18" title="El Día / Crónica: 8% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">8%</td>
             
           
             
@@ -2443,7 +2469,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="24" title="El Día / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="11" data-col="24" title="El Día / Infocielo: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -2463,7 +2489,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="28" title="El Día / DiarioAR: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="11" data-col="28" title="El Día / DiarioAR: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2518,7 +2544,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="12" data-col="6" title="El Intransigente / Los Andes: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="12" data-col="6" title="El Intransigente / Los Andes: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2528,7 +2554,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="12" data-col="8" title="El Intransigente / La Gaceta: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="12" data-col="8" title="El Intransigente / La Gaceta: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -2547,12 +2573,12 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="El Intransigente: 323 historias cubiertas">323</td>
+            <td class="celda diagonal" title="El Intransigente: 312 historias cubiertas">312</td>
             
           
             
             
-            <td class="celda" data-fila="12" data-col="13" title="El Intransigente / Clarín: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="12" data-col="13" title="El Intransigente / Clarín: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -2577,7 +2603,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="12" data-col="18" title="El Intransigente / Crónica: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
+            <td class="celda" data-fila="12" data-col="18" title="El Intransigente / Crónica: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -2667,7 +2693,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="3" title="Clarín / La Izquierda Diario: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="13" data-col="3" title="Clarín / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -2697,7 +2723,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="9" title="Clarín / Misiones Online: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="13" data-col="9" title="Clarín / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2707,21 +2733,21 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="11" title="Clarín / El Día: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="13" data-col="11" title="Clarín / El Día: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
             
-            <td class="celda" data-fila="13" data-col="12" title="Clarín / El Intransigente: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="13" data-col="12" title="Clarín / El Intransigente: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
-            <td class="celda diagonal" title="Clarín: 185 historias cubiertas">185</td>
+            <td class="celda diagonal" title="Clarín: 183 historias cubiertas">183</td>
             
           
             
             
-            <td class="celda" data-fila="13" data-col="14" title="Clarín / TN: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="13" data-col="14" title="Clarín / TN: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -2736,12 +2762,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="17" title="Clarín / La Capital: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="13" data-col="17" title="Clarín / La Capital: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
             
-            <td class="celda" data-fila="13" data-col="18" title="Clarín / Crónica: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="13" data-col="18" title="Clarín / Crónica: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
             
           
             
@@ -2771,7 +2797,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="24" title="Clarín / Infocielo: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="13" data-col="24" title="Clarín / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2781,7 +2807,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="26" title="Clarín / La Tinta: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="13" data-col="26" title="Clarín / La Tinta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -2791,7 +2817,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="28" title="Clarín / DiarioAR: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="13" data-col="28" title="Clarín / DiarioAR: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -2846,7 +2872,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="6" title="TN / Los Andes: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="14" data-col="6" title="TN / Los Andes: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -2856,7 +2882,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="8" title="TN / La Gaceta: 9% de historias en común" style="background: rgba(var(--accent-rgb), 0.05);">9%</td>
+            <td class="celda" data-fila="14" data-col="8" title="TN / La Gaceta: 8% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">8%</td>
             
           
             
@@ -2871,7 +2897,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="11" title="TN / El Día: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="14" data-col="11" title="TN / El Día: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -2881,11 +2907,11 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="13" title="TN / Clarín: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="14" data-col="13" title="TN / Clarín: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
-            <td class="celda diagonal" title="TN: 527 historias cubiertas">527</td>
+            <td class="celda diagonal" title="TN: 510 historias cubiertas">510</td>
             
           
             
@@ -2900,7 +2926,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="17" title="TN / La Capital: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="14" data-col="17" title="TN / La Capital: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -3054,7 +3080,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Buenos Aires Times: 82 historias cubiertas">82</td>
+            <td class="celda diagonal" title="Buenos Aires Times: 80 historias cubiertas">80</td>
             
           
             
@@ -3189,7 +3215,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="16" data-col="9" title="MercoPress / Misiones Online: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="16" data-col="9" title="MercoPress / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -3318,12 +3344,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="2" title="La Capital / Ámbito: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="17" data-col="2" title="La Capital / Ámbito: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
             
-            <td class="celda" data-fila="17" data-col="3" title="La Capital / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="17" data-col="3" title="La Capital / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -3333,7 +3359,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="5" title="La Capital / Página/12: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="17" data-col="5" title="La Capital / Página/12: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -3353,7 +3379,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="9" title="La Capital / Misiones Online: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="17" data-col="9" title="La Capital / Misiones Online: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -3373,12 +3399,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="13" title="La Capital / Clarín: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="17" data-col="13" title="La Capital / Clarín: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
             
-            <td class="celda" data-fila="17" data-col="14" title="La Capital / TN: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="17" data-col="14" title="La Capital / TN: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -3392,7 +3418,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="La Capital: 168 historias cubiertas">168</td>
+            <td class="celda diagonal" title="La Capital: 158 historias cubiertas">158</td>
             
           
             
@@ -3427,7 +3453,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="24" title="La Capital / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="17" data-col="24" title="La Capital / Infocielo: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -3437,7 +3463,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="26" title="La Capital / La Tinta: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="17" data-col="26" title="La Capital / La Tinta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -3482,7 +3508,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="18" data-col="2" title="Crónica / Ámbito: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="18" data-col="2" title="Crónica / Ámbito: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -3497,7 +3523,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="18" data-col="5" title="Crónica / Página/12: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="18" data-col="5" title="Crónica / Página/12: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -3527,17 +3553,17 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="18" data-col="11" title="Crónica / El Día: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
+            <td class="celda" data-fila="18" data-col="11" title="Crónica / El Día: 8% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">8%</td>
             
           
             
             
-            <td class="celda" data-fila="18" data-col="12" title="Crónica / El Intransigente: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
+            <td class="celda" data-fila="18" data-col="12" title="Crónica / El Intransigente: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
             
-            <td class="celda" data-fila="18" data-col="13" title="Crónica / Clarín: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="18" data-col="13" title="Crónica / Clarín: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
             
           
             
@@ -3561,7 +3587,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Crónica: 308 historias cubiertas">308</td>
+            <td class="celda diagonal" title="Crónica: 280 historias cubiertas">280</td>
             
           
             
@@ -4068,7 +4094,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Canal Abierto: 12 historias cubiertas">12</td>
+            <td class="celda diagonal" title="Canal Abierto: 13 historias cubiertas">13</td>
             
           
             
@@ -4173,7 +4199,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="22" data-col="9" title="Contraeditorial / Misiones Online: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="22" data-col="9" title="Contraeditorial / Misiones Online: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4267,7 +4293,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="22" data-col="28" title="Contraeditorial / DiarioAR: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="22" data-col="28" title="Contraeditorial / DiarioAR: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4322,7 +4348,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="23" data-col="6" title="El Grito del Sur / Los Andes: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="23" data-col="6" title="El Grito del Sur / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4456,7 +4482,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="24" data-col="0" title="Infocielo / La Nación: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="24" data-col="0" title="Infocielo / La Nación: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4471,7 +4497,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="24" data-col="3" title="Infocielo / La Izquierda Diario: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="24" data-col="3" title="Infocielo / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -4511,7 +4537,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="24" data-col="11" title="Infocielo / El Día: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="24" data-col="11" title="Infocielo / El Día: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -4521,7 +4547,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="24" data-col="13" title="Infocielo / Clarín: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="24" data-col="13" title="Infocielo / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4541,7 +4567,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="24" data-col="17" title="Infocielo / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="24" data-col="17" title="Infocielo / La Capital: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -4610,7 +4636,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="24" data-col="31" title="Infocielo / Indymedia Argentina: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="24" data-col="31" title="Infocielo / Indymedia Argentina: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -4625,7 +4651,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="25" data-col="1" title="Periodismo de Izquierda / Perfil: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="25" data-col="1" title="Periodismo de Izquierda / Perfil: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4645,12 +4671,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="25" data-col="5" title="Periodismo de Izquierda / Página/12: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="25" data-col="5" title="Periodismo de Izquierda / Página/12: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
             
-            <td class="celda" data-fila="25" data-col="6" title="Periodismo de Izquierda / Los Andes: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="25" data-col="6" title="Periodismo de Izquierda / Los Andes: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4824,7 +4850,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="26" data-col="8" title="La Tinta / La Gaceta: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="26" data-col="8" title="La Tinta / La Gaceta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4849,7 +4875,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="26" data-col="13" title="La Tinta / Clarín: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="26" data-col="13" title="La Tinta / Clarín: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4869,7 +4895,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="26" data-col="17" title="La Tinta / La Capital: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="26" data-col="17" title="La Tinta / La Capital: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -4923,7 +4949,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="26" data-col="28" title="La Tinta / DiarioAR: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="26" data-col="28" title="La Tinta / DiarioAR: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -5127,7 +5153,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="3" title="DiarioAR / La Izquierda Diario: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="28" data-col="3" title="DiarioAR / La Izquierda Diario: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -5137,7 +5163,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="5" title="DiarioAR / Página/12: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="28" data-col="5" title="DiarioAR / Página/12: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -5152,7 +5178,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="8" title="DiarioAR / La Gaceta: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="28" data-col="8" title="DiarioAR / La Gaceta: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -5167,7 +5193,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="11" title="DiarioAR / El Día: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="28" data-col="11" title="DiarioAR / El Día: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -5177,7 +5203,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="13" title="DiarioAR / Clarín: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="28" data-col="13" title="DiarioAR / Clarín: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -5222,7 +5248,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="22" title="DiarioAR / Contraeditorial: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="28" data-col="22" title="DiarioAR / Contraeditorial: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -5242,7 +5268,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="26" title="DiarioAR / La Tinta: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="28" data-col="26" title="DiarioAR / La Tinta: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -5251,7 +5277,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="DiarioAR: 105 historias cubiertas">105</td>
+            <td class="celda diagonal" title="DiarioAR: 104 historias cubiertas">104</td>
             
           
             
@@ -5266,7 +5292,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="31" title="DiarioAR / Indymedia Argentina: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="28" data-col="31" title="DiarioAR / Indymedia Argentina: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
         </tr>
@@ -5291,7 +5317,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="29" data-col="3" title="La Retaguardia / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
+            <td class="celda" data-fila="29" data-col="3" title="La Retaguardia / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -5619,7 +5645,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="31" data-col="3" title="Indymedia Argentina / La Izquierda Diario: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="31" data-col="3" title="Indymedia Argentina / La Izquierda Diario: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -5724,7 +5750,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="31" data-col="24" title="Indymedia Argentina / Infocielo: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="31" data-col="24" title="Indymedia Argentina / Infocielo: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -5744,7 +5770,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="31" data-col="28" title="Indymedia Argentina / DiarioAR: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="31" data-col="28" title="Indymedia Argentina / DiarioAR: 0% de historias en común" style="background: rgba(var(--accent-rgb), 0.0);">0%</td>
             
           
             
@@ -6141,11 +6167,60 @@ a { text-decoration: none; }
       if (sol) sol.hidden = osc;
       if (luna) luna.hidden = !osc;
     }
+    // Gira + achica + desvanece el icono que se va, y trae el nuevo desde
+    // el giro opuesto -- mismo truco de reflow que usan las tarjetas del
+    // swipe (clase "sin-anim" para fijar el estado de arranque sin
+    // transicion, reflow, sacarla recién ahí anima).
+    function animarIconos(irAOscuro) {
+      var saliente = irAOscuro ? sol : luna;
+      var entrante = irAOscuro ? luna : sol;
+      if (saliente) {
+        saliente.classList.add('icono-saliendo');
+        setTimeout(function () { saliente.hidden = true; saliente.classList.remove('icono-saliendo'); }, 320);
+      }
+      if (entrante) {
+        entrante.hidden = false;
+        entrante.classList.add('icono-sin-anim', 'icono-entrando-desde');
+        void entrante.offsetWidth;
+        entrante.classList.remove('icono-sin-anim', 'icono-entrando-desde');
+      }
+    }
+    // Efecto iris: un circulo que crece desde el boton revela el tema
+    // nuevo, con un desenfoque que se despeja a la vez (se ve "aparecer"
+    // en vez de cortar la pantalla al medio). Sin soporte de View
+    // Transitions (o con "reducir movimiento" activado), el tema cambia
+    // igual, solo que sin el efecto.
+    function aplicarConIris(irAOscuro) {
+      var nuevo = irAOscuro ? 'dark' : 'light';
+      var aplicar = function () {
+        document.documentElement.setAttribute('data-theme', nuevo);
+        try { localStorage.setItem('puente-tema', irAOscuro ? 'oscuro' : 'claro'); } catch (e) {}
+      };
+      var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!document.startViewTransition || sinMovimiento) { aplicar(); return; }
+      var r = btn.getBoundingClientRect();
+      var x = r.left + r.width / 2, y = r.top + r.height / 2;
+      var radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      document.documentElement.classList.add('transicion-tema');
+      var transicion = document.startViewTransition(aplicar);
+      transicion.ready.then(function () {
+        document.documentElement.animate(
+          { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + radio + 'px at ' + x + 'px ' + y + 'px)'] },
+          { duration: 520, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' }
+        );
+        document.documentElement.animate(
+          { filter: ['blur(16px)', 'blur(0px)'] },
+          { duration: 520, easing: 'ease-out', pseudoElement: '::view-transition-new(root)' }
+        );
+      });
+      transicion.finished.finally(function () {
+        document.documentElement.classList.remove('transicion-tema');
+      });
+    }
     btn.addEventListener('click', function () {
-      var nuevo = oscuroActivo() ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', nuevo);
-      try { localStorage.setItem('puente-tema', nuevo === 'dark' ? 'oscuro' : 'claro'); } catch (e) {}
-      pintarIcono();
+      var irAOscuro = !oscuroActivo();
+      animarIconos(irAOscuro);
+      aplicarConIris(irAOscuro);
     });
     pintarIcono();
   })();
@@ -6319,6 +6394,7 @@ a { text-decoration: none; }
     var DURACION_SALIDA = 260;
     var DURACION_CAIDA = 380;
     var UMBRAL_COMMIT = 100;
+    var DURACION_LECTOR = 300;
 
     var CLAVE_VISTA = 'puente-vista';
     function vistaGuardada() {
@@ -6399,6 +6475,13 @@ a { text-decoration: none; }
       if (badges) resumen.appendChild(badges.cloneNode(true));
       if (titulo) resumen.appendChild(titulo.cloneNode(true));
 
+      if (nodo.dataset.fechaTexto) {
+        var fecha = document.createElement('p');
+        fecha.className = 'lector-fecha';
+        fecha.textContent = nodo.dataset.fechaTexto;
+        resumen.appendChild(fecha);
+      }
+
       var textoResumen = nodo.dataset.resumen;
       if (textoResumen) {
         var p = document.createElement('p');
@@ -6408,6 +6491,20 @@ a { text-decoration: none; }
       }
 
       resumen.appendChild(construirBarraLcr(nodo));
+
+      var nMedios = nodo.dataset.nMedios;
+      if (nMedios) {
+        var cobertura = document.createElement('p');
+        cobertura.className = 'lector-cobertura';
+        var fuerte = document.createElement('strong');
+        fuerte.textContent = nMedios + ' medio' + (nMedios === '1' ? '' : 's');
+        cobertura.appendChild(fuerte);
+        cobertura.appendChild(document.createTextNode(' la cubrieron'));
+        if (nodo.dataset.mediosFaltanTexto) {
+          cobertura.appendChild(document.createTextNode('. No la cubrieron: ' + nodo.dataset.mediosFaltanTexto));
+        }
+        resumen.appendChild(cobertura);
+      }
 
       var acciones = nodo.querySelector('.acciones-historia');
       if (acciones) resumen.appendChild(acciones.cloneNode(true));
@@ -6568,6 +6665,8 @@ a { text-decoration: none; }
       }
       indice = idx;
       lector.hidden = false;
+      void lector.offsetWidth;
+      lector.classList.add('lector-abierto');
       render(null);
     }
 
@@ -6578,12 +6677,15 @@ a { text-decoration: none; }
     }
 
     function cerrar() {
-      lector.hidden = true;
+      lector.classList.remove('lector-abierto');
       guardarVista('feed');
       marcarVista('feed');
-      var nodos = pila.querySelectorAll('.tarjeta-swipe');
-      if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
-      if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
+      setTimeout(function () {
+        lector.hidden = true;
+        var nodos = pila.querySelectorAll('.tarjeta-swipe');
+        if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
+        if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
+      }, DURACION_LECTOR);
     }
 
     function siguiente() { avanzar('sig'); }

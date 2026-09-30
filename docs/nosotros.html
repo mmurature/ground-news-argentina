@@ -48,6 +48,21 @@
   --c-consenso: #4ade80; --c-mixta: #fbbf24; --c-polarizada: #f87171;
   --lcr-izq: #e2685a; --lcr-cen: #838a96; --lcr-der: #5b8cf0;
 }
+
+/* --- transiciones nativas entre paginas: fundido cruzado automatico del
+   navegador entre navegaciones (Chrome/Edge; en el resto no pasa nada,
+   es progresivo). El cambio de tema usa su propio efecto (mas abajo,
+   ".transicion-tema") y apaga este fundido por defecto para no duplicarse. --- */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 0.36s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+html.transicion-tema::view-transition-old(root) { animation: none; }
+html.transicion-tema::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { color-scheme: light dark; }
@@ -88,6 +103,10 @@ a { text-decoration: none; }
 }
 .btn-tema { width: 34px; height: 34px; padding: 0; }
 .btn-tema:hover { color: var(--text); border-color: var(--accent); }
+.btn-tema svg { transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease; }
+.btn-tema svg.icono-sin-anim { transition: none !important; }
+.btn-tema svg.icono-saliendo { transform: rotate(-110deg) scale(0.3); opacity: 0; }
+.btn-tema svg.icono-entrando-desde { transform: rotate(110deg) scale(0.3); opacity: 0; }
 .btn-instalar { padding: 0 14px; height: 34px; font-size: 0.8rem; font-weight: 600; color: var(--accent); border-color: var(--accent); }
 .btn-instalar:hover { background: var(--accent); color: var(--card-bg); }
 
@@ -165,11 +184,15 @@ a { text-decoration: none; }
   padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
   pointer-events: none;
 }
-.lector-velo { position: fixed; inset: 0; z-index: 89; background: rgba(10, 11, 13, 0.52); pointer-events: none; }
+.lector-velo { position: fixed; inset: 0; z-index: 89; background: rgba(10, 11, 13, 0.52); pointer-events: none; opacity: 0; transition: opacity 0.28s ease; }
 .lector-panel {
   position: relative; z-index: 90; width: 100%; max-width: 460px; height: 100%; max-height: 760px;
   display: flex; flex-direction: column; pointer-events: auto;
+  transform: translateY(24px) scale(0.97); opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.24s ease;
 }
+#lector.lector-abierto .lector-velo { opacity: 1; }
+#lector.lector-abierto .lector-panel { transform: translateY(0) scale(1); opacity: 1; }
 .lector-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px 12px; flex-shrink: 0; }
 .lector-contador { font-size: 0.78rem; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
 .vista-switch--compacta { padding: 3px; }
@@ -199,6 +222,9 @@ a { text-decoration: none; }
 .lector-resumen h2 a { color: var(--text); }
 .lector-resumen h2 a:hover { text-decoration: underline; }
 .lector-resumen-texto { font-size: 0.96rem; line-height: 1.5; color: var(--text); margin: 12px 0 0; }
+.lector-fecha { font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 0; }
+.lector-cobertura { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--border); }
+.lector-cobertura strong { color: var(--text); font-weight: 700; }
 .barra-lcr-bloque { margin: 18px 0 0; }
 .barra-lcr { display: flex; width: 100%; height: 34px; border-radius: 8px; overflow: hidden; }
 .barra-lcr-seg { display: flex; align-items: center; justify-content: center; min-width: 0; transition: width 0.3s ease; }
@@ -401,11 +427,60 @@ a { text-decoration: none; }
       if (sol) sol.hidden = osc;
       if (luna) luna.hidden = !osc;
     }
+    // Gira + achica + desvanece el icono que se va, y trae el nuevo desde
+    // el giro opuesto -- mismo truco de reflow que usan las tarjetas del
+    // swipe (clase "sin-anim" para fijar el estado de arranque sin
+    // transicion, reflow, sacarla recién ahí anima).
+    function animarIconos(irAOscuro) {
+      var saliente = irAOscuro ? sol : luna;
+      var entrante = irAOscuro ? luna : sol;
+      if (saliente) {
+        saliente.classList.add('icono-saliendo');
+        setTimeout(function () { saliente.hidden = true; saliente.classList.remove('icono-saliendo'); }, 320);
+      }
+      if (entrante) {
+        entrante.hidden = false;
+        entrante.classList.add('icono-sin-anim', 'icono-entrando-desde');
+        void entrante.offsetWidth;
+        entrante.classList.remove('icono-sin-anim', 'icono-entrando-desde');
+      }
+    }
+    // Efecto iris: un circulo que crece desde el boton revela el tema
+    // nuevo, con un desenfoque que se despeja a la vez (se ve "aparecer"
+    // en vez de cortar la pantalla al medio). Sin soporte de View
+    // Transitions (o con "reducir movimiento" activado), el tema cambia
+    // igual, solo que sin el efecto.
+    function aplicarConIris(irAOscuro) {
+      var nuevo = irAOscuro ? 'dark' : 'light';
+      var aplicar = function () {
+        document.documentElement.setAttribute('data-theme', nuevo);
+        try { localStorage.setItem('puente-tema', irAOscuro ? 'oscuro' : 'claro'); } catch (e) {}
+      };
+      var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!document.startViewTransition || sinMovimiento) { aplicar(); return; }
+      var r = btn.getBoundingClientRect();
+      var x = r.left + r.width / 2, y = r.top + r.height / 2;
+      var radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      document.documentElement.classList.add('transicion-tema');
+      var transicion = document.startViewTransition(aplicar);
+      transicion.ready.then(function () {
+        document.documentElement.animate(
+          { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + radio + 'px at ' + x + 'px ' + y + 'px)'] },
+          { duration: 520, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' }
+        );
+        document.documentElement.animate(
+          { filter: ['blur(16px)', 'blur(0px)'] },
+          { duration: 520, easing: 'ease-out', pseudoElement: '::view-transition-new(root)' }
+        );
+      });
+      transicion.finished.finally(function () {
+        document.documentElement.classList.remove('transicion-tema');
+      });
+    }
     btn.addEventListener('click', function () {
-      var nuevo = oscuroActivo() ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', nuevo);
-      try { localStorage.setItem('puente-tema', nuevo === 'dark' ? 'oscuro' : 'claro'); } catch (e) {}
-      pintarIcono();
+      var irAOscuro = !oscuroActivo();
+      animarIconos(irAOscuro);
+      aplicarConIris(irAOscuro);
     });
     pintarIcono();
   })();
@@ -579,6 +654,7 @@ a { text-decoration: none; }
     var DURACION_SALIDA = 260;
     var DURACION_CAIDA = 380;
     var UMBRAL_COMMIT = 100;
+    var DURACION_LECTOR = 300;
 
     var CLAVE_VISTA = 'puente-vista';
     function vistaGuardada() {
@@ -659,6 +735,13 @@ a { text-decoration: none; }
       if (badges) resumen.appendChild(badges.cloneNode(true));
       if (titulo) resumen.appendChild(titulo.cloneNode(true));
 
+      if (nodo.dataset.fechaTexto) {
+        var fecha = document.createElement('p');
+        fecha.className = 'lector-fecha';
+        fecha.textContent = nodo.dataset.fechaTexto;
+        resumen.appendChild(fecha);
+      }
+
       var textoResumen = nodo.dataset.resumen;
       if (textoResumen) {
         var p = document.createElement('p');
@@ -668,6 +751,20 @@ a { text-decoration: none; }
       }
 
       resumen.appendChild(construirBarraLcr(nodo));
+
+      var nMedios = nodo.dataset.nMedios;
+      if (nMedios) {
+        var cobertura = document.createElement('p');
+        cobertura.className = 'lector-cobertura';
+        var fuerte = document.createElement('strong');
+        fuerte.textContent = nMedios + ' medio' + (nMedios === '1' ? '' : 's');
+        cobertura.appendChild(fuerte);
+        cobertura.appendChild(document.createTextNode(' la cubrieron'));
+        if (nodo.dataset.mediosFaltanTexto) {
+          cobertura.appendChild(document.createTextNode('. No la cubrieron: ' + nodo.dataset.mediosFaltanTexto));
+        }
+        resumen.appendChild(cobertura);
+      }
 
       var acciones = nodo.querySelector('.acciones-historia');
       if (acciones) resumen.appendChild(acciones.cloneNode(true));
@@ -828,6 +925,8 @@ a { text-decoration: none; }
       }
       indice = idx;
       lector.hidden = false;
+      void lector.offsetWidth;
+      lector.classList.add('lector-abierto');
       render(null);
     }
 
@@ -838,12 +937,15 @@ a { text-decoration: none; }
     }
 
     function cerrar() {
-      lector.hidden = true;
+      lector.classList.remove('lector-abierto');
       guardarVista('feed');
       marcarVista('feed');
-      var nodos = pila.querySelectorAll('.tarjeta-swipe');
-      if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
-      if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
+      setTimeout(function () {
+        lector.hidden = true;
+        var nodos = pila.querySelectorAll('.tarjeta-swipe');
+        if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
+        if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
+      }, DURACION_LECTOR);
     }
 
     function siguiente() { avanzar('sig'); }
