@@ -114,6 +114,23 @@ a { text-decoration: none; }
 .btn-guardar.guardado { color: var(--highlight); border-color: var(--highlight); }
 .btn-guardar.guardado svg { fill: currentColor; }
 
+/* --- volver arriba: aparece al bajar, en páginas que se hacen largas --- */
+.btn-arriba {
+  position: fixed; right: 16px; bottom: 16px; z-index: 40;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--card-bg); color: var(--text-muted); cursor: pointer; padding: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn-arriba.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.btn-arriba:hover { color: var(--text); border-color: var(--accent); }
+.btn-arriba svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) {
+  .btn-arriba { transition: opacity 0.01s, visibility 0.01s; }
+}
+
 /* --- selector de vista: Feed (tradicional) vs Swipe --- */
 .vista-switch {
   display: inline-flex; gap: 4px; padding: 4px; margin: 6px 0 0;
