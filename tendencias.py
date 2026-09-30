@@ -46,6 +46,7 @@ import time
 from datetime import datetime, timezone
 
 from generar_pagina import (
+    MEDIOS_MINIMOS,
     armar_distribucion_lcr,
     armar_indicador,
     cargar_medios_confirmados,
@@ -55,7 +56,9 @@ from generar_pagina import (
 DB_PATH = "noticias.db"
 GEO = "AR"
 MAX_TENDENCIAS = 15  # cuántos temas traer de Google Trends
-MAX_CURVAS = 8       # a cuántos, como mucho, pedirles interest_over_time esta corrida
+MAX_CURVAS = 10      # a cuántos, como mucho, pedirles interest_over_time esta corrida — subido de 8 a 10
+                      # tras la primera corrida real exitosa; sigue siendo la llamada más frágil, así que
+                      # no conviene subirlo mucho más sin ver primero si Google empieza a devolver errores
 UMBRAL_MATCH = 0.55  # similitud semántica mínima para relacionar una tendencia con una historia.
 # Subido de 0.42 tras ver la primera corrida real: con 0.42 había falsos positivos claros
 # ("muerte" matcheaba con cinco historias sin relación entre sí; "walter samuel" matcheaba
@@ -249,7 +252,40 @@ def cargar_historias_actuales(con):
     for hid, titulo_rep, medio, titulo, link, fecha in filas:
         h = historias.setdefault(hid, {"id": hid, "titulo": titulo_rep, "notas": []})
         h["notas"].append({"medio": medio, "titulo": titulo, "link": link, "fecha": fecha})
+
+    # Mismo criterio que generar_pagina.cargar_historias(): un medio puede
+    # publicar más de una nota sobre la misma historia (ej. notas "en vivo"
+    # que se republican con una URL nueva) — nos quedamos con la más
+    # reciente por medio, para no inflar el indicador político ni ofrecerla
+    # dos veces en el "elegir de dónde leer" de _destino_de_historia().
+    for h in historias.values():
+        por_medio = {}
+        for n in h["notas"]:
+            actual = por_medio.get(n["medio"])
+            if actual is None or (n["fecha"] or "") > (actual["fecha"] or ""):
+                por_medio[n["medio"]] = n
+        h["notas"] = list(por_medio.values())
+
     return list(historias.values())
+
+
+def _destino_de_historia(h):
+    """A dónde debería llevar el click en esta historia relacionada.
+    generar_pagina.py solo genera docs/historias/<id>.html para las
+    historias con MEDIOS_MINIMOS medios o más (mismo umbral acá) — una
+    tendencia puede perfectamente matchear con una cobertura más incipiente
+    (1 o 2 medios) que todavía no tiene esa página, así que hay que
+    resolver el destino del link caso por caso en vez de asumir que la
+    página siempre existe."""
+    notas = h["notas"]  # ya deduplicadas a una por medio
+    if len(notas) >= MEDIOS_MINIMOS:
+        return {"tipo": "pagina", "href": f"historias/{h['id']}.html"}
+    if len(notas) == 1:
+        return {"tipo": "directo", "href": notas[0]["link"], "medio": notas[0]["medio"]}
+    return {
+        "tipo": "elegir",
+        "opciones": [{"medio": n["medio"], "href": n["link"]} for n in notas],
+    }
 
 
 def enriquecer_historia(h, posiciones):
@@ -265,6 +301,7 @@ def enriquecer_historia(h, posiciones):
         "notas": notas,
         "indicador": armar_indicador(notas, posiciones),
         "distribucion_lcr": armar_distribucion_lcr(notas, posiciones),
+        "destino": _destino_de_historia(h),
     }
 
 

@@ -217,6 +217,32 @@ def cargar_medios_confirmados():
     return nombres, posiciones
 
 
+def cargar_metodologia_medios():
+    """Lista completa (no solo nombre + posición, como cargar_medios_confirmados)
+    de los medios confirmados, para la tabla de metodología de comparacion.html:
+    con qué criterio se clasificó editorialmente a cada uno y de dónde sale ese
+    número, para que cualquiera pueda revisar el criterio en vez de tener que
+    confiar en la ubicación en el eje sin más contexto."""
+    with open(FEEDS_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    medios = data.get("confirmados", [])
+    resultado = []
+    for m in medios:
+        pos = m.get("posicion_editorial", ESCALA_CENTRO)
+        pos = pos if isinstance(pos, (int, float)) else ESCALA_CENTRO
+        resultado.append(
+            {
+                "medio": m["medio"],
+                "tipo": m.get("tipo", ""),
+                "posicion": pos,
+                "bucket": bucket_de_posicion(pos),
+                "fuente": m.get("fuente_posicion", ""),
+            }
+        )
+    resultado.sort(key=lambda m: m["posicion"])
+    return resultado
+
+
 def cargar_historias(con):
     filas = con.execute(
         """
@@ -486,6 +512,22 @@ def _tabla_existe(con, nombre):
     return bool(fila)
 
 
+def _suavizar(valores, ventana):
+    """Promedio móvil centrado, sin achicar la lista (los bordes usan el
+    tramo que tienen disponible). interest_over_time de Google viene con
+    bastante ruido punto a punto incluso para "now 1-d" — un poco de
+    suavizado deja ver la tendencia real sin aplanar picos genuinos."""
+    if ventana <= 1:
+        return valores
+    n = len(valores)
+    mitad = ventana // 2
+    return [
+        sum(valores[max(0, i - mitad):min(n, i + mitad + 1)])
+        / len(valores[max(0, i - mitad):min(n, i + mitad + 1)])
+        for i in range(n)
+    ]
+
+
 def armar_sparkline_svg(puntos, ancho=280, alto=64):
     """Convierte la curva de interés de búsqueda (lista de {"t","v"}) en
     coordenadas para un sparkline SVG — línea de 2px y área rellena al
@@ -495,16 +537,17 @@ def armar_sparkline_svg(puntos, ancho=280, alto=64):
     la curva esta corrida)."""
     if not puntos or len(puntos) < 2:
         return None
-    valores = [p["v"] for p in puntos]
+    n = len(puntos)
+    ventana = 5 if n >= 24 else (3 if n >= 12 else 1)
+    valores = _suavizar([p["v"] for p in puntos], ventana)
     minimo, maximo = min(valores), max(valores)
     rango = (maximo - minimo) or 1
-    n = len(puntos)
     margen = 3
 
     coords = []
-    for i, p in enumerate(puntos):
+    for i, v in enumerate(valores):
         x = i / (n - 1) * ancho
-        y = alto - ((p["v"] - minimo) / rango * (alto - margen * 2)) - margen
+        y = alto - ((v - minimo) / rango * (alto - margen * 2)) - margen
         coords.append(f"{x:.1f},{y:.1f}")
 
     linea = " ".join(coords)
@@ -638,6 +681,7 @@ def main():
 
     # --- Comparación de medios ---
     nombres_matriz, totales_matriz, matriz = armar_matriz_comparacion(historias, medios_confirmados)
+    metodologia_medios = cargar_metodologia_medios()
     plantilla_comparacion = env.get_template("comparacion.html")
     html_c = plantilla_comparacion.render(
         nombres=nombres_matriz,
@@ -645,6 +689,7 @@ def main():
         totales=totales_matriz,
         matriz=matriz,
         posiciones=posiciones,
+        metodologia=metodologia_medios,
         generado=generado,
     )
     with open(SALIDA_COMPARACION, "w", encoding="utf-8") as f:

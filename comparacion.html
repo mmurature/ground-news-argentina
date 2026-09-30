@@ -63,6 +63,24 @@
   .par-medio a { color: var(--text); }
   .par-medio a:hover { text-decoration: underline; }
   .nota { margin: 0; font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
+
+  .metodologia { display: flex; flex-direction: column; gap: 14px; }
+  .metodologia h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; }
+  .subtitulo-metodologia { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; }
+  .tabla-metodologia { display: flex; flex-direction: column; gap: 10px; }
+  .fila-metodologia {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .fila-metodologia-header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .fila-metodologia-medio { font-weight: 700; color: var(--accent); font-size: 0.92rem; }
+  .fila-metodologia-tipo { font-size: 0.76rem; color: var(--text-muted); }
+  .fila-metodologia-pos {
+    margin-left: auto; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--highlight); border: 1px solid var(--highlight); border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+  }
+  .fila-metodologia-fuente { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; }
+
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
 </style>
 </head>
@@ -131,6 +149,25 @@
       </select>
     </div>
     <div id="resultado-comparador"></div>
+  </div>
+
+  <div class="metodologia">
+    <div>
+      <h2>Cómo ubicamos a cada medio</h2>
+      <p class="subtitulo-metodologia">La ubicación editorial (1 = izquierda, 21 = derecha) que usamos en todo Puente no es un juicio nuestro sobre quién tiene razón: es una estimación armada con fuentes públicas cuando existen (estudios académicos, Media Bias/Fact Check, propiedad o vínculos documentados del medio, autodescripción) y con criterio editorial explícito cuando no hay una fuente confiable. Así clasificamos a cada uno, de izquierda a derecha:</p>
+    </div>
+    <div class="tabla-metodologia">
+      {% for m in metodologia %}
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">{{ m.medio }}</span>
+          {% if m.tipo %}<span class="fila-metodologia-tipo">{{ m.tipo }}</span>{% endif %}
+          <span class="fila-metodologia-pos" title="{{ m.posicion }} en la escala 1-21">{{ m.bucket }}</span>
+        </div>
+        {% if m.fuente %}<p class="fila-metodologia-fuente">{{ m.fuente }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
   </div>
 
   <footer>Puente · metodología pública</footer>

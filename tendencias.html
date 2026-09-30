@@ -53,11 +53,23 @@
   .tendencia-mas { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
   .tendencia-sin-cobertura { font-size: 0.82rem; color: var(--text-muted); font-style: italic; margin: 4px 0 0; }
 
+  .elegir-fuente { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .chip-fuente {
+    display: inline-flex; align-items: center; font-size: 0.74rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent);
+    background: transparent; text-decoration: none; white-space: nowrap;
+  }
+  .chip-fuente:hover { background: var(--accent); color: var(--card-bg); }
+
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
   .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; }
 </style>
 </head>
 <body>
+{% macro enlace_historia(h) %}{% if h.destino.tipo == 'elegir' %}<span>{{ h.titulo }}</span>
+      <div class="elegir-fuente">
+        {% for op in h.destino.opciones %}<a class="chip-fuente" href="{{ op.href }}" target="_blank" rel="noopener">Leer en {{ op.medio }}</a>{% endfor %}
+      </div>{% elif h.destino.tipo == 'directo' %}<span class="medio">{{ h.destino.medio }}</span> <a href="{{ h.destino.href }}" target="_blank" rel="noopener">{{ h.titulo }}</a>{% else %}<a href="historias/{{ h.id }}.html">{{ h.titulo }}</a>{% endif %}{% endmacro %}
 {% set base = '' %}
 {% set pagina = 'tendencias' %}
 {% include "_splash.html" %}
@@ -83,13 +95,15 @@
         <polygon points="{{ destacada.curva_svg.area }}" class="tendencia-sparkline-area"></polygon>
         <polyline points="{{ destacada.curva_svg.linea }}" class="tendencia-sparkline-linea"></polyline>
       </svg>
+      {% else %}
+      <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
       {% endif %}
       {% if destacada.historias %}
       <ul class="tendencia-historias">
         {% for h in destacada.historias %}
         <li>
           <span class="badges"><span class="badge-categoria">{{ h.categoria }}</span> <span class="badge-consenso {{ h.indicador.consenso_clase }}">{{ h.indicador.consenso_etiqueta }}</span></span>
-          <div><a href="historias/{{ h.id }}.html">{{ h.titulo }}</a></div>
+          <div>{{ enlace_historia(h) }}</div>
           <span style="color: var(--text-muted); font-size: 0.78rem;">{{ h.n_medios }} medio{{ 's' if h.n_medios != 1 else '' }} la cubrieron</span>
         </li>
         {% endfor %}
@@ -110,11 +124,13 @@
           <polygon points="{{ t.curva_svg.area }}" class="tendencia-sparkline-area"></polygon>
           <polyline points="{{ t.curva_svg.linea }}" class="tendencia-sparkline-linea"></polyline>
         </svg>
+        {% else %}
+        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
         {% endif %}
         {% if t.historias %}
         <ul class="tendencia-historias">
           {% for h in t.historias[:2] %}
-          <li><a href="historias/{{ h.id }}.html">{{ h.titulo }}</a></li>
+          <li>{{ enlace_historia(h) }}</li>
           {% endfor %}
         </ul>
         {% if t.historias|length > 2 %}<p class="tendencia-mas">+{{ t.historias|length - 2 }} historia{{ 's' if t.historias|length - 2 != 1 else '' }} más</p>{% endif %}
