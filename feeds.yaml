@@ -167,6 +167,42 @@ confirmados:
     posicion_editorial: 4.8
     fuente_posicion: "Medio cercano al Sindicato de Camioneros (Moyano); notas propias con enfoque sindical-crítico de los medios tradicionales (ej. \"Doble vara de Clarín y sus satélites al 'fuck you' de Pablo Moyano\"). Izquierda sindical/de poder más que ideológica, por eso más cerca del centro que los otros medios de izquierda del roster"
 
+  - medio: "Periodismo de Izquierda"
+    tipo: "Portal de análisis/opinión (partidario)"
+    feed_url: "https://www.periodismodeizquierda.com/feed/"
+    posicion_editorial: 2.3
+    fuente_posicion: "Medio del MST (Movimiento Socialista de los Trabajadores), integrante del FIT-U; misma familia trotskista que La Izquierda Diario (PTS) pero de otro partido"
+
+  - medio: "La Tinta"
+    tipo: "Portal cooperativo (Córdoba)"
+    feed_url: "https://latinta.com.ar/feed/"
+    posicion_editorial: 3.5
+    fuente_posicion: "Se autodescribe en su propio feed como \"Medio cooperativo de Córdoba\"; cobertura de movimientos sociales, género y ambiente desde una perspectiva de izquierda social no partidaria"
+
+  - medio: "Lavaca"
+    tipo: "Agencia de noticias cooperativa"
+    feed_url: "https://lavaca.org/feed/"
+    posicion_editorial: 3.8
+    fuente_posicion: "Se autodescribe como \"Agencia de noticias de libre circulación\"; cooperativa de periodistas (también edita la revista MU) con foco histórico en movimientos sociales, DDHH y feminismo"
+
+  - medio: "DiarioAR"
+    tipo: "Portal nacional"
+    feed_url: "https://www.eldiarioar.com/rss/"
+    posicion_editorial: 5.5
+    fuente_posicion: "Medio fundado en 2021 por un grupo de periodistas (Martín Sivak entre otros) con línea progresista/feminista; más institucional y menos combativo que el resto del bloque de izquierda del roster, por eso más cerca del centro"
+
+  - medio: "La Retaguardia"
+    tipo: "Portal de DDHH y juicios"
+    feed_url: "https://laretaguardia.com.ar/feed/"
+    posicion_editorial: 3.6
+    fuente_posicion: "Colectivo de comunicación popular sostenido por aportes (\"Tu aporte nos sostiene\"), especializado en cobertura de juicios de lesa humanidad y derechos humanos en vivo"
+
+  - medio: "Red Eco Alternativo"
+    tipo: "Colectivo de comunicación"
+    feed_url: "https://www.redeco.com.ar/feed"
+    posicion_editorial: 3.8
+    fuente_posicion: "Se autodescribe como \"Colectivo de Comunicación y Cultura\"; cobertura de conflictos ambientales, laborales y sociales desde una perspectiva de comunicación alternativa"
+
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.
 candidatos:
@@ -181,6 +217,26 @@ pendientes:
     problema: "Su robots.txt prohíbe explícitamente el acceso automático a esa ruta. No se incluye por eso, no por falla técnica."
   - medio: "Noticias Argentinas"
     problema: "Es una agencia de cable (B2B); probablemente no tenga feed público. Revisar si ofrecen alguno o sacarla de la lista."
+  - medio: "Prensa Obrera"
+    problema: "Sin link rel=alternate de RSS en el HTML, y /feed, /feed/, /rss.xml no existen. Buscar la URL correcta a mano si el sitio la expone en otro lado."
+  - medio: "Marcha"
+    problema: "No se pudo verificar desde esta sesión: fetch bloqueado (fallo de conexión al robots.txt), no necesariamente el sitio esté caído. Reintentar desde un entorno sin esa restricción."
+  - medio: "Resumen Latinoamericano"
+    problema: "Mismo problema que Marcha: fetch bloqueado desde esta sesión (con y sin www), no verificado. Reintentar aparte."
+  - medio: "Radio Gráfica"
+    problema: "Mismo problema: fetch bloqueado desde esta sesión, no verificado."
+  - medio: "Barricada TV"
+    problema: "Mismo problema: fetch bloqueado desde esta sesión, no verificado. Además es un canal de TV, puede que no tenga feed de texto."
+  - medio: "La Garganta Poderosa"
+    problema: "feed_url probada (/feed/) da 404. Puede que usen otra ruta o que el sitio no tenga RSS."
+  - medio: "ANRed"
+    problema: "Fetch bloqueado (fallo de conexión al robots.txt) en dos intentos distintos, en dos sesiones distintas. Reintentar desde un entorno sin esa restricción antes de descartarlo del todo."
+  - medio: "Agencia Paco Urondo"
+    problema: "Sin link rel=alternate de RSS en el HTML de la home, y varias rutas comunes (/feed, /feed/) dan 404."
+  - medio: "Notas - Periodismo Popular"
+    problema: "Fetch bloqueado (robots.txt) en dos intentos. Reintentar desde un entorno sin esa restricción."
+  - medio: "Indymedia Argentina"
+    problema: "El sitio está activo (notas de 2026 confirmadas), pero no se encontró la URL de su feed RSS/backend. Buscar a mano la ruta correcta."
 
 descartados:
   - medio: "La Voz del Interior"
@@ -194,3 +250,11 @@ descartados:
   - medio: "Tiempo Argentino"
     feed_url_probada: "https://www.tiempoar.com.ar/feed"
     problema: "El feed devolvió contenido de apuestas online en ruso, no noticias del medio. Da la pinta de un feed comprometido o abandonado. No usar esta URL; si se quiere este medio, hay que encontrar un feed nuevo y confirmarlo de nuevo antes de sumarlo."
+
+  - medio: "Contrahegemonía Web"
+    feed_url_probada: "https://contrahegemoniaweb.com.ar/feed/"
+    problema: "El feed es técnicamente válido pero la última nota es de diciembre de 2018: el sitio está abandonado, no sirve para un agregador de noticias actuales."
+
+  - medio: "Revista Cítrica"
+    feed_url_probada: "https://citrica.com/feed/"
+    problema: "citrica.com redirige (302) a un sitio de portfolio completamente ajeno (emora.myportfolio.com); el dominio original parece abandonado o vendido."
