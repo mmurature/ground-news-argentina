@@ -237,7 +237,7 @@
   </div>
   <div class="grilla" id="grilla">
     {% for h in historias %}
-    <article class="historia" data-id="{{ h.id }}" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}"{% if h.resumen_representativo %} data-resumen="{{ h.resumen_representativo.texto }}"{% endif %} data-lcr-izq="{{ h.distribucion_lcr.izquierda_pct }}" data-lcr-cen="{{ h.distribucion_lcr.centro_pct }}" data-lcr-der="{{ h.distribucion_lcr.derecha_pct }}">
+    <article class="historia" data-id="{{ h.id }}" data-categoria="{{ h.categoria }}" data-buscar="{{ (h.titulo ~ ' ' ~ h.notas|map(attribute='medio')|join(' '))|lower }}"{% if h.resumen_representativo %} data-resumen="{{ h.resumen_representativo.texto }}"{% endif %} data-lcr-izq="{{ h.distribucion_lcr.izquierda_pct }}" data-lcr-cen="{{ h.distribucion_lcr.centro_pct }}" data-lcr-der="{{ h.distribucion_lcr.derecha_pct }}" data-n-medios="{{ h.n_medios }}"{% if h.medios_faltan_texto %} data-medios-faltan-texto="{{ h.medios_faltan_texto }}"{% endif %}{% if h.fecha_cobertura %} data-fecha-texto="{{ h.fecha_cobertura.texto }}"{% endif %}>
       <div class="badges">
         {% if h.destacada %}<span class="destacada">Más cubierta</span>{% endif %}
         <span class="badge-categoria">{{ h.categoria }}</span>

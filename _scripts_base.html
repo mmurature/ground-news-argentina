@@ -54,11 +54,60 @@
       if (sol) sol.hidden = osc;
       if (luna) luna.hidden = !osc;
     }
+    // Gira + achica + desvanece el icono que se va, y trae el nuevo desde
+    // el giro opuesto -- mismo truco de reflow que usan las tarjetas del
+    // swipe (clase "sin-anim" para fijar el estado de arranque sin
+    // transicion, reflow, sacarla recién ahí anima).
+    function animarIconos(irAOscuro) {
+      var saliente = irAOscuro ? sol : luna;
+      var entrante = irAOscuro ? luna : sol;
+      if (saliente) {
+        saliente.classList.add('icono-saliendo');
+        setTimeout(function () { saliente.hidden = true; saliente.classList.remove('icono-saliendo'); }, 320);
+      }
+      if (entrante) {
+        entrante.hidden = false;
+        entrante.classList.add('icono-sin-anim', 'icono-entrando-desde');
+        void entrante.offsetWidth;
+        entrante.classList.remove('icono-sin-anim', 'icono-entrando-desde');
+      }
+    }
+    // Efecto iris: un circulo que crece desde el boton revela el tema
+    // nuevo, con un desenfoque que se despeja a la vez (se ve "aparecer"
+    // en vez de cortar la pantalla al medio). Sin soporte de View
+    // Transitions (o con "reducir movimiento" activado), el tema cambia
+    // igual, solo que sin el efecto.
+    function aplicarConIris(irAOscuro) {
+      var nuevo = irAOscuro ? 'dark' : 'light';
+      var aplicar = function () {
+        document.documentElement.setAttribute('data-theme', nuevo);
+        try { localStorage.setItem('puente-tema', irAOscuro ? 'oscuro' : 'claro'); } catch (e) {}
+      };
+      var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!document.startViewTransition || sinMovimiento) { aplicar(); return; }
+      var r = btn.getBoundingClientRect();
+      var x = r.left + r.width / 2, y = r.top + r.height / 2;
+      var radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      document.documentElement.classList.add('transicion-tema');
+      var transicion = document.startViewTransition(aplicar);
+      transicion.ready.then(function () {
+        document.documentElement.animate(
+          { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + radio + 'px at ' + x + 'px ' + y + 'px)'] },
+          { duration: 520, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' }
+        );
+        document.documentElement.animate(
+          { filter: ['blur(16px)', 'blur(0px)'] },
+          { duration: 520, easing: 'ease-out', pseudoElement: '::view-transition-new(root)' }
+        );
+      });
+      transicion.finished.finally(function () {
+        document.documentElement.classList.remove('transicion-tema');
+      });
+    }
     btn.addEventListener('click', function () {
-      var nuevo = oscuroActivo() ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', nuevo);
-      try { localStorage.setItem('puente-tema', nuevo === 'dark' ? 'oscuro' : 'claro'); } catch (e) {}
-      pintarIcono();
+      var irAOscuro = !oscuroActivo();
+      animarIconos(irAOscuro);
+      aplicarConIris(irAOscuro);
     });
     pintarIcono();
   })();
@@ -232,6 +281,7 @@
     var DURACION_SALIDA = 260;
     var DURACION_CAIDA = 380;
     var UMBRAL_COMMIT = 100;
+    var DURACION_LECTOR = 300;
 
     var CLAVE_VISTA = 'puente-vista';
     function vistaGuardada() {
@@ -312,6 +362,13 @@
       if (badges) resumen.appendChild(badges.cloneNode(true));
       if (titulo) resumen.appendChild(titulo.cloneNode(true));
 
+      if (nodo.dataset.fechaTexto) {
+        var fecha = document.createElement('p');
+        fecha.className = 'lector-fecha';
+        fecha.textContent = nodo.dataset.fechaTexto;
+        resumen.appendChild(fecha);
+      }
+
       var textoResumen = nodo.dataset.resumen;
       if (textoResumen) {
         var p = document.createElement('p');
@@ -321,6 +378,20 @@
       }
 
       resumen.appendChild(construirBarraLcr(nodo));
+
+      var nMedios = nodo.dataset.nMedios;
+      if (nMedios) {
+        var cobertura = document.createElement('p');
+        cobertura.className = 'lector-cobertura';
+        var fuerte = document.createElement('strong');
+        fuerte.textContent = nMedios + ' medio' + (nMedios === '1' ? '' : 's');
+        cobertura.appendChild(fuerte);
+        cobertura.appendChild(document.createTextNode(' la cubrieron'));
+        if (nodo.dataset.mediosFaltanTexto) {
+          cobertura.appendChild(document.createTextNode('. No la cubrieron: ' + nodo.dataset.mediosFaltanTexto));
+        }
+        resumen.appendChild(cobertura);
+      }
 
       var acciones = nodo.querySelector('.acciones-historia');
       if (acciones) resumen.appendChild(acciones.cloneNode(true));
@@ -481,6 +552,8 @@
       }
       indice = idx;
       lector.hidden = false;
+      void lector.offsetWidth;
+      lector.classList.add('lector-abierto');
       render(null);
     }
 
@@ -491,12 +564,15 @@
     }
 
     function cerrar() {
-      lector.hidden = true;
+      lector.classList.remove('lector-abierto');
       guardarVista('feed');
       marcarVista('feed');
-      var nodos = pila.querySelectorAll('.tarjeta-swipe');
-      if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
-      if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
+      setTimeout(function () {
+        lector.hidden = true;
+        var nodos = pila.querySelectorAll('.tarjeta-swipe');
+        if (nodos[0]) { nodos[0].className = 'tarjeta-swipe tarjeta-swipe--peek'; nodos[0].style.cssText = ''; nodos[0].innerHTML = ''; }
+        if (nodos[1]) { nodos[1].className = 'tarjeta-swipe tarjeta-swipe--activa'; nodos[1].style.cssText = ''; nodos[1].innerHTML = ''; }
+      }, DURACION_LECTOR);
     }
 
     function siguiente() { avanzar('sig'); }

@@ -623,6 +623,69 @@ def texto_medios_faltan(medios_faltan, tope=6):
     return ", ".join(medios_faltan[:tope]) + f" y {resto} medio{'s' if resto != 1 else ''} más"
 
 
+def _relativo_fecha(fecha_iso, ahora):
+    """Convierte una fecha ISO a texto relativo en español ("hace 5 min",
+    "hace 3 h", "hace 2 días"); pasada una semana, a fecha corta ("30/09").
+    None si no hay fecha o no se puede parsear (algunos RSS no traen
+    fecha de publicación)."""
+    if not fecha_iso:
+        return None
+    try:
+        dt = datetime.fromisoformat(fecha_iso)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    segundos = max((ahora - dt).total_seconds(), 0)
+    minutos = segundos / 60
+    if minutos < 1:
+        return "recién"
+    if minutos < 60:
+        return f"hace {int(minutos)} min"
+    horas = minutos / 60
+    if horas < 24:
+        return f"hace {int(horas)} h"
+    dias = horas / 24
+    if dias < 7:
+        d = int(dias)
+        return f"hace {d} día{'s' if d != 1 else ''}"
+    return dt.strftime("%d/%m")
+
+
+def armar_fecha_cobertura(notas, ahora=None):
+    """Cuándo se publicó esta historia, a partir de las fechas de sus
+    notas (algunas pueden no tener, si ese RSS no la manda). Si todas las
+    coberturas caen dentro de una misma tanda (menos de 20 h entre la
+    primera y la última nota), se muestra un solo momento relativo a la
+    más reciente -- separar 'primera' y 'última' no suma nada si se cubrió
+    todo junto. Si la historia sigue generando notas nuevas más allá de
+    eso (un tema que sigue vivo días después de que rompió), se muestran
+    los dos extremos: mostrar solo la más vieja la haría ver
+    desactualizada, y mostrar solo la más nueva escondería que ya lleva
+    tiempo en agenda."""
+    ahora = ahora or datetime.now(timezone.utc)
+    fechas = []
+    for n in notas:
+        f = n.get("fecha")
+        if not f:
+            continue
+        try:
+            dt = datetime.fromisoformat(f)
+        except ValueError:
+            continue
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        fechas.append(dt)
+    if not fechas:
+        return None
+    mas_vieja, mas_nueva = min(fechas), max(fechas)
+    reciente = _relativo_fecha(mas_nueva.isoformat(), ahora)
+    if (mas_nueva - mas_vieja) <= timedelta(hours=20):
+        return {"texto": reciente}
+    antigua = _relativo_fecha(mas_vieja.isoformat(), ahora)
+    return {"texto": f"Primera nota {antigua} · la más reciente {reciente}"}
+
+
 def armar_contexto(historias, medios_confirmados, posiciones):
     resultado = []
     for hid, notas in historias.items():
@@ -644,6 +707,7 @@ def armar_contexto(historias, medios_confirmados, posiciones):
                 "indicador": armar_indicador(notas, posiciones),
                 "resumen_representativo": elegir_resumen(notas),
                 "distribucion_lcr": armar_distribucion_lcr(notas, posiciones),
+                "fecha_cobertura": armar_fecha_cobertura(notas),
             }
         )
     # más medios primero (lo más compartido arriba); entre empatados, más notas primero
