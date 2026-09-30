@@ -323,7 +323,7 @@ a { text-decoration: none; }
       <span class="badge-consenso mixta">Cobertura mixta</span>
     </div>
     <h1>La firme defensa de Joaquín Levinton tras ser denunciado por abuso sexual: “Esta persona me viene acosando hace muchos años”</h1>
-    <p class="meta">5 coberturas de 5 medios · 27 de 32 medios no la cubrieron · Actualizado 30/09/2026 15:31 UTC</p>
+    <p class="meta">5 coberturas de 5 medios · 27 de 32 medios no la cubrieron · Actualizado 30/09/2026 16:57 UTC</p>
     <div class="acciones-historia">
       <button type="button" class="accion-icono btn-guardar" data-id="195536" aria-pressed="false" title="Guardar para después">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
@@ -801,8 +801,13 @@ a { text-decoration: none; }
 
     // Anima la salida de la tarjeta activa hacia un costado (volando),
     // ya sea por botón/teclado (arranca en reposo) o al soltar un arrastre
-    // (arranca desde la posición donde quedó el dedo, sin saltos).
+    // (arranca desde la posición donde quedó el dedo, sin saltos). Sube el
+    // z-index mientras vuela: los dos roles (activa/peek) viven siempre en
+    // los mismos dos divs, que no se reordenan en el DOM, así que un
+    // z-index empatado no alcanza para garantizar que quede por encima de
+    // la tarjeta que se está promoviendo detrás en paralelo.
     function despedir(nodo, direccion) {
+      nodo.style.zIndex = '3';
       nodo.classList.add('tarjeta-transicion');
       void nodo.offsetWidth;
       var x = direccion === 'sig' ? '-130%' : '130%';
@@ -811,10 +816,12 @@ a { text-decoration: none; }
       nodo.style.opacity = '0';
     }
 
-    // Se llama cuando la tarjeta activa ya terminó de volar afuera:
-    // promueve la que asomaba detrás (ya tiene el contenido correcto) al
-    // frente, y hace caer contenido nuevo en el lugar que quedó atrás.
-    function promover(nodoSaliente, direccion) {
+    // Promueve la tarjeta que asomaba detrás (ya tiene el contenido
+    // correcto) al frente. Corre en paralelo con despedir(): son dos
+    // elementos distintos, no hay motivo para esperar a que uno termine
+    // de volar para recién animar el otro -- eso era lo que generaba el
+    // delay perceptible entre tarjetas.
+    function promoverPeekAActiva(direccion) {
       indice = direccion === 'ant' ? (indice - 1 + lista.length) % lista.length : siguienteIndice(indice);
       var peekActual = nodoPeek();
 
@@ -826,12 +833,21 @@ a { text-decoration: none; }
         peekActual.scrollTop = 0;
         contador.textContent = (indice + 1) + ' / ' + lista.length;
         if (window.PuenteGuardadas) window.PuenteGuardadas.pintarTodos(peekActual);
-        setTimeout(function () { peekActual.classList.remove('tarjeta-transicion'); }, DURACION_CAIDA);
+        setTimeout(function () { peekActual.classList.remove('tarjeta-transicion'); }, DURACION_SALIDA);
       }
 
+      btnAnt.disabled = btnSig.disabled = lista.length <= 1;
+    }
+
+    // Se llama cuando la tarjeta que salió volando ya terminó su
+    // animación: recién ahí se recicla como el nuevo peek detrás de la
+    // pila (con la caída rebotada). No bloquea nada -- para cuando esto
+    // corre, la tarjeta activa nueva ya está lista e interactiva hace rato.
+    function reciclarSaliente(nodoSaliente) {
       nodoSaliente.classList.remove('tarjeta-swipe--activa', 'tarjeta-transicion', 'tarjeta-arrastrando');
       nodoSaliente.style.transform = '';
       nodoSaliente.style.opacity = '';
+      nodoSaliente.style.zIndex = '';
       nodoSaliente.classList.add('tarjeta-swipe--peek');
 
       if (lista.length > 1) {
@@ -843,18 +859,26 @@ a { text-decoration: none; }
         nodoSaliente.style.display = 'none';
         nodoSaliente.innerHTML = '';
       }
+    }
 
-      btnAnt.disabled = btnSig.disabled = lista.length <= 1;
-      setTimeout(function () { animando = false; }, DURACION_CAIDA);
+    // Punto único donde se confirma un swipe (botón/teclado o arrastre
+    // soltado más allá del umbral): dispara la salida y la promoción en
+    // paralelo, y recicla la saliente apenas esa animación termina. La
+    // interacción queda bloqueada solo durante DURACION_SALIDA (antes se
+    // esperaba también DURACION_CAIDA después, sumando ~640ms de delay).
+    function confirmarSwipe(el, direccion) {
+      animando = true;
+      despedir(el, direccion);
+      promoverPeekAActiva(direccion);
+      setTimeout(function () { reciclarSaliente(el); }, DURACION_SALIDA);
+      setTimeout(function () { animando = false; }, DURACION_SALIDA);
     }
 
     function avanzar(direccion) {
       if (!lista.length || animando || lista.length <= 1) return;
-      animando = true;
-      var activa = nodoActivo();
-      despedir(activa, direccion);
-      setTimeout(function () { promover(activa, direccion); }, DURACION_SALIDA);
+      confirmarSwipe(nodoActivo(), direccion);
     }
+
 
     // direccion: null (apertura, cae la tarjeta activa y después la que
     // asoma detrás) | 'sig' | 'ant' (delegado a avanzar)
@@ -962,10 +986,7 @@ a { text-decoration: none; }
       arrastre = null;
       el.classList.remove('tarjeta-arrastrando');
       if (horizontal && Math.abs(dx) > UMBRAL_COMMIT) {
-        var direccion = dx < 0 ? 'sig' : 'ant';
-        animando = true;
-        despedir(el, direccion);
-        setTimeout(function () { promover(el, direccion); }, DURACION_SALIDA);
+        confirmarSwipe(el, dx < 0 ? 'sig' : 'ant');
       } else if (horizontal) {
         el.classList.add('tarjeta-transicion');
         el.style.transform = '';
