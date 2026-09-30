@@ -26,27 +26,26 @@ solo, no para tirar abajo el resto del pipeline:
     que tienen alguna historia nuestra relacionada), nunca para los quince
     de la lista completa.
 
-IMPORTANTE — esto no se pudo probar contra Google Trends real: el sandbox
-donde se escribió este script no tiene salida de red hacia trends.google.com
-(mismo motivo por el que no se pudieron validar feeds nuevos ni traer logos
-en su momento). La primera corrida real en GitHub Actions es la que va a
-decir si `trendspy` sigue funcionando tal cual hoy y si los nombres de
-campo que se usan acá (`_campo_en`, más abajo) son los correctos — si algo
-sale raro, revisar el log de esa corrida: imprime el objeto crudo que
-devuelve `trending_now()` la primera vez que corre, con sus atributos, así
-se puede ajustar `_campo_en` sin tener que adivinar de nuevo.
+Validado contra Google Trends real en GitHub Actions (no se pudo probar en
+el sandbox donde se escribió la primera versión, que no tiene salida de red
+hacia trends.google.com): `trendspy` funciona y los nombres de campo que
+adivinó `_campo_en` resultaron correctos. Si en algún momento Google cambia
+la forma de la respuesta, revisar el log de la corrida: sigue imprimiendo
+el objeto crudo que devuelve `trending_now()` la primera vez que corre.
 
 Uso:
     python tendencias.py
 """
 
 import json
+import re
 import sqlite3
 import time
 from datetime import datetime, timezone
 
 from generar_pagina import (
     MEDIOS_MINIMOS,
+    _normalizar,
     armar_distribucion_lcr,
     armar_indicador,
     cargar_medios_confirmados,
@@ -60,11 +59,15 @@ MAX_CURVAS = 10      # a cuántos, como mucho, pedirles interest_over_time esta 
                       # tras la primera corrida real exitosa; sigue siendo la llamada más frágil, así que
                       # no conviene subirlo mucho más sin ver primero si Google empieza a devolver errores
 UMBRAL_MATCH = 0.55  # similitud semántica mínima para relacionar una tendencia con una historia.
-# Subido de 0.42 tras ver la primera corrida real: con 0.42 había falsos positivos claros
-# ("muerte" matcheaba con cinco historias sin relación entre sí; "walter samuel" matcheaba
-# con una nota sobre un santo). 0.55 es todavía una estimación, no un valor medido — el log
-# de [match] que emite emparejar_tendencias_con_historias() imprime el top-3 de similitud
-# real por tendencia (pase o no el umbral) para poder terminar de calibrarlo con esos números.
+# Subido de 0.42 a 0.55 tras la primera corrida real (había falsos positivos claros). Con
+# datos reales de una segunda corrida a 0.55 quedó claro que subir más el número no alcanza:
+# los scores de matches buenos y malos se superponen en todo el rango 0.56-0.77 ("lucas sugo"
+# matcheó con una nota de rescate de perros a 0.77, más alto que varios matches correctos).
+# Por eso desde entonces el umbral ya NO es el único filtro — ver _comparten_palabra() y su
+# uso en emparejar_tendencias_con_historias(): además de superar este número, la tendencia y
+# la historia tienen que compartir al menos una palabra real. El log de [match] sigue
+# mostrando el top-3 real por tendencia (con una marca aparte para lo que pasó el número pero
+# no la palabra en común) para seguir calibrando con datos reales si hace falta.
 MODELO_EMBEDDINGS = "paraphrase-multilingual-MiniLM-L12-v2"  # mismo modelo que usa agrupar.py — no hay acoplamiento real (cada script corre por separado), es solo la misma elección por calidad ya probada
 
 
@@ -305,12 +308,53 @@ def enriquecer_historia(h, posiciones):
     }
 
 
+# Palabras funcionales genéricas a ignorar en _tokens_significativos(). A
+# propósito NO incluye nombres propios como "argentina": para el filtro de
+# palabra-en-común de más abajo, "argentina" SÍ es una señal real (ej. la
+# tendencia "argentina vs" con una historia de la selección argentina es un
+# match genuino, no ruido) — distinto del caso de "palabra del día" en
+# generar_pagina.py, que la excluye por la razón opuesta (es demasiado
+# frecuente como para ser noticia por sí sola).
+_STOPWORDS_MATCH = set(
+    """
+    para como pero esta este esto estos estas sus entre desde hasta sobre
+    donde cuando contra tras ante cada cual cuales durante segun mientras
+    otra otro otros otras ser estar tiene tienen fue son sera seran hay
+    """.split()
+)
+
+
+def _tokens_significativos(texto):
+    """Palabras de contenido de un texto: 4+ letras, sin acentos, sin
+    números (un año como "2026" aparece en casi cualquier nota de
+    actualidad y no dice nada del tema real) y sin las stopwords de
+    arriba. Se usa para exigir que una tendencia y una historia compartan
+    al menos una palabra real — ver el comentario en
+    emparejar_tendencias_con_historias()."""
+    palabras = re.findall(r"[a-z]{4,}", _normalizar(texto))
+    return {p for p in palabras if p not in _STOPWORDS_MATCH}
+
+
 def emparejar_tendencias_con_historias(tendencias, historias, posiciones, umbral=UMBRAL_MATCH):
     """Para cada tendencia, qué historias nuestras hablan de lo mismo.
     Matchea por similitud semántica (embeddings) en vez de por texto
     exacto, porque una búsqueda en tendencia suele ser una frase corta
     ("Boca Juniors", "Milei Francia") y un título de historia es una
-    oración completa — la comparación textual literal fallaría seguido."""
+    oración completa — la comparación textual literal fallaría seguido.
+
+    Pero la similitud semántica sola no alcanza: con datos reales de
+    producción, los scores de matches buenos y falsos positivos se
+    superponen en todo el rango relevante (un caso real: "lucas sugo" con
+    una nota de rescate de perros dio 0.77 de similitud, más alto que
+    varios matches genuinos). Por eso además del umbral se exige que la
+    tendencia y la historia compartan al menos una palabra de contenido
+    real (_tokens_significativos) — los falsos positivos más flagrantes no
+    comparten ninguna palabra literal con el título, solo "parecen"
+    similares para el modelo de embeddings. No es perfecto: una tendencia
+    genérica de una sola palabra institucional (ej. "decreto") va a seguir
+    matcheando con decretos no relacionados, porque ahí sí comparten esa
+    palabra — es un límite conocido, no vale la pena complicar más por
+    ese caso."""
     if not tendencias:
         return tendencias
     for t in tendencias:
@@ -327,6 +371,9 @@ def emparejar_tendencias_con_historias(tendencias, historias, posiciones, umbral
     emb_queries = modelo.encode(queries, normalize_embeddings=True)
     emb_historias = modelo.encode(titulos, normalize_embeddings=True)
 
+    tokens_queries = [_tokens_significativos(q) for q in queries]
+    tokens_historias = [_tokens_significativos(tit) for tit in titulos]
+
     cache_enriquecidas = {}
     for i, t in enumerate(tendencias):
         similitudes = emb_historias @ emb_queries[i]
@@ -335,21 +382,33 @@ def emparejar_tendencias_con_historias(tendencias, historias, posiciones, umbral
         )
 
         # Log de diagnóstico permanente: el top-3 de similitud real para esta
-        # tendencia, pase o no el umbral (✓/✗), para poder calibrar
-        # UMBRAL_MATCH con números reales mirando el log de Actions en vez de
-        # adivinar — esto fue lo que permitió detectar que 0.42 daba falsos
-        # positivos en la primera corrida real.
+        # tendencia, pase o no el filtro, para poder seguir calibrando con
+        # números reales en vez de adivinar. "✗sin palabra común" marca el
+        # caso de un score que superó el umbral pero no la palabra
+        # compartida — esto fue lo que permitió detectar, con la segunda
+        # corrida real, que el umbral solo no alcanzaba.
         mejores = ranking[:3]
         if mejores:
-            resumen = ", ".join(
-                f"{sim:.2f}{'✓' if sim >= umbral else '✗'} {historias[j]['titulo'][:60]!r}"
-                for sim, j in mejores
-            )
+            partes = []
+            for sim, j in mejores:
+                comparten = bool(tokens_queries[i] & tokens_historias[j])
+                if sim >= umbral and comparten:
+                    marca = "✓"
+                elif sim >= umbral:
+                    marca = "✗sin palabra común"
+                else:
+                    marca = "✗"
+                partes.append(f"{sim:.2f}{marca} {historias[j]['titulo'][:60]!r}")
+            resumen = ", ".join(partes)
         else:
             resumen = "(sin historias para comparar)"
         print(f"  [match] {t['query']!r} -> {resumen}")
 
-        candidatas = [(sim, j) for sim, j in ranking if sim >= umbral]
+        candidatas = [
+            (sim, j)
+            for sim, j in ranking
+            if sim >= umbral and (tokens_queries[i] & tokens_historias[j])
+        ]
         relacionadas = []
         for _, j in candidatas[:5]:
             hid = historias[j]["id"]

@@ -142,10 +142,30 @@ def _tokenizar(titulo: str) -> set:
     return {p for p in palabras if p not in STOPWORDS}
 
 
-def calcular_palabra_del_dia(con, posiciones, horas=24, minimo_titulares=3):
-    cutoff = (datetime.now(timezone.utc) - timedelta(hours=horas)).isoformat()
+def calcular_palabra_del_dia(con, posiciones, horas=24, dias_base=6, minimo_titulares=3):
+    """La palabra del día NO es la más mencionada en las últimas `horas`
+    sin más — es la que más REPUNTA respecto a lo habitual. Con solo
+    frecuencia cruda, un nombre que está todo el tiempo en las noticias
+    porque es una figura pública que genera controversia todos los días
+    (ej. el presidente de turno) gana siempre, aunque el día no tenga nada
+    particular — la palabra del día deja de decir algo sobre ESE día.
+
+    Para evitarlo, se compara la frecuencia de hoy contra el promedio
+    diario de los `dias_base` días anteriores (mismas palabras, mismo
+    _tokenizar) y se ordena por ese cociente, no por el conteo crudo. Un
+    nombre que aparece todos los días por igual tiene un cociente cercano
+    a 1 así sea muy frecuente; uno que hoy se disparó respecto a lo suyo
+    (aunque sea un medio menos mencionado en general) gana. El +2 en el
+    denominador es a propósito: sin ese suavizado, una palabra nueva que
+    recién hoy llega al mínimo de menciones (`minimo_titulares`) tendría
+    un cociente artificialmente enorme por no tener casi base de
+    comparación, y terminaría ganando por ruido en vez de por señal real."""
+    ahora = datetime.now(timezone.utc)
+    corte_hoy = (ahora - timedelta(hours=horas)).isoformat()
+    corte_base = (ahora - timedelta(hours=horas, days=dias_base)).isoformat()
+
     filas = con.execute(
-        "SELECT medio, titulo FROM notas WHERE fecha_recoleccion >= ?", (cutoff,)
+        "SELECT medio, titulo FROM notas WHERE fecha_recoleccion >= ?", (corte_hoy,)
     ).fetchall()
     if not filas:
         return None
@@ -160,9 +180,24 @@ def calcular_palabra_del_dia(con, posiciones, horas=24, minimo_titulares=3):
     if not contador:
         return None
 
-    palabra, frecuencia = contador.most_common(1)[0]
-    if frecuencia < minimo_titulares:
+    filas_base = con.execute(
+        "SELECT titulo FROM notas WHERE fecha_recoleccion >= ? AND fecha_recoleccion < ?",
+        (corte_base, corte_hoy),
+    ).fetchall()
+    contador_base = Counter()
+    for (titulo,) in filas_base:
+        contador_base.update(_tokenizar(titulo))
+
+    candidatas = [(p, f) for p, f in contador.items() if f >= minimo_titulares]
+    if not candidatas:
         return None
+
+    def repunte(item):
+        p, frecuencia_hoy = item
+        promedio_diario_base = contador_base.get(p, 0) / max(dias_base, 1)
+        return frecuencia_hoy / (promedio_diario_base + 2)
+
+    palabra, frecuencia = max(candidatas, key=repunte)
 
     medios_con_palabra = set()
     por_bucket = {}
