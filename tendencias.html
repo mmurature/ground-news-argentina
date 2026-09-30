@@ -104,7 +104,7 @@
       {% for t in tendencias[1:] %}
       <div class="tendencia-card">
         <h3>{{ t.query }}</h3>
-        {% if t.volumen_texto %}<span class="tendencia-volumen">{{ t.volumen_texto }}</span>{% endif %}
+        {% if t.volumen_texto %}<span class="tendencia-volumen">{{ t.volumen_texto }} búsquedas</span>{% endif %}
         {% if t.curva_svg %}
         <svg class="tendencia-sparkline" viewBox="0 0 {{ t.curva_svg.ancho }} {{ t.curva_svg.alto }}" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;{{ t.query }}&quot; en las últimas 24 horas">
           <polygon points="{{ t.curva_svg.area }}" class="tendencia-sparkline-area"></polygon>

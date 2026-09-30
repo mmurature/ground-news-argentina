@@ -56,7 +56,12 @@ DB_PATH = "noticias.db"
 GEO = "AR"
 MAX_TENDENCIAS = 15  # cuántos temas traer de Google Trends
 MAX_CURVAS = 8       # a cuántos, como mucho, pedirles interest_over_time esta corrida
-UMBRAL_MATCH = 0.42  # similitud semántica mínima para relacionar una tendencia con una historia — a ojo, ajustar con datos reales una vez que la pestaña esté corriendo
+UMBRAL_MATCH = 0.55  # similitud semántica mínima para relacionar una tendencia con una historia.
+# Subido de 0.42 tras ver la primera corrida real: con 0.42 había falsos positivos claros
+# ("muerte" matcheaba con cinco historias sin relación entre sí; "walter samuel" matcheaba
+# con una nota sobre un santo). 0.55 es todavía una estimación, no un valor medido — el log
+# de [match] que emite emparejar_tendencias_con_historias() imprime el top-3 de similitud
+# real por tendencia (pase o no el umbral) para poder terminar de calibrarlo con esos números.
 MODELO_EMBEDDINGS = "paraphrase-multilingual-MiniLM-L12-v2"  # mismo modelo que usa agrupar.py — no hay acoplamiento real (cada script corre por separado), es solo la misma elección por calidad ya probada
 
 
@@ -118,6 +123,41 @@ def _campo_en(obj, *nombres, default=None):
     return default
 
 
+def formatear_volumen(valor):
+    """Google Trends da el volumen como un entero ya redondeado a un
+    escalón (20000, 50000, 1000000...), no como texto legible — esto lo
+    pasa a algo tipo "20 mil+" (que es, de hecho, lo que muestra la propia
+    UI de Google). Si en algún momento el campo real resulta ser uno de
+    los que ya viene como texto (`formatted_traffic`/`traffic`), se
+    devuelve tal cual en vez de intentar reinterpretarlo como número."""
+    if valor in (None, ""):
+        return None
+    numero = None
+    if isinstance(valor, bool):
+        return None
+    if isinstance(valor, (int, float)):
+        numero = valor
+    elif isinstance(valor, str):
+        texto = valor.strip()
+        if texto.isdigit():
+            numero = int(texto)
+        else:
+            return texto or None
+    if numero is None or numero <= 0:
+        return None
+
+    def _sin_cero_final(texto):
+        return texto[:-2] if texto.endswith(",0") else texto
+
+    if numero >= 1_000_000:
+        return f"{_sin_cero_final(f'{numero / 1_000_000:.1f}'.replace('.', ','))} M+"
+    if numero >= 1_000:
+        cociente = numero / 1_000
+        texto = f"{cociente:.0f}" if cociente >= 10 else _sin_cero_final(f"{cociente:.1f}".replace(".", ","))
+        return f"{texto} mil+"
+    return f"{int(numero)}+"
+
+
 def traer_tendencias_google(geo=GEO, cuantas=MAX_TENDENCIAS):
     """Lista de dicts {"query": str, "volumen_texto": str|None} con los
     temas en tendencia ahora mismo en Argentina, o None si falló por
@@ -153,7 +193,7 @@ def traer_tendencias_google(geo=GEO, cuantas=MAX_TENDENCIAS):
         resultado.append(
             {
                 "query": str(query).strip(),
-                "volumen_texto": str(volumen).strip() if volumen else None,
+                "volumen_texto": formatear_volumen(volumen),
             }
         )
     return resultado
@@ -253,8 +293,26 @@ def emparejar_tendencias_con_historias(tendencias, historias, posiciones, umbral
     cache_enriquecidas = {}
     for i, t in enumerate(tendencias):
         similitudes = emb_historias @ emb_queries[i]
-        candidatas = [(float(sim), j) for j, sim in enumerate(similitudes) if sim >= umbral]
-        candidatas.sort(key=lambda par: -par[0])
+        ranking = sorted(
+            ((float(sim), j) for j, sim in enumerate(similitudes)), key=lambda par: -par[0]
+        )
+
+        # Log de diagnóstico permanente: el top-3 de similitud real para esta
+        # tendencia, pase o no el umbral (✓/✗), para poder calibrar
+        # UMBRAL_MATCH con números reales mirando el log de Actions en vez de
+        # adivinar — esto fue lo que permitió detectar que 0.42 daba falsos
+        # positivos en la primera corrida real.
+        mejores = ranking[:3]
+        if mejores:
+            resumen = ", ".join(
+                f"{sim:.2f}{'✓' if sim >= umbral else '✗'} {historias[j]['titulo'][:60]!r}"
+                for sim, j in mejores
+            )
+        else:
+            resumen = "(sin historias para comparar)"
+        print(f"  [match] {t['query']!r} -> {resumen}")
+
+        candidatas = [(sim, j) for sim, j in ranking if sim >= umbral]
         relacionadas = []
         for _, j in candidatas[:5]:
             hid = historias[j]["id"]
