@@ -203,6 +203,12 @@ confirmados:
     posicion_editorial: 3.8
     fuente_posicion: "Se autodescribe como \"Colectivo de Comunicación y Cultura\"; cobertura de conflictos ambientales, laborales y sociales desde una perspectiva de comunicación alternativa"
 
+  - medio: "Indymedia Argentina"
+    tipo: "Colectivo de publicación abierta"
+    feed_url: "https://argentina.indymedia.org/feed/"
+    posicion_editorial: 2.8
+    fuente_posicion: "Centro de medios independiente de \"publicación abierta\" (open publishing) activo desde 2001; cobertura autogestionada de movimientos sociales, pueblos originarios, feminismo y DDHH desde una perspectiva autonomista/izquierda de base, sin afiliación partidaria"
+
 # Candidatos que todavía no validaron. Reintentar validar_feeds.py más
 # adelante o buscar la URL correcta a mano.
 candidatos:
@@ -235,8 +241,6 @@ pendientes:
     problema: "Sin link rel=alternate de RSS en el HTML de la home, y varias rutas comunes (/feed, /feed/) dan 404."
   - medio: "Notas - Periodismo Popular"
     problema: "Fetch bloqueado (robots.txt) en dos intentos. Reintentar desde un entorno sin esa restricción."
-  - medio: "Indymedia Argentina"
-    problema: "El sitio está activo (notas de 2026 confirmadas), pero no se encontró la URL de su feed RSS/backend. Buscar a mano la ruta correcta."
 
 descartados:
   - medio: "La Voz del Interior"
