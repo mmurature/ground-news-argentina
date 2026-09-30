@@ -127,6 +127,23 @@ a { text-decoration: none; }
 .btn-guardar.guardado { color: var(--highlight); border-color: var(--highlight); }
 .btn-guardar.guardado svg { fill: currentColor; }
 
+/* --- volver arriba: aparece al bajar, en páginas que se hacen largas --- */
+.btn-arriba {
+  position: fixed; right: 16px; bottom: 16px; z-index: 40;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--card-bg); color: var(--text-muted); cursor: pointer; padding: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn-arriba.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.btn-arriba:hover { color: var(--text); border-color: var(--accent); }
+.btn-arriba svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) {
+  .btn-arriba { transition: opacity 0.01s, visibility 0.01s; }
+}
+
 /* --- selector de vista: Feed (tradicional) vs Swipe --- */
 .vista-switch {
   display: inline-flex; gap: 4px; padding: 4px; margin: 6px 0 0;
@@ -291,6 +308,24 @@ a { text-decoration: none; }
   .par-medio a { color: var(--text); }
   .par-medio a:hover { text-decoration: underline; }
   .nota { margin: 0; font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
+
+  .metodologia { display: flex; flex-direction: column; gap: 14px; }
+  .metodologia h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; }
+  .subtitulo-metodologia { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; }
+  .tabla-metodologia { display: flex; flex-direction: column; gap: 10px; }
+  .fila-metodologia {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .fila-metodologia-header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .fila-metodologia-medio { font-weight: 700; color: var(--accent); font-size: 0.92rem; }
+  .fila-metodologia-tipo { font-size: 0.76rem; color: var(--text-muted); }
+  .fila-metodologia-pos {
+    margin-left: auto; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--highlight); border: 1px solid var(--highlight); border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+  }
+  .fila-metodologia-fuente { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; }
+
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
 </style>
 </head>
@@ -331,7 +366,7 @@ a { text-decoration: none; }
 <div class="contenedor">
   <div>
     <h1>Comparación de medios</h1>
-    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado 30/09/2026 18:22 UTC.</p>
+    <p class="subtitulo">Qué tan parecida es la cobertura entre cada par de medios, y dónde se ubica cada uno editorialmente. Actualizado 30/09/2026 18:48 UTC.</p>
   </div>
 
   <div class="leyenda">
@@ -484,7 +519,7 @@ a { text-decoration: none; }
           <th class="rotulo-fila" data-idx="0" title="La Nación">La Nación</th>
           
             
-            <td class="celda diagonal" title="La Nación: 426 historias cubiertas">426</td>
+            <td class="celda diagonal" title="La Nación: 438 historias cubiertas">438</td>
             
           
             
@@ -509,7 +544,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="0" data-col="5" title="La Nación / Página/12: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="0" data-col="5" title="La Nación / Página/12: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -653,7 +688,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Perfil: 309 historias cubiertas">309</td>
+            <td class="celda diagonal" title="Perfil: 312 historias cubiertas">312</td>
             
           
             
@@ -713,7 +748,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="1" data-col="13" title="Perfil / Clarín: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="1" data-col="13" title="Perfil / Clarín: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -842,7 +877,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="2" data-col="6" title="Ámbito / Los Andes: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
+            <td class="celda" data-fila="2" data-col="6" title="Ámbito / Los Andes: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -1160,7 +1195,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Infobae: 1367 historias cubiertas">1367</td>
+            <td class="celda diagonal" title="Infobae: 1406 historias cubiertas">1406</td>
             
           
             
@@ -1175,7 +1210,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="4" data-col="7" title="Infobae / Río Negro: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="4" data-col="7" title="Infobae / Río Negro: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -1205,7 +1240,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="4" data-col="13" title="Infobae / Clarín: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="4" data-col="13" title="Infobae / Clarín: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -1305,7 +1340,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="5" data-col="0" title="Página/12 / La Nación: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="5" data-col="0" title="Página/12 / La Nación: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
             
           
             
@@ -1479,7 +1514,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="2" title="Los Andes / Ámbito: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
+            <td class="celda" data-fila="6" data-col="2" title="Los Andes / Ámbito: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
             
           
             
@@ -1498,7 +1533,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Los Andes: 152 historias cubiertas">152</td>
+            <td class="celda diagonal" title="Los Andes: 158 historias cubiertas">158</td>
             
           
             
@@ -1528,7 +1563,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="6" data-col="12" title="Los Andes / El Intransigente: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="6" data-col="12" title="Los Andes / El Intransigente: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -1653,7 +1688,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="7" data-col="4" title="Río Negro / Infobae: 1% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">1%</td>
+            <td class="celda" data-fila="7" data-col="4" title="Río Negro / Infobae: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
             
           
             
@@ -1667,7 +1702,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Río Negro: 204 historias cubiertas">204</td>
+            <td class="celda diagonal" title="Río Negro: 207 historias cubiertas">207</td>
             
           
             
@@ -1856,12 +1891,12 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="8" data-col="12" title="La Gaceta / El Intransigente: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="8" data-col="12" title="La Gaceta / El Intransigente: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
             
-            <td class="celda" data-fila="8" data-col="13" title="La Gaceta / Clarín: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="8" data-col="13" title="La Gaceta / Clarín: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -2005,7 +2040,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Misiones Online: 69 historias cubiertas">69</td>
+            <td class="celda diagonal" title="Misiones Online: 72 historias cubiertas">72</td>
             
           
             
@@ -2343,12 +2378,12 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="El Día: 250 historias cubiertas">250</td>
+            <td class="celda diagonal" title="El Día: 251 historias cubiertas">251</td>
             
           
             
             
-            <td class="celda" data-fila="11" data-col="12" title="El Día / El Intransigente: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="11" data-col="12" title="El Día / El Intransigente: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2358,7 +2393,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="11" data-col="14" title="El Día / TN: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="11" data-col="14" title="El Día / TN: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -2483,7 +2518,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="12" data-col="6" title="El Intransigente / Los Andes: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="12" data-col="6" title="El Intransigente / Los Andes: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2493,7 +2528,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="12" data-col="8" title="El Intransigente / La Gaceta: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="12" data-col="8" title="El Intransigente / La Gaceta: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
             
           
             
@@ -2508,11 +2543,11 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="12" data-col="11" title="El Intransigente / El Día: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="12" data-col="11" title="El Intransigente / El Día: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
-            <td class="celda diagonal" title="El Intransigente: 275 historias cubiertas">275</td>
+            <td class="celda diagonal" title="El Intransigente: 286 historias cubiertas">286</td>
             
           
             
@@ -2622,7 +2657,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="1" title="Clarín / Perfil: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
+            <td class="celda" data-fila="13" data-col="1" title="Clarín / Perfil: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2637,7 +2672,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="4" title="Clarín / Infobae: 2% de historias en común" style="background: rgba(var(--accent-rgb), 0.01);">2%</td>
+            <td class="celda" data-fila="13" data-col="4" title="Clarín / Infobae: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
             
           
             
@@ -2657,7 +2692,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="8" title="Clarín / La Gaceta: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="13" data-col="8" title="Clarín / La Gaceta: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -2681,7 +2716,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Clarín: 156 historias cubiertas">156</td>
+            <td class="celda diagonal" title="Clarín: 166 historias cubiertas">166</td>
             
           
             
@@ -2706,7 +2741,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="13" data-col="18" title="Clarín / Crónica: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="13" data-col="18" title="Clarín / Crónica: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
             
           
             
@@ -2836,7 +2871,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="11" title="TN / El Día: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="14" data-col="11" title="TN / El Día: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -2850,7 +2885,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="TN: 491 historias cubiertas">491</td>
+            <td class="celda diagonal" title="TN: 496 historias cubiertas">496</td>
             
           
             
@@ -2865,7 +2900,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="14" data-col="17" title="TN / La Capital: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="14" data-col="17" title="TN / La Capital: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -3019,7 +3054,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Buenos Aires Times: 80 historias cubiertas">80</td>
+            <td class="celda diagonal" title="Buenos Aires Times: 82 historias cubiertas">82</td>
             
           
             
@@ -3343,7 +3378,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="17" data-col="14" title="La Capital / TN: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="17" data-col="14" title="La Capital / TN: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -3357,7 +3392,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="La Capital: 152 historias cubiertas">152</td>
+            <td class="celda diagonal" title="La Capital: 156 historias cubiertas">156</td>
             
           
             
@@ -3502,7 +3537,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="18" data-col="13" title="Crónica / Clarín: 6% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">6%</td>
+            <td class="celda" data-fila="18" data-col="13" title="Crónica / Clarín: 7% de historias en común" style="background: rgba(var(--accent-rgb), 0.04);">7%</td>
             
           
             
@@ -3526,7 +3561,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Crónica: 272 historias cubiertas">272</td>
+            <td class="celda diagonal" title="Crónica: 280 historias cubiertas">280</td>
             
           
             
@@ -3576,7 +3611,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="18" data-col="28" title="Crónica / DiarioAR: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="18" data-col="28" title="Crónica / DiarioAR: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -4540,7 +4575,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="Infocielo: 20 historias cubiertas">20</td>
+            <td class="celda diagonal" title="Infocielo: 25 historias cubiertas">25</td>
             
           
             
@@ -5167,7 +5202,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="28" data-col="18" title="DiarioAR / Crónica: 3% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">3%</td>
+            <td class="celda" data-fila="28" data-col="18" title="DiarioAR / Crónica: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
@@ -5216,7 +5251,7 @@ a { text-decoration: none; }
             
           
             
-            <td class="celda diagonal" title="DiarioAR: 100 historias cubiertas">100</td>
+            <td class="celda diagonal" title="DiarioAR: 102 historias cubiertas">102</td>
             
           
             
@@ -5559,7 +5594,7 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="30" data-col="31" title="Red Eco Alternativo / Indymedia Argentina: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="30" data-col="31" title="Red Eco Alternativo / Indymedia Argentina: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
         </tr>
@@ -5719,11 +5754,11 @@ a { text-decoration: none; }
           
             
             
-            <td class="celda" data-fila="31" data-col="30" title="Indymedia Argentina / Red Eco Alternativo: 5% de historias en común" style="background: rgba(var(--accent-rgb), 0.03);">5%</td>
+            <td class="celda" data-fila="31" data-col="30" title="Indymedia Argentina / Red Eco Alternativo: 4% de historias en común" style="background: rgba(var(--accent-rgb), 0.02);">4%</td>
             
           
             
-            <td class="celda diagonal" title="Indymedia Argentina: 13 historias cubiertas">13</td>
+            <td class="celda diagonal" title="Indymedia Argentina: 14 historias cubiertas">14</td>
             
           
         </tr>
@@ -5748,6 +5783,304 @@ a { text-decoration: none; }
       </select>
     </div>
     <div id="resultado-comparador"></div>
+  </div>
+
+  <div class="metodologia">
+    <div>
+      <h2>Cómo ubicamos a cada medio</h2>
+      <p class="subtitulo-metodologia">La ubicación editorial (1 = izquierda, 21 = derecha) que usamos en todo Puente no es un juicio nuestro sobre quién tiene razón: es una estimación armada con fuentes públicas cuando existen (estudios académicos, Media Bias/Fact Check, propiedad o vínculos documentados del medio, autodescripción) y con criterio editorial explícito cuando no hay una fuente confiable. Así clasificamos a cada uno, de izquierda a derecha:</p>
+    </div>
+    <div class="tabla-metodologia">
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">La Izquierda Diario</span>
+          <span class="fila-metodologia-tipo">Portal nacional</span>
+          <span class="fila-metodologia-pos" title="2.0 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Autodescripción (medio del PTS, trotskista) + análisis de Nueva Sociedad sobre el trotskismo argentino que lo describe como vocero explícito de esa tradición</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Periodismo de Izquierda</span>
+          <span class="fila-metodologia-tipo">Portal de análisis/opinión (partidario)</span>
+          <span class="fila-metodologia-pos" title="2.3 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Medio del MST (Movimiento Socialista de los Trabajadores), integrante del FIT-U; misma familia trotskista que La Izquierda Diario (PTS) pero de otro partido</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Indymedia Argentina</span>
+          <span class="fila-metodologia-tipo">Colectivo de publicación abierta</span>
+          <span class="fila-metodologia-pos" title="2.8 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Centro de medios independiente de &#34;publicación abierta&#34; (open publishing) activo desde 2001; cobertura autogestionada de movimientos sociales, pueblos originarios, feminismo y DDHH desde una perspectiva autonomista/izquierda de base, sin afiliación partidaria</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">El Cohete a la Luna</span>
+          <span class="fila-metodologia-tipo">Portal de análisis/opinión</span>
+          <span class="fila-metodologia-pos" title="3.3 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Portal fundado y dirigido por Horacio Verbitsky (ex Página/12), con editoriales que también se emiten en AM530 (radio popular identificada con el kirchnerismo); línea de investigación/opinión consistentemente alineada al campo nacional-popular</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">La Tinta</span>
+          <span class="fila-metodologia-tipo">Portal cooperativo (Córdoba)</span>
+          <span class="fila-metodologia-pos" title="3.5 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Se autodescribe en su propio feed como &#34;Medio cooperativo de Córdoba&#34;; cobertura de movimientos sociales, género y ambiente desde una perspectiva de izquierda social no partidaria</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Canal Abierto</span>
+          <span class="fila-metodologia-tipo">Portal sindical/DDHH</span>
+          <span class="fila-metodologia-pos" title="3.6 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Vínculo institucional documentado con la CTA Autónoma (aparece como &#34;Agencia CTA&#34; en su propio sitio); cobertura centrada en sindicalismo y derechos humanos desde una perspectiva de izquierda sindical</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">La Retaguardia</span>
+          <span class="fila-metodologia-tipo">Portal de DDHH y juicios</span>
+          <span class="fila-metodologia-pos" title="3.6 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Colectivo de comunicación popular sostenido por aportes (&#34;Tu aporte nos sostiene&#34;), especializado en cobertura de juicios de lesa humanidad y derechos humanos en vivo</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">El Grito del Sur</span>
+          <span class="fila-metodologia-tipo">Portal de política y sociedad</span>
+          <span class="fila-metodologia-pos" title="3.7 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Medio vinculado a Ofelia Fernández (ex legisladora porteña de La Cámpora); cobertura periodística (Nota al Pie, abril-mayo 2025) sobre intentos del gobierno de Milei de desalojarlos de su oficina, consistente con un alineamiento kirchnerista de izquierda</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Lavaca</span>
+          <span class="fila-metodologia-tipo">Agencia de noticias cooperativa</span>
+          <span class="fila-metodologia-pos" title="3.8 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Se autodescribe como &#34;Agencia de noticias de libre circulación&#34;; cooperativa de periodistas (también edita la revista MU) con foco histórico en movimientos sociales, DDHH y feminismo</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Red Eco Alternativo</span>
+          <span class="fila-metodologia-tipo">Colectivo de comunicación</span>
+          <span class="fila-metodologia-pos" title="3.8 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Se autodescribe como &#34;Colectivo de Comunicación y Cultura&#34;; cobertura de conflictos ambientales, laborales y sociales desde una perspectiva de comunicación alternativa</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Contraeditorial</span>
+          <span class="fila-metodologia-tipo">Portal de opinión política</span>
+          <span class="fila-metodologia-pos" title="4.3 en la escala 1-21">Izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Autodescripción en su página &#34;Quiénes somos&#34;: periodismo &#34;contrahegemónico&#34; frente al &#34;poder corporativo del neoliberalismo&#34;; dirigido por Roberto Caballero (ex director de Tiempo Argentino y El Destape TV), figura identificada con el kirchnerismo</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Infocielo</span>
+          <span class="fila-metodologia-tipo">Portal de política y economía (Buenos Aires)</span>
+          <span class="fila-metodologia-pos" title="4.8 en la escala 1-21">Centro-izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Medio cercano al Sindicato de Camioneros (Moyano); notas propias con enfoque sindical-crítico de los medios tradicionales (ej. &#34;Doble vara de Clarín y sus satélites al &#39;fuck you&#39; de Pablo Moyano&#34;). Izquierda sindical/de poder más que ideológica, por eso más cerca del centro que los otros medios de izquierda del roster</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Página/12</span>
+          <span class="fila-metodologia-tipo">Diario nacional</span>
+          <span class="fila-metodologia-pos" title="5.0 en la escala 1-21">Centro-izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Literatura académica (SciELO México, &#34;Tres medios y dos presidencias&#34;) que lo identifica con el sesgo partidario más fuerte entre Clarín/La Nación/Página12, claramente de izquierda</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">DiarioAR</span>
+          <span class="fila-metodologia-tipo">Portal nacional</span>
+          <span class="fila-metodologia-pos" title="5.5 en la escala 1-21">Centro-izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Medio fundado en 2021 por un grupo de periodistas (Martín Sivak entre otros) con línea progresista/feminista; más institucional y menos combativo que el resto del bloque de izquierda del roster, por eso más cerca del centro</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Diario Registrado</span>
+          <span class="fila-metodologia-tipo">Portal nacional</span>
+          <span class="fila-metodologia-pos" title="6.3 en la escala 1-21">Centro-izquierda</span>
+        </div>
+        <p class="fila-metodologia-fuente">Fundado por Diego Gvirtz (creador de &#34;6,7,8&#34;, pro-kirchnerista); controlado por Grupo Indalo (Cristóbal López), mismo grupo que controló Ámbito Financiero</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Crónica</span>
+          <span class="fila-metodologia-tipo">Diario popular nacional</span>
+          <span class="fila-metodologia-pos" title="9.0 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Propiedad de Grupo Olmos desde 2005, con vínculos documentados (Media Ownership Monitor) entre sus dueños y el sindicalismo alineado al kirchnerismo; tradición histórica de periodismo popular/peronista</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Infobae</span>
+          <span class="fila-metodologia-tipo">Portal nacional</span>
+          <span class="fila-metodologia-pos" title="9.3 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Media Bias/Fact Check (Left-Center) + estudios sobre elecciones argentinas que lo encuentran cerca del centro; literatura académica en tensión (un paper lo ubica center-left, otro center-right junto a Clarín/TN)</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Ámbito</span>
+          <span class="fila-metodologia-tipo">Economía y política</span>
+          <span class="fila-metodologia-pos" title="9.6 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Línea económica difícil de reducir al eje izq-der + paso documentado por Grupo Indalo (Cristóbal López, descrito como &#34;empresario kirchnerista&#34; por La Nación) entre 2015 y 2016</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">La Capital</span>
+          <span class="fila-metodologia-tipo">Diario regional (Rosario)</span>
+          <span class="fila-metodologia-pos" title="10.5 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Propiedad: familia Lagos → Grupo América (Vila-Manzano) 1997-2019 → Grupo Scaglione (también dueño de Telefe) desde 2019; apoyo editorial documentado a la Ley de Servicios Audiovisuales de 2009 (evidencia parcial/ambigua)</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Perfil</span>
+          <span class="fila-metodologia-tipo">Diario y portal nacional</span>
+          <span class="fila-metodologia-pos" title="10.8 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Criterio editorial de Max (posicionamiento transversal) + editorial explícita de Fontevecchia en 2023 llamando a votar en contra de Milei, tras histórica postura crítica de Kirchner/CFK y Menem por igual</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Río Negro</span>
+          <span class="fila-metodologia-tipo">Diario regional (Patagonia norte)</span>
+          <span class="fila-metodologia-pos" title="11.0 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Medio regional patagónico sin línea editorial que justifique alejarlo del centro con la evidencia disponible; cambio de dueño en 2025 sin alineamiento político documentado</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">MercoPress</span>
+          <span class="fila-metodologia-tipo">Portal internacional (Mercosur/Cono Sur, en inglés)</span>
+          <span class="fila-metodologia-pos" title="11.0 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Agencia regional/económica con base en Uruguay; sin evidencia de una posición ideológica marcada en el eje argentino</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Misiones Online</span>
+          <span class="fila-metodologia-tipo">Portal regional (Misiones)</span>
+          <span class="fila-metodologia-pos" title="12.0 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Medio provincial/generalista; sin evidencia que justifique una posición cercana a los extremos</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Los Andes</span>
+          <span class="fila-metodologia-tipo">Diario regional (Mendoza)</span>
+          <span class="fila-metodologia-pos" title="12.4 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Diario tradicional de Mendoza asociado a posiciones liberales/conservadoras; cambió de manos en 2024 a empresarios mendocinos con vínculos en espacios de Cambia Mendoza (centro-derecha provincial)</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Buenos Aires Times</span>
+          <span class="fila-metodologia-tipo">Diario nacional en inglés</span>
+          <span class="fila-metodologia-pos" title="13.0 en la escala 1-21">Centro</span>
+        </div>
+        <p class="fila-metodologia-fuente">Media Bias/Fact Check (Right-Center): títulos con carga emocional favorables a Macri/Bullrich, con alta factualidad — medio de Grupo Perfil</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">El Día</span>
+          <span class="fila-metodologia-tipo">Diario regional (La Plata)</span>
+          <span class="fila-metodologia-pos" title="13.6 en la escala 1-21">Centro-derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Historia editorial ligada a posiciones liberales y opositoras al peronismo + apoyo editorial documentado de la familia Kraiselburd al golpe de 1976 (Wikipedia), sin implicar posición extrema hoy</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">El Intransigente</span>
+          <span class="fila-metodologia-tipo">Portal regional (Salta / NOA)</span>
+          <span class="fila-metodologia-pos" title="14.2 en la escala 1-21">Centro-derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Trayectoria históricamente opositora al peronismo; autodescripción actual como medio &#34;sin compromisos partidarios&#34; sugiere una posición algo más moderada de lo estimado originalmente (evidencia débil)</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Cadena 3</span>
+          <span class="fila-metodologia-tipo">Radio y portal nacional (con base en Córdoba)</span>
+          <span class="fila-metodologia-pos" title="14.5 en la escala 1-21">Centro-derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Cobertura periodística documenta línea consistentemente crítica del kirchnerismo (entrevistas de Mario Pereyra) y audiencia en una Córdoba caracterizada como opositora al gobierno nacional peronista; propietario ligado a círculos agroindustriales cordobeses</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">La Gaceta</span>
+          <span class="fila-metodologia-tipo">Diario regional (Tucumán)</span>
+          <span class="fila-metodologia-pos" title="15.3 en la escala 1-21">Centro-derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Tradición editorial liberal y republicana + apoyo editorial documentado al Proceso de Reorganización Nacional y vínculos familiares con el interventor Bussi en Tucumán (Wikipedia)</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">TN</span>
+          <span class="fila-metodologia-tipo">Portal nacional</span>
+          <span class="fila-metodologia-pos" title="16.3 en la escala 1-21">Centro-derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Mismo grupo que Clarín (Grupo Clarín/Artear) + papers académicos (Nature 2024, arXiv) que lo agrupan center-right junto a Clarín y La Nación</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">Clarín</span>
+          <span class="fila-metodologia-tipo">Diario nacional</span>
+          <span class="fila-metodologia-pos" title="17.4 en la escala 1-21">Centro-derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Media Bias/Fact Check (Right-Center, score más alto que La Nación) + SciELO México: mayor intensidad de sesgo partidario (anti-K/pro-Macri) que La Nación</p>
+      </div>
+      
+      <div class="fila-metodologia">
+        <div class="fila-metodologia-header">
+          <span class="fila-metodologia-medio">La Nación</span>
+          <span class="fila-metodologia-tipo">Diario nacional</span>
+          <span class="fila-metodologia-pos" title="18.6 en la escala 1-21">Derecha</span>
+        </div>
+        <p class="fila-metodologia-fuente">Media Bias/Fact Check (Right-Center) + estudios académicos (SciELO México, &#34;Tres medios y dos presidencias&#34;) que la ubican en centro-derecha/derecha, con sesgo partidario algo menor al de Clarín</p>
+      </div>
+      
+    </div>
   </div>
 
   <footer>Puente · metodología pública</footer>
@@ -6391,6 +6724,34 @@ a { text-decoration: none; }
       input.addEventListener('input', actualizarBotonSeguir);
     }
     pintar();
+  })();
+
+  // --- Volver arriba: aparece al bajar un poco, en páginas que se hacen
+  // largas (Comparación con la tabla de metodología, Tendencias, etc.) ---
+  (function () {
+    var boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'btn-arriba';
+    boton.setAttribute('aria-label', 'Volver arriba');
+    boton.title = 'Volver arriba';
+    boton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    document.body.appendChild(boton);
+
+    var UMBRAL_PX = 480;
+    var visible = false;
+    function actualizar() {
+      var mostrar = (window.scrollY || document.documentElement.scrollTop || 0) > UMBRAL_PX;
+      if (mostrar === visible) return;
+      visible = mostrar;
+      boton.classList.toggle('visible', visible);
+    }
+    window.addEventListener('scroll', actualizar, { passive: true });
+    actualizar();
+
+    boton.addEventListener('click', function () {
+      var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: sinMovimiento ? 'auto' : 'smooth' });
+    });
   })();
 </script>
 <script>

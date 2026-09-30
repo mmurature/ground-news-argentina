@@ -127,6 +127,23 @@ a { text-decoration: none; }
 .btn-guardar.guardado { color: var(--highlight); border-color: var(--highlight); }
 .btn-guardar.guardado svg { fill: currentColor; }
 
+/* --- volver arriba: aparece al bajar, en páginas que se hacen largas --- */
+.btn-arriba {
+  position: fixed; right: 16px; bottom: 16px; z-index: 40;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--card-bg); color: var(--text-muted); cursor: pointer; padding: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn-arriba.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.btn-arriba:hover { color: var(--text); border-color: var(--accent); }
+.btn-arriba svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) {
+  .btn-arriba { transition: opacity 0.01s, visibility 0.01s; }
+}
+
 /* --- selector de vista: Feed (tradicional) vs Swipe --- */
 .vista-switch {
   display: inline-flex; gap: 4px; padding: 4px; margin: 6px 0 0;
@@ -967,6 +984,34 @@ a { text-decoration: none; }
       input.addEventListener('input', actualizarBotonSeguir);
     }
     pintar();
+  })();
+
+  // --- Volver arriba: aparece al bajar un poco, en páginas que se hacen
+  // largas (Comparación con la tabla de metodología, Tendencias, etc.) ---
+  (function () {
+    var boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'btn-arriba';
+    boton.setAttribute('aria-label', 'Volver arriba');
+    boton.title = 'Volver arriba';
+    boton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    document.body.appendChild(boton);
+
+    var UMBRAL_PX = 480;
+    var visible = false;
+    function actualizar() {
+      var mostrar = (window.scrollY || document.documentElement.scrollTop || 0) > UMBRAL_PX;
+      if (mostrar === visible) return;
+      visible = mostrar;
+      boton.classList.toggle('visible', visible);
+    }
+    window.addEventListener('scroll', actualizar, { passive: true });
+    actualizar();
+
+    boton.addEventListener('click', function () {
+      var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: sinMovimiento ? 'auto' : 'smooth' });
+    });
   })();
 </script>
 </body>
