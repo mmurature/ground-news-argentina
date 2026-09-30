@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tendencias — Puente</title>
+<meta name="description" content="Qué temas están en tendencia de búsqueda en Argentina ahora mismo, y qué historias de Puente se relacionan con cada uno.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-180.png?v=2">
+<meta name="theme-color" content="#0f766e">
+{% include "_tema_temprano.html" %}
+<style>
+{% include "_estilos_base.html" %}
+  .contenedor { max-width: 880px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
+  h1 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--text-muted); font-size: 0.9rem; margin: 4px 0 0; }
+  .aviso-cache {
+    background: var(--card-bg); border: 1px dashed var(--border); border-radius: 10px;
+    padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); font-style: italic;
+  }
+
+  .tendencia-sparkline { display: block; width: 100%; height: 64px; }
+  .tendencia-sparkline-area { fill: var(--accent); opacity: 0.1; }
+  .tendencia-sparkline-linea { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .tendencia-sin-curva { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
+  .tendencia-volumen {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
+    padding: 2px 9px; margin: 0 0 8px;
+  }
+
+  .tendencia-destacada {
+    background: var(--card-bg); border: 1px solid var(--accent); border-radius: 14px;
+    padding: 20px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px;
+  }
+  .kicker-destacada { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--highlight); }
+  .tendencia-destacada h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 2px 0 0; }
+
+  .tendencia-grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 14px; }
+  .tendencia-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .tendencia-card h3 { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin: 0; }
+
+  .tendencia-historias { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 6px; }
+  .tendencia-historias li { font-size: 0.85rem; line-height: 1.35; padding-top: 6px; border-top: 1px solid var(--border); }
+  .tendencia-historias li:first-child { padding-top: 0; border-top: none; }
+  .tendencia-historias a { color: var(--text); text-decoration: none; }
+  .tendencia-historias a:hover { text-decoration: underline; }
+  .tendencia-historias .medio { font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
+  .tendencia-mas { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
+  .tendencia-sin-cobertura { font-size: 0.82rem; color: var(--text-muted); font-style: italic; margin: 4px 0 0; }
+
+  footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
+  .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; }
+</style>
+</head>
+<body>
+{% set base = '' %}
+{% set pagina = 'tendencias' %}
+{% include "_splash.html" %}
+{% include "_nav.html" %}
+<div class="contenedor">
+  <div>
+    <h1>Tendencias</h1>
+    <p class="subtitulo">Qué está en tendencia de búsqueda en Argentina ahora mismo (Google Trends), y qué historias de Puente hablan de cada tema — con quién las cubrió. Actualizado {{ generado }}.</p>
+  </div>
+
+  {% if desde_cache %}
+  <p class="aviso-cache">No pudimos actualizar la lista de tendencias en esta corrida (puede pasar, depende de un servicio de Google que no es una API oficial). Se muestra la última lista disponible{% if generado_tendencias %}, de {{ generado_tendencias }}{% endif %}.</p>
+  {% endif %}
+
+  {% if tendencias %}
+    {% set destacada = tendencias[0] %}
+    <div class="tendencia-destacada">
+      <span class="kicker-destacada">Lo más buscado ahora</span>
+      <h2>{{ destacada.query }}</h2>
+      {% if destacada.volumen_texto %}<span class="tendencia-volumen">{{ destacada.volumen_texto }} búsquedas</span>{% endif %}
+      {% if destacada.curva_svg %}
+      <svg class="tendencia-sparkline" viewBox="0 0 {{ destacada.curva_svg.ancho }} {{ destacada.curva_svg.alto }}" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;{{ destacada.query }}&quot; en las últimas 24 horas">
+        <polygon points="{{ destacada.curva_svg.area }}" class="tendencia-sparkline-area"></polygon>
+        <polyline points="{{ destacada.curva_svg.linea }}" class="tendencia-sparkline-linea"></polyline>
+      </svg>
+      {% endif %}
+      {% if destacada.historias %}
+      <ul class="tendencia-historias">
+        {% for h in destacada.historias %}
+        <li>
+          <span class="badges"><span class="badge-categoria">{{ h.categoria }}</span> <span class="badge-consenso {{ h.indicador.consenso_clase }}">{{ h.indicador.consenso_etiqueta }}</span></span>
+          <div><a href="historias/{{ h.id }}.html">{{ h.titulo }}</a></div>
+          <span style="color: var(--text-muted); font-size: 0.78rem;">{{ h.n_medios }} medio{{ 's' if h.n_medios != 1 else '' }} la cubrieron</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="tendencia-sin-cobertura">Todavía ningún medio de los que seguimos cubrió esto.</p>
+      {% endif %}
+    </div>
+
+    {% if tendencias|length > 1 %}
+    <div class="tendencia-grilla">
+      {% for t in tendencias[1:] %}
+      <div class="tendencia-card">
+        <h3>{{ t.query }}</h3>
+        {% if t.volumen_texto %}<span class="tendencia-volumen">{{ t.volumen_texto }}</span>{% endif %}
+        {% if t.curva_svg %}
+        <svg class="tendencia-sparkline" viewBox="0 0 {{ t.curva_svg.ancho }} {{ t.curva_svg.alto }}" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;{{ t.query }}&quot; en las últimas 24 horas">
+          <polygon points="{{ t.curva_svg.area }}" class="tendencia-sparkline-area"></polygon>
+          <polyline points="{{ t.curva_svg.linea }}" class="tendencia-sparkline-linea"></polyline>
+        </svg>
+        {% endif %}
+        {% if t.historias %}
+        <ul class="tendencia-historias">
+          {% for h in t.historias[:2] %}
+          <li><a href="historias/{{ h.id }}.html">{{ h.titulo }}</a></li>
+          {% endfor %}
+        </ul>
+        {% if t.historias|length > 2 %}<p class="tendencia-mas">+{{ t.historias|length - 2 }} historia{{ 's' if t.historias|length - 2 != 1 else '' }} más</p>{% endif %}
+        {% else %}
+        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% else %}
+    <p class="vacio">Todavía no pudimos traer tendencias. Probá de nuevo más tarde.</p>
+  {% endif %}
+
+  <footer>Puente · metodología pública · la lista de tendencias viene de Google Trends (no oficial); el cruce con nuestras historias es propio.</footer>
+</div>
+{% include "_scripts_base.html" %}
+</body>
+</html>

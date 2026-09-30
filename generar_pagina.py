@@ -11,8 +11,13 @@ por agrupar.py) y genera:
     que se muestra en la home.
   - docs/comparacion.html: matriz de solapamiento de cobertura entre
     todos los medios confirmados.
+  - docs/tendencias.html: temas en tendencia de búsqueda en Argentina
+    (Google Trends) cruzados con nuestras historias — los datos los arma
+    tendencias.py, este script solo los lee de noticias.db y los dibuja.
 
-Requiere haber corrido antes recolector.py y agrupar.py.
+Requiere haber corrido antes recolector.py, agrupar.py y (para la pestaña
+de tendencias) tendencias.py — si tendencias.py nunca corrió, la pestaña
+se genera vacía en vez de romper el resto del sitio.
 
 Uso:
     python generar_pagina.py
@@ -39,6 +44,7 @@ SALIDA = os.path.join(DOCS_DIR, "index.html")
 SALIDA_COMPARACION = os.path.join(DOCS_DIR, "comparacion.html")
 SALIDA_NOSOTROS = os.path.join(DOCS_DIR, "nosotros.html")
 SALIDA_GUARDADAS = os.path.join(DOCS_DIR, "guardadas.html")
+SALIDA_TENDENCIAS = os.path.join(DOCS_DIR, "tendencias.html")
 SALIDA_DATOS_COMPARACION = os.path.join(DOCS_DIR, "datos_comparacion.json")
 DIR_HISTORIAS = os.path.join(DOCS_DIR, "historias")
 
@@ -470,6 +476,63 @@ def armar_datos_comparacion(historias_todas):
     return por_medio
 
 
+# --- Tendencias (datos los arma tendencias.py, esto solo los lee y dibuja) --
+
+
+def _tabla_existe(con, nombre):
+    fila = con.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (nombre,)
+    ).fetchone()
+    return bool(fila)
+
+
+def armar_sparkline_svg(puntos, ancho=280, alto=64):
+    """Convierte la curva de interés de búsqueda (lista de {"t","v"}) en
+    coordenadas para un sparkline SVG — línea de 2px y área rellena al
+    ~10% de opacidad, como el resto de los indicadores del sitio (ver
+    _estilos_base.html). None si no hay suficientes puntos para que una
+    línea tenga sentido (por ejemplo, si a ese tema no se le pudo traer
+    la curva esta corrida)."""
+    if not puntos or len(puntos) < 2:
+        return None
+    valores = [p["v"] for p in puntos]
+    minimo, maximo = min(valores), max(valores)
+    rango = (maximo - minimo) or 1
+    n = len(puntos)
+    margen = 3
+
+    coords = []
+    for i, p in enumerate(puntos):
+        x = i / (n - 1) * ancho
+        y = alto - ((p["v"] - minimo) / rango * (alto - margen * 2)) - margen
+        coords.append(f"{x:.1f},{y:.1f}")
+
+    linea = " ".join(coords)
+    area = f"0,{alto} {linea} {ancho},{alto}"
+    return {"ancho": ancho, "alto": alto, "linea": linea, "area": area}
+
+
+def cargar_tendencias(con):
+    """Lee el último resultado que dejó tendencias.py en noticias.db
+    (fresco o, si Google falló esa corrida, el último que funcionó — la
+    degradación ya la resuelve tendencias.py, acá solo se lee y se le
+    agrega el SVG). None si tendencias.py nunca corrió con éxito."""
+    if not _tabla_existe(con, "estado_pipeline"):
+        return None
+    fila = con.execute(
+        "SELECT valor FROM estado_pipeline WHERE clave = 'tendencias_render'"
+    ).fetchone()
+    if not fila:
+        return None
+    try:
+        datos = json.loads(fila[0])
+    except (json.JSONDecodeError, TypeError):
+        return None
+    for t in datos.get("tendencias", []):
+        t["curva_svg"] = armar_sparkline_svg(t.get("curva"))
+    return datos
+
+
 # --- Armado de contexto -------------------------------------------------------
 
 
@@ -518,6 +581,7 @@ def main():
     con = sqlite3.connect(DB_PATH)
     historias = cargar_historias(con)
     palabra_del_dia = calcular_palabra_del_dia(con, posiciones)
+    datos_tendencias = cargar_tendencias(con)
     con.close()
 
     if not historias:
@@ -603,11 +667,23 @@ def main():
     with open(SALIDA_GUARDADAS, "w", encoding="utf-8") as f:
         f.write(html_g)
 
+    # --- Tendencias ---
+    plantilla_tendencias = env.get_template("tendencias.html")
+    html_t = plantilla_tendencias.render(
+        tendencias=(datos_tendencias or {}).get("tendencias", []),
+        generado_tendencias=(datos_tendencias or {}).get("generado"),
+        desde_cache=(datos_tendencias or {}).get("desde_cache", False),
+        generado=generado,
+    )
+    with open(SALIDA_TENDENCIAS, "w", encoding="utf-8") as f:
+        f.write(html_t)
+
+    n_tendencias = len((datos_tendencias or {}).get("tendencias", []))
     print(
         f"Listo: {SALIDA} generado con {len(contexto_historias)} historias "
         f"(de {len(historias)} agrupadas, filtrando por {MEDIOS_MINIMOS}+ medios). "
-        f"{len(contexto_historias)} páginas de historia + comparación de medios. "
-        f"{huerfanas} páginas de historia vieja(s) borrada(s)."
+        f"{len(contexto_historias)} páginas de historia + comparación de medios + "
+        f"{n_tendencias} tendencias. {huerfanas} páginas de historia vieja(s) borrada(s)."
     )
 
 

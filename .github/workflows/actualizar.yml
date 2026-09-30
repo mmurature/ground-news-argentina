@@ -36,6 +36,14 @@ jobs:
       - name: Agrupar historias
         run: python agrupar.py
 
+      - name: Traer tendencias (Google Trends)
+        # No falla el resto del pipeline si Google Trends no responde:
+        # tendencias.py atrapa sus propios errores de red/endpoint y
+        # degrada solo (reusa la última lista que funcionó). continue-on-error
+        # es una red de seguridad extra por si algo se le escapa igual.
+        run: python tendencias.py
+        continue-on-error: true
+
       - name: Generar la página
         run: python generar_pagina.py
 
