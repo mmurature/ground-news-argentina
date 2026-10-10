@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tendencias — Puente</title>
-<meta name="description" content="Qué temas están en tendencia de búsqueda en Argentina ahora mismo, y qué historias de Puente se relacionan con cada uno.">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icono.svg?v=2" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icono-180.png?v=2">
+<title>La CGT marchó por la crisis en la industria: pidió al Gobierno una mesa de diálogo, pero amenazó con &#34;hacer tronar el escarmiento&#34; — Puente</title>
+<meta name="description" content="Cobertura y tendencias políticas de esta historia, contada desde distintos medios argentinos.">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icono.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icono-180.png?v=2">
 <meta name="theme-color" content="#0f766e">
 <script>(function(){try{var t=localStorage.getItem('puente-tema');if(t==='oscuro')document.documentElement.setAttribute('data-theme','dark');else if(t==='claro')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <style>
@@ -283,68 +283,49 @@ a { text-decoration: none; }
   border-radius: 50%; border: none; background: rgba(var(--accent-rgb), 0.18); color: inherit;
   cursor: pointer; font-size: 0.7rem; line-height: 1; padding: 0;
 }
-  .contenedor { max-width: 880px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
-  h1 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .subtitulo { color: var(--text-muted); font-size: 0.9rem; margin: 4px 0 0; }
-  .aviso-cache {
-    background: var(--card-bg); border: 1px dashed var(--border); border-radius: 10px;
-    padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); font-style: italic;
-  }
+  .contenedor { max-width: 720px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 22px; }
 
-  .tendencia-sparkline { display: block; width: 100%; height: 64px; }
-  .tendencia-sparkline-area { fill: var(--accent); opacity: 0.1; }
-  .tendencia-sparkline-linea { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-  .tendencia-sin-curva { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
-  .tendencia-volumen {
-    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.04em; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
-    padding: 2px 9px; margin: 0 0 8px;
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .destacada, .badge-categoria {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 999px; padding: 2px 9px;
   }
+  .destacada { color: var(--highlight); border: 1px solid var(--highlight); }
+  .badge-categoria { color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
 
-  .tendencia-destacada {
-    background: var(--card-bg); border: 1px solid var(--accent); border-radius: 14px;
-    padding: 20px 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px;
+  h1 { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 700; margin: 0; line-height: 1.3; letter-spacing: -0.01em; }
+  .meta { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+
+  h2 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; margin: 0; }
+  .subtitulo-seccion { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-muted); }
+
+  .indicador-politico { display: flex; flex-direction: column; gap: 6px; }
+  .indicador-header { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .indicador-etiqueta { font-family: var(--font-serif); font-weight: 700; color: var(--highlight); font-size: 1.1rem; }
+  .indicador-desc { color: var(--text-muted); font-size: 0.8rem; }
+  .indicador-eje { position: relative; height: 24px; }
+  .eje-linea { position: absolute; top: 10px; left: 0; right: 0; height: 3px; background: var(--border); border-radius: 2px; }
+  .eje-marca { position: absolute; top: 8px; width: 2px; height: 7px; background: var(--border); transform: translateX(-50%); }
+  .eje-punto { position: absolute; top: 50%; border-radius: 50%; background: var(--text-muted); opacity: 0.6; transform: translate(-50%, -50%); }
+  .eje-promedio { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; background: var(--highlight); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); box-shadow: 0 0 0 3px var(--bg); }
+  .eje-extremos { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .coberturas { display: flex; flex-direction: column; gap: 10px; }
+  .cobertura {
+    border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 6px;
   }
-  .kicker-destacada { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--highlight); }
-  .tendencia-destacada h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 2px 0 0; }
+  .cobertura .fila-medio { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .cobertura .medio { font-weight: 700; color: var(--accent); }
+  .cobertura .bucket { font-size: 0.68rem; font-weight: 600; color: var(--highlight); border: 1px solid var(--highlight); border-radius: 999px; padding: 1px 8px; }
+  .cobertura a { font-size: 0.92rem; color: var(--text); line-height: 1.35; overflow-wrap: break-word; }
+  .cobertura a:hover { text-decoration: underline; }
 
-  .tendencia-encabezado { display: flex; align-items: center; gap: 8px; }
-  .tendencia-rango {
-    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-    width: 24px; height: 24px; border-radius: 999px; background: var(--accent); color: var(--card-bg);
-    font-size: 0.74rem; font-weight: 700; font-family: var(--font-serif, inherit);
-  }
-
-  .tendencia-grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 14px; }
-  .tendencia-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;
-  }
-  .tendencia-card h3 { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin: 0; }
-
-  .tendencia-historias { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 6px; }
-  .tendencia-historias li { font-size: 0.85rem; line-height: 1.35; padding-top: 6px; border-top: 1px solid var(--border); }
-  .tendencia-historias li:first-child { padding-top: 0; border-top: none; }
-  .tendencia-historias a { color: var(--text); text-decoration: none; }
-  .tendencia-historias a:hover { text-decoration: underline; }
-  .tendencia-historias .medio { font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
-  .tendencia-mas { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
-  .tendencia-sin-cobertura { font-size: 0.82rem; color: var(--text-muted); font-style: italic; margin: 4px 0 0; }
-
-  .elegir-fuente { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
-  .chip-fuente {
-    display: inline-flex; align-items: center; font-size: 0.74rem; font-weight: 600;
-    padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent);
-    background: transparent; text-decoration: none; white-space: nowrap;
-  }
-  .chip-fuente:hover { background: var(--accent); color: var(--card-bg); }
+  .faltan { margin: 0; font-size: 0.82rem; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed var(--border); }
 
   footer { color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 0 0; }
-  .vacio { color: var(--text-muted); padding: 32px 0; text-align: center; }
 </style>
 </head>
 <body>
-
 
 
 <div class="splash" id="splash" aria-hidden="true">
@@ -355,7 +336,7 @@ a { text-decoration: none; }
 </div>
 <nav class="nav-superior">
   <div class="nav-fila">
-    <a href="index.html" class="nav-marca">
+    <a href="../index.html" class="nav-marca">
       <svg width="26" height="19" viewBox="0 0 70 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <path d="M6 38 Q6 20 30 10 Q54 20 54 38" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
         <path d="M20 40 Q20 24 42 16 Q64 24 64 40" stroke="var(--highlight)" stroke-width="4.5" stroke-linecap="round"/>
@@ -371,319 +352,177 @@ a { text-decoration: none; }
     </div>
   </div>
   <div class="nav-links">
-    <a href="index.html">Inicio</a>
-    <a href="tendencias.html" class="activo">Tendencias</a>
-    <a href="comparacion.html">Comparación</a>
-    <a href="guardadas.html">Guardadas</a>
-    <a href="nosotros.html">Nosotros</a>
+    <a href="../index.html">Inicio</a>
+    <a href="../tendencias.html">Tendencias</a>
+    <a href="../comparacion.html">Comparación</a>
+    <a href="../guardadas.html">Guardadas</a>
+    <a href="../nosotros.html">Nosotros</a>
   </div>
 </nav>
 <div class="contenedor">
-  <div>
-    <h1>Tendencias</h1>
-    <p class="subtitulo">Qué está en tendencia de búsqueda en Argentina ahora mismo (Google Trends), y qué historias de Puente hablan de cada tema — con quién las cubrió. Actualizado 10/10/2026 03:19 UTC.</p>
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="badges">
+      
+      <span class="badge-categoria">Política nacional</span>
+      <span class="badge-consenso polarizada">Cobertura polarizada</span>
+    </div>
+    <h1>La CGT marchó por la crisis en la industria: pidió al Gobierno una mesa de diálogo, pero amenazó con &#34;hacer tronar el escarmiento&#34;</h1>
+    <p class="meta">10 coberturas de 10 medios · 22 de 32 medios no la cubrieron · Actualizado 10/10/2026 03:19 UTC</p>
+    <div class="acciones-historia">
+      <button type="button" class="accion-icono btn-guardar" data-id="458435" aria-pressed="false" title="Guardar para después">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+      </button>
+      <button type="button" class="accion-icono btn-compartir" data-id="458435" data-titulo="La CGT marchó por la crisis en la industria: pidió al Gobierno una mesa de diálogo, pero amenazó con &#34;hacer tronar el escarmiento&#34;" data-etiqueta="Centro" data-medios="Clarín, El Día, El Intransigente, Indymedia Argentina, Infocielo y 5 más" title="Compartir como imagen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
+      </button>
+    </div>
   </div>
 
-  
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div>
+      <h2>Cobertura y tendencias políticas</h2>
+      <p class="subtitulo-seccion">Cómo se ubica editorialmente cada medio que cubrió esta historia, y qué tituló cada uno.</p>
+    </div>
 
-  
-    
-    <div class="tendencia-destacada">
-      <div class="tendencia-encabezado">
-        <span class="tendencia-rango">1</span>
-        <span class="kicker-destacada">Lo más buscado ahora</span>
+    <div class="indicador-politico">
+      <div class="indicador-header">
+        <span class="indicador-etiqueta">Centro</span>
+        <span class="indicador-desc">— promedio de 10 coberturas</span>
       </div>
-      <h2>instituto - boca juniors</h2>
-      <span class="tendencia-volumen">500 mil+ búsquedas</span>
-      
-      <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;instituto - boca juniors&quot; en las últimas 24 horas">
-        <polygon points="0,64 0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,61.0 37.3,61.0 38.9,61.0 40.4,61.0 42.0,61.0 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,61.0 74.7,61.0 76.2,61.0 77.8,61.0 79.3,61.0 80.9,61.0 82.4,61.0 84.0,61.0 85.6,61.0 87.1,61.0 88.7,61.0 90.2,61.0 91.8,61.0 93.3,61.0 94.9,61.0 96.4,61.0 98.0,61.0 99.6,61.0 101.1,61.0 102.7,61.0 104.2,61.0 105.8,61.0 107.3,61.0 108.9,61.0 110.4,61.0 112.0,61.0 113.6,61.0 115.1,61.0 116.7,61.0 118.2,61.0 119.8,61.0 121.3,61.0 122.9,61.0 124.4,61.0 126.0,61.0 127.6,61.0 129.1,61.0 130.7,61.0 132.2,61.0 133.8,61.0 135.3,61.0 136.9,61.0 138.4,61.0 140.0,61.0 141.6,61.0 143.1,61.0 144.7,61.0 146.2,61.0 147.8,61.0 149.3,61.0 150.9,61.0 152.4,61.0 154.0,61.0 155.6,61.0 157.1,61.0 158.7,61.0 160.2,61.0 161.8,61.0 163.3,61.0 164.9,61.0 166.4,61.0 168.0,61.0 169.6,61.0 171.1,61.0 172.7,61.0 174.2,61.0 175.8,61.0 177.3,61.0 178.9,61.0 180.4,61.0 182.0,61.0 183.6,61.0 185.1,61.0 186.7,61.0 188.2,61.0 189.8,61.0 191.3,61.0 192.9,61.0 194.4,61.0 196.0,61.0 197.6,61.0 199.1,61.0 200.7,61.0 202.2,61.0 203.8,61.0 205.3,60.9 206.9,60.7 208.4,60.6 210.0,60.4 211.6,59.7 213.1,58.9 214.7,58.3 216.2,57.7 217.8,57.1 219.3,46.6 220.9,37.7 222.4,30.7 224.0,22.6 225.6,11.3 227.1,8.9 228.7,8.3 230.2,7.3 231.8,4.3 233.3,7.7 234.9,11.3 236.4,8.9 238.0,5.0 239.6,6.9 241.1,6.3 242.7,5.0 244.2,3.6 245.8,7.0 247.3,3.7 248.9,3.0 250.4,8.0 252.0,17.9 253.6,23.7 255.1,34.4 256.7,42.1 258.2,46.6 259.8,49.4 261.3,51.3 262.9,52.4 264.4,53.4 266.0,54.3 267.6,55.0 269.1,55.6 270.7,56.1 272.2,56.6 273.8,57.0 275.3,57.3 276.9,57.7 278.4,58.0 280.0,58.1 280,64" class="tendencia-sparkline-area"></polygon>
-        <polyline points="0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,61.0 37.3,61.0 38.9,61.0 40.4,61.0 42.0,61.0 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,61.0 74.7,61.0 76.2,61.0 77.8,61.0 79.3,61.0 80.9,61.0 82.4,61.0 84.0,61.0 85.6,61.0 87.1,61.0 88.7,61.0 90.2,61.0 91.8,61.0 93.3,61.0 94.9,61.0 96.4,61.0 98.0,61.0 99.6,61.0 101.1,61.0 102.7,61.0 104.2,61.0 105.8,61.0 107.3,61.0 108.9,61.0 110.4,61.0 112.0,61.0 113.6,61.0 115.1,61.0 116.7,61.0 118.2,61.0 119.8,61.0 121.3,61.0 122.9,61.0 124.4,61.0 126.0,61.0 127.6,61.0 129.1,61.0 130.7,61.0 132.2,61.0 133.8,61.0 135.3,61.0 136.9,61.0 138.4,61.0 140.0,61.0 141.6,61.0 143.1,61.0 144.7,61.0 146.2,61.0 147.8,61.0 149.3,61.0 150.9,61.0 152.4,61.0 154.0,61.0 155.6,61.0 157.1,61.0 158.7,61.0 160.2,61.0 161.8,61.0 163.3,61.0 164.9,61.0 166.4,61.0 168.0,61.0 169.6,61.0 171.1,61.0 172.7,61.0 174.2,61.0 175.8,61.0 177.3,61.0 178.9,61.0 180.4,61.0 182.0,61.0 183.6,61.0 185.1,61.0 186.7,61.0 188.2,61.0 189.8,61.0 191.3,61.0 192.9,61.0 194.4,61.0 196.0,61.0 197.6,61.0 199.1,61.0 200.7,61.0 202.2,61.0 203.8,61.0 205.3,60.9 206.9,60.7 208.4,60.6 210.0,60.4 211.6,59.7 213.1,58.9 214.7,58.3 216.2,57.7 217.8,57.1 219.3,46.6 220.9,37.7 222.4,30.7 224.0,22.6 225.6,11.3 227.1,8.9 228.7,8.3 230.2,7.3 231.8,4.3 233.3,7.7 234.9,11.3 236.4,8.9 238.0,5.0 239.6,6.9 241.1,6.3 242.7,5.0 244.2,3.6 245.8,7.0 247.3,3.7 248.9,3.0 250.4,8.0 252.0,17.9 253.6,23.7 255.1,34.4 256.7,42.1 258.2,46.6 259.8,49.4 261.3,51.3 262.9,52.4 264.4,53.4 266.0,54.3 267.6,55.0 269.1,55.6 270.7,56.1 272.2,56.6 273.8,57.0 275.3,57.3 276.9,57.7 278.4,58.0 280.0,58.1" class="tendencia-sparkline-linea"></polyline>
-      </svg>
-      
-      
-      <ul class="tendencia-historias">
+      <div class="indicador-eje">
+        <div class="eje-linea"></div>
         
-        <li>
-          <span class="badges"><span class="badge-categoria">Deportes</span> <span class="badge-consenso unica">Cobertura única</span></span>
-          <div><span class="medio">El Día</span> <a href="https://www.eldia.com/deportes/boca-visita-a-instituto-en-un-cruce-fundamental-deportes_1791525172" target="_blank" rel="noopener">Boca visita a Instituto, en un cruce fundamental</a></div>
-          <span style="color: var(--text-muted); font-size: 0.78rem;">1 medio la cubrieron</span>
-        </li>
+        <div class="eje-marca" style="left: 0%;"></div>
         
-      </ul>
+        <div class="eje-marca" style="left: 25%;"></div>
+        
+        <div class="eje-marca" style="left: 50%;"></div>
+        
+        <div class="eje-marca" style="left: 75%;"></div>
+        
+        <div class="eje-marca" style="left: 100%;"></div>
+        
+        
+        <div class="eje-punto" title="Indymedia Argentina" style="left: 9.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="Infocielo" style="left: 19.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="Página/12" style="left: 20.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="Ámbito" style="left: 43.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="Río Negro" style="left: 50.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="El Día" style="left: 63.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="El Intransigente" style="left: 66.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="La Gaceta" style="left: 71.5%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="Clarín" style="left: 82.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-punto" title="La Nación" style="left: 88.0%; width: 9px; height: 9px;"></div>
+        
+        <div class="eje-promedio" style="left: 51.15%;"></div>
+      </div>
+      <div class="eje-extremos"><span>Izquierda</span><span>Derecha</span></div>
+    </div>
+
+    <div class="coberturas">
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">Clarín</span>
+          <span class="bucket">Centro-derecha</span>
+        </div>
+        <a href="https://www.clarin.com/politica/cgt-marcho-crisis-industria-pidio-gobierno-mesa-dialogo-amenazo-hacer-tronar-escarmiento_0_5cNNl9tyeG.html" target="_blank" rel="noopener">La CGT marchó por la crisis en la industria: pidió al Gobierno una mesa de diálogo, pero amenazó con &#34;hacer tronar el escarmiento&#34;</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">El Día</span>
+          <span class="bucket">Centro-derecha</span>
+        </div>
+        <a href="https://www.eldia.com/politica-y-economia/la-cgt-marcha-por-la-industria-nacional-politica-y-economia_1791435857" target="_blank" rel="noopener">La CGT marcha por la industria nacional</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">El Intransigente</span>
+          <span class="bucket">Centro-derecha</span>
+        </div>
+        <a href="https://elintransigente.com/2026/10/cgt-movilizacion-industria-nacional/" target="_blank" rel="noopener">CGT marchó contra el Gobierno Nacional en defensa de la industria y el empleo</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">Indymedia Argentina</span>
+          <span class="bucket">Izquierda</span>
+        </div>
+        <a href="https://argentina.indymedia.org/2026/10/09/la-cgt-movilizo-en-defensa-de-la-industria-nacional/" target="_blank" rel="noopener">La CGT movilizó “en defensa de la industria nacional”</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">Infocielo</span>
+          <span class="bucket">Centro-izquierda</span>
+        </div>
+        <a href="https://www.infocielo.com/politica-y-economia/la-cgt-marcha-por-la-industria-leera-un-documento-en-donde-acusa-a-milei-de-fanatismo-ideologico-insensibilidad-y-falta-de-empatia" target="_blank" rel="noopener">La CGT marcha por la industria:  leerá un duro documento contra el Gobierno</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">La Gaceta</span>
+          <span class="bucket">Centro-derecha</span>
+        </div>
+        <a href="https://www.lagaceta.com.ar/nota/1157221/politica/cgt-denuncia-crisis-profunda-industria-marcha-contra-modelo-economico-milei.html" target="_blank" rel="noopener">La CGT denuncia una “crisis profunda” de la industria y marcha contra el modelo económico de Milei</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">La Nación</span>
+          <span class="bucket">Derecha</span>
+        </div>
+        <a href="https://www.lanacion.com.ar/politica/la-cgt-sale-a-la-calle-en-defensa-de-la-industria-nacional-y-posterga-la-definicion-sobre-un-paro-nid08102026/" target="_blank" rel="noopener">La CGT sale a la calle “en defensa de la industria nacional” y posterga la definición sobre un paro general</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">Página/12</span>
+          <span class="bucket">Centro-izquierda</span>
+        </div>
+        <a href="https://www.pagina12.com.ar/2026/10/08/la-cgt-se-movilizo-en-defensa-de-la-industria-nacional/" target="_blank" rel="noopener">La CGT se movilizó en defensa de la industria nacional</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">Río Negro</span>
+          <span class="bucket">Centro</span>
+        </div>
+        <a href="https://www.rionegro.com.ar/gremios/la-cgt-marcha-hoy-al-ex-ministerio-de-industria-reclama-frenar-la-apertura-de-importaciones-4752254/" target="_blank" rel="noopener">La CGT marcha hoy al ex ministerio de Industria: reclama frenar la apertura de importaciones</a>
+      </div>
+      
+      <div class="cobertura">
+        <div class="fila-medio">
+          <span class="medio">Ámbito</span>
+          <span class="bucket">Centro</span>
+        </div>
+        <a href="https://www.ambito.com/politica/la-cgt-denuncia-una-crisis-profunda-la-industria-y-marcha-contra-el-gobierno-n6330912" target="_blank" rel="noopener">La CGT denuncia una &#34;crisis profunda&#34; de la industria y marcha contra el Gobierno</a>
+      </div>
       
     </div>
 
     
-    <div class="tendencia-grilla">
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">2</span>
-          <h3>unión - defensa y justicia</h3>
-        </div>
-        <span class="tendencia-volumen">20 mil+ búsquedas</span>
-        
-        <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;unión - defensa y justicia&quot; en las últimas 24 horas">
-          <polygon points="0,64 0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,61.0 37.3,61.0 38.9,61.0 40.4,61.0 42.0,61.0 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,61.0 74.7,61.0 76.2,61.0 77.8,61.0 79.3,61.0 80.9,61.0 82.4,61.0 84.0,61.0 85.6,61.0 87.1,61.0 88.7,61.0 90.2,61.0 91.8,61.0 93.3,61.0 94.9,61.0 96.4,61.0 98.0,61.0 99.6,61.0 101.1,61.0 102.7,61.0 104.2,61.0 105.8,61.0 107.3,61.0 108.9,61.0 110.4,61.0 112.0,61.0 113.6,61.0 115.1,61.0 116.7,61.0 118.2,61.0 119.8,61.0 121.3,61.0 122.9,61.0 124.4,61.0 126.0,61.0 127.6,61.0 129.1,61.0 130.7,61.0 132.2,61.0 133.8,61.0 135.3,61.0 136.9,61.0 138.4,61.0 140.0,61.0 141.6,61.0 143.1,61.0 144.7,61.0 146.2,61.0 147.8,61.0 149.3,61.0 150.9,61.0 152.4,61.0 154.0,61.0 155.6,61.0 157.1,61.0 158.7,61.0 160.2,61.0 161.8,61.0 163.3,61.0 164.9,61.0 166.4,61.0 168.0,61.0 169.6,61.0 171.1,61.0 172.7,61.0 174.2,61.0 175.8,61.0 177.3,61.0 178.9,61.0 180.4,61.0 182.0,61.0 183.6,61.0 185.1,61.0 186.7,61.0 188.2,61.0 189.8,61.0 191.3,61.0 192.9,61.0 194.4,61.0 196.0,61.0 197.6,61.0 199.1,61.0 200.7,61.0 202.2,60.8 203.8,60.8 205.3,60.8 206.9,60.8 208.4,60.6 210.0,60.6 211.6,60.5 213.1,60.3 214.7,60.1 216.2,60.1 217.8,60.1 219.3,60.3 220.9,60.3 222.4,60.3 224.0,60.5 225.6,60.5 227.1,60.3 228.7,60.3 230.2,60.5 231.8,60.3 233.3,60.1 234.9,60.1 236.4,60.1 238.0,59.4 239.6,58.9 241.1,58.5 242.7,52.6 244.2,35.2 245.8,23.5 247.3,16.1 248.9,6.3 250.4,3.0 252.0,11.9 253.6,16.5 255.1,17.9 256.7,16.5 258.2,16.1 259.8,17.0 261.3,16.1 262.9,15.3 264.4,19.8 266.0,22.8 267.6,22.8 269.1,24.2 270.7,23.3 272.2,25.4 273.8,22.5 275.3,23.5 276.9,26.7 278.4,28.6 280.0,26.5 280,64" class="tendencia-sparkline-area"></polygon>
-          <polyline points="0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,61.0 37.3,61.0 38.9,61.0 40.4,61.0 42.0,61.0 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,61.0 74.7,61.0 76.2,61.0 77.8,61.0 79.3,61.0 80.9,61.0 82.4,61.0 84.0,61.0 85.6,61.0 87.1,61.0 88.7,61.0 90.2,61.0 91.8,61.0 93.3,61.0 94.9,61.0 96.4,61.0 98.0,61.0 99.6,61.0 101.1,61.0 102.7,61.0 104.2,61.0 105.8,61.0 107.3,61.0 108.9,61.0 110.4,61.0 112.0,61.0 113.6,61.0 115.1,61.0 116.7,61.0 118.2,61.0 119.8,61.0 121.3,61.0 122.9,61.0 124.4,61.0 126.0,61.0 127.6,61.0 129.1,61.0 130.7,61.0 132.2,61.0 133.8,61.0 135.3,61.0 136.9,61.0 138.4,61.0 140.0,61.0 141.6,61.0 143.1,61.0 144.7,61.0 146.2,61.0 147.8,61.0 149.3,61.0 150.9,61.0 152.4,61.0 154.0,61.0 155.6,61.0 157.1,61.0 158.7,61.0 160.2,61.0 161.8,61.0 163.3,61.0 164.9,61.0 166.4,61.0 168.0,61.0 169.6,61.0 171.1,61.0 172.7,61.0 174.2,61.0 175.8,61.0 177.3,61.0 178.9,61.0 180.4,61.0 182.0,61.0 183.6,61.0 185.1,61.0 186.7,61.0 188.2,61.0 189.8,61.0 191.3,61.0 192.9,61.0 194.4,61.0 196.0,61.0 197.6,61.0 199.1,61.0 200.7,61.0 202.2,60.8 203.8,60.8 205.3,60.8 206.9,60.8 208.4,60.6 210.0,60.6 211.6,60.5 213.1,60.3 214.7,60.1 216.2,60.1 217.8,60.1 219.3,60.3 220.9,60.3 222.4,60.3 224.0,60.5 225.6,60.5 227.1,60.3 228.7,60.3 230.2,60.5 231.8,60.3 233.3,60.1 234.9,60.1 236.4,60.1 238.0,59.4 239.6,58.9 241.1,58.5 242.7,52.6 244.2,35.2 245.8,23.5 247.3,16.1 248.9,6.3 250.4,3.0 252.0,11.9 253.6,16.5 255.1,17.9 256.7,16.5 258.2,16.1 259.8,17.0 261.3,16.1 262.9,15.3 264.4,19.8 266.0,22.8 267.6,22.8 269.1,24.2 270.7,23.3 272.2,25.4 273.8,22.5 275.3,23.5 276.9,26.7 278.4,28.6 280.0,26.5" class="tendencia-sparkline-linea"></polyline>
-        </svg>
-        
-        
-        <ul class="tendencia-historias">
-          
-          <li><span class="medio">Clarín</span> <a href="https://www.clarin.com/deportes/union-vs-defensa-justicia-vivo-torneo-clausura-2026-hora-juegan-formaciones-ver-partido_0_YShWS2d1iv.html" target="_blank" rel="noopener">Unión vs Defensa y Justicia, EN VIVO, por el Torneo Clausura 2026: a qué hora juegan, formaciones y cómo ver el partido</a></li>
-          
-          <li><span class="medio">El Día</span> <a href="https://www.eldia.com/politica-y-economia/toma-en-educacion-y-el-ejecutivo-va-a-la-justicia-politica-y-economia_1791435917" target="_blank" rel="noopener">“Toma” en Educación y el Ejecutivo va a la Justicia</a></li>
-          
-        </ul>
-        <p class="tendencia-mas">+2 historias más</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">3</span>
-          <h3>héctor alterio</h3>
-        </div>
-        <span class="tendencia-volumen">20 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">4</span>
-          <h3>panama</h3>
-        </div>
-        <span class="tendencia-volumen">50 mil+ búsquedas</span>
-        
-        <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;panama&quot; en las últimas 24 horas">
-          <polygon points="0,64 0.0,58.6 1.6,58.6 3.1,58.7 4.7,58.8 6.2,58.9 7.8,59.1 9.3,59.2 10.9,59.2 12.4,59.3 14.0,59.4 15.6,59.5 17.1,59.7 18.7,59.8 20.2,59.9 21.8,60.0 23.3,60.2 24.9,60.3 26.4,60.4 28.0,60.4 29.6,60.4 31.1,60.4 32.7,60.4 34.2,60.5 35.8,60.5 37.3,60.6 38.9,60.8 40.4,60.9 42.0,60.9 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,60.9 74.7,60.9 76.2,60.9 77.8,60.8 79.3,60.6 80.9,60.6 82.4,60.5 84.0,60.4 85.6,60.4 87.1,60.4 88.7,60.4 90.2,60.4 91.8,60.4 93.3,60.3 94.9,60.2 96.4,60.0 98.0,59.9 99.6,59.8 101.1,59.8 102.7,59.8 104.2,59.7 105.8,59.5 107.3,59.4 108.9,59.3 110.4,59.2 112.0,59.2 113.6,59.2 115.1,59.1 116.7,58.9 118.2,58.8 119.8,58.7 121.3,58.6 122.9,58.6 124.4,58.6 126.0,58.6 127.6,58.6 129.1,58.6 130.7,58.6 132.2,58.6 133.8,58.6 135.3,58.6 136.9,58.6 138.4,58.6 140.0,58.6 141.6,58.5 143.1,58.5 144.7,58.3 146.2,58.2 147.8,58.2 149.3,58.3 150.9,58.2 152.4,58.2 154.0,58.2 155.6,58.1 157.1,58.0 158.7,58.0 160.2,58.0 161.8,58.1 163.3,58.2 164.9,58.2 166.4,58.2 168.0,58.0 169.6,49.3 171.1,37.8 172.7,26.7 174.2,15.6 175.8,4.8 177.3,3.0 178.9,4.2 180.4,6.1 182.0,8.7 183.6,11.6 185.1,14.1 186.7,16.2 188.2,17.9 189.8,19.6 191.3,20.8 192.9,21.4 194.4,22.8 196.0,24.3 197.6,24.6 199.1,23.7 200.7,24.0 202.2,24.1 203.8,24.1 205.3,24.9 206.9,26.9 208.4,28.1 210.0,29.5 211.6,30.3 213.1,31.2 214.7,31.8 216.2,32.8 217.8,33.5 219.3,34.2 220.9,34.4 222.4,34.7 224.0,34.4 225.6,34.5 227.1,34.5 228.7,34.8 230.2,34.4 231.8,33.7 233.3,33.2 234.9,33.0 236.4,32.7 238.0,33.6 239.6,34.7 241.1,34.8 242.7,35.3 244.2,35.7 245.8,36.1 247.3,37.0 248.9,37.7 250.4,38.0 252.0,38.4 253.6,38.3 255.1,38.2 256.7,38.8 258.2,39.2 259.8,39.4 261.3,40.3 262.9,40.9 264.4,41.2 266.0,41.7 267.6,42.3 269.1,42.8 270.7,43.2 272.2,43.8 273.8,44.1 275.3,44.8 276.9,45.2 278.4,45.3 280.0,45.5 280,64" class="tendencia-sparkline-area"></polygon>
-          <polyline points="0.0,58.6 1.6,58.6 3.1,58.7 4.7,58.8 6.2,58.9 7.8,59.1 9.3,59.2 10.9,59.2 12.4,59.3 14.0,59.4 15.6,59.5 17.1,59.7 18.7,59.8 20.2,59.9 21.8,60.0 23.3,60.2 24.9,60.3 26.4,60.4 28.0,60.4 29.6,60.4 31.1,60.4 32.7,60.4 34.2,60.5 35.8,60.5 37.3,60.6 38.9,60.8 40.4,60.9 42.0,60.9 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,60.9 74.7,60.9 76.2,60.9 77.8,60.8 79.3,60.6 80.9,60.6 82.4,60.5 84.0,60.4 85.6,60.4 87.1,60.4 88.7,60.4 90.2,60.4 91.8,60.4 93.3,60.3 94.9,60.2 96.4,60.0 98.0,59.9 99.6,59.8 101.1,59.8 102.7,59.8 104.2,59.7 105.8,59.5 107.3,59.4 108.9,59.3 110.4,59.2 112.0,59.2 113.6,59.2 115.1,59.1 116.7,58.9 118.2,58.8 119.8,58.7 121.3,58.6 122.9,58.6 124.4,58.6 126.0,58.6 127.6,58.6 129.1,58.6 130.7,58.6 132.2,58.6 133.8,58.6 135.3,58.6 136.9,58.6 138.4,58.6 140.0,58.6 141.6,58.5 143.1,58.5 144.7,58.3 146.2,58.2 147.8,58.2 149.3,58.3 150.9,58.2 152.4,58.2 154.0,58.2 155.6,58.1 157.1,58.0 158.7,58.0 160.2,58.0 161.8,58.1 163.3,58.2 164.9,58.2 166.4,58.2 168.0,58.0 169.6,49.3 171.1,37.8 172.7,26.7 174.2,15.6 175.8,4.8 177.3,3.0 178.9,4.2 180.4,6.1 182.0,8.7 183.6,11.6 185.1,14.1 186.7,16.2 188.2,17.9 189.8,19.6 191.3,20.8 192.9,21.4 194.4,22.8 196.0,24.3 197.6,24.6 199.1,23.7 200.7,24.0 202.2,24.1 203.8,24.1 205.3,24.9 206.9,26.9 208.4,28.1 210.0,29.5 211.6,30.3 213.1,31.2 214.7,31.8 216.2,32.8 217.8,33.5 219.3,34.2 220.9,34.4 222.4,34.7 224.0,34.4 225.6,34.5 227.1,34.5 228.7,34.8 230.2,34.4 231.8,33.7 233.3,33.2 234.9,33.0 236.4,32.7 238.0,33.6 239.6,34.7 241.1,34.8 242.7,35.3 244.2,35.7 245.8,36.1 247.3,37.0 248.9,37.7 250.4,38.0 252.0,38.4 253.6,38.3 255.1,38.2 256.7,38.8 258.2,39.2 259.8,39.4 261.3,40.3 262.9,40.9 264.4,41.2 266.0,41.7 267.6,42.3 269.1,42.8 270.7,43.2 272.2,43.8 273.8,44.1 275.3,44.8 276.9,45.2 278.4,45.3 280.0,45.5" class="tendencia-sparkline-linea"></polyline>
-        </svg>
-        
-        
-        <ul class="tendencia-historias">
-          
-          <li><span class="medio">Infobae</span> <a href="https://www.infobae.com/costa-rica/2026/10/09/dos-nuevos-sismos-de-hasta-magnitud-69-sacuden-panama-y-vuelven-a-sentirse-en-costa-rica-este-viernes/" target="_blank" rel="noopener">Dos nuevos sismos de hasta magnitud 6,9 sacuden Panamá y vuelven a sentirse en Costa Rica este viernes</a></li>
-          
-          <li><span class="medio">Infobae</span> <a href="https://www.infobae.com/panama/2026/10/08/panama-mantiene-atractivo-para-los-inversionistas-pero-enfrenta-alertas-por-corrupcion-y-justicia/" target="_blank" rel="noopener">Panamá mantiene atractivo para los inversionistas, pero enfrenta alertas por corrupción y justicia</a></li>
-          
-        </ul>
-        <p class="tendencia-mas">+3 historias más</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">5</span>
-          <h3>fecha</h3>
-        </div>
-        <span class="tendencia-volumen">50 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">6</span>
-          <h3>gimnasia - atlético tucumán</h3>
-        </div>
-        <span class="tendencia-volumen">50 mil+ búsquedas</span>
-        
-        <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;gimnasia - atlético tucumán&quot; en las últimas 24 horas">
-          <polygon points="0,64 0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,61.0 37.3,61.0 38.9,61.0 40.4,61.0 42.0,61.0 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,61.0 74.7,61.0 76.2,61.0 77.8,61.0 79.3,61.0 80.9,61.0 82.4,61.0 84.0,61.0 85.6,61.0 87.1,61.0 88.7,61.0 90.2,61.0 91.8,61.0 93.3,61.0 94.9,61.0 96.4,61.0 98.0,61.0 99.6,61.0 101.1,61.0 102.7,61.0 104.2,61.0 105.8,61.0 107.3,61.0 108.9,61.0 110.4,61.0 112.0,61.0 113.6,61.0 115.1,61.0 116.7,61.0 118.2,61.0 119.8,61.0 121.3,61.0 122.9,61.0 124.4,61.0 126.0,61.0 127.6,61.0 129.1,61.0 130.7,61.0 132.2,61.0 133.8,61.0 135.3,61.0 136.9,61.0 138.4,61.0 140.0,61.0 141.6,61.0 143.1,61.0 144.7,61.0 146.2,61.0 147.8,61.0 149.3,61.0 150.9,61.0 152.4,61.0 154.0,61.0 155.6,61.0 157.1,61.0 158.7,61.0 160.2,61.0 161.8,61.0 163.3,61.0 164.9,61.0 166.4,61.0 168.0,61.0 169.6,61.0 171.1,61.0 172.7,61.0 174.2,61.0 175.8,61.0 177.3,61.0 178.9,61.0 180.4,61.0 182.0,61.0 183.6,60.9 185.1,60.9 186.7,60.7 188.2,60.6 189.8,60.5 191.3,60.5 192.9,60.5 194.4,60.0 196.0,59.8 197.6,59.4 199.1,59.1 200.7,58.0 202.2,51.0 203.8,44.0 205.3,36.4 206.9,29.3 208.4,23.0 210.0,24.1 211.6,25.8 213.1,28.3 214.7,30.8 216.2,33.0 217.8,32.8 219.3,30.8 220.9,30.2 222.4,29.3 224.0,26.3 225.6,20.2 227.1,17.0 228.7,13.7 230.2,6.0 231.8,3.0 233.3,9.4 234.9,16.1 236.4,22.6 238.0,33.4 239.6,42.5 241.1,46.8 242.7,49.4 244.2,50.5 245.8,51.6 247.3,52.4 248.9,53.2 250.4,54.0 252.0,55.3 253.6,56.3 255.1,56.9 256.7,57.3 258.2,57.6 259.8,57.9 261.3,58.1 262.9,58.4 264.4,58.5 266.0,58.5 267.6,58.8 269.1,58.7 270.7,58.7 272.2,58.9 273.8,59.2 275.3,59.2 276.9,59.5 278.4,59.6 280.0,59.6 280,64" class="tendencia-sparkline-area"></polygon>
-          <polyline points="0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,61.0 37.3,61.0 38.9,61.0 40.4,61.0 42.0,61.0 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,61.0 52.9,61.0 54.4,61.0 56.0,61.0 57.6,61.0 59.1,61.0 60.7,61.0 62.2,61.0 63.8,61.0 65.3,61.0 66.9,61.0 68.4,61.0 70.0,61.0 71.6,61.0 73.1,61.0 74.7,61.0 76.2,61.0 77.8,61.0 79.3,61.0 80.9,61.0 82.4,61.0 84.0,61.0 85.6,61.0 87.1,61.0 88.7,61.0 90.2,61.0 91.8,61.0 93.3,61.0 94.9,61.0 96.4,61.0 98.0,61.0 99.6,61.0 101.1,61.0 102.7,61.0 104.2,61.0 105.8,61.0 107.3,61.0 108.9,61.0 110.4,61.0 112.0,61.0 113.6,61.0 115.1,61.0 116.7,61.0 118.2,61.0 119.8,61.0 121.3,61.0 122.9,61.0 124.4,61.0 126.0,61.0 127.6,61.0 129.1,61.0 130.7,61.0 132.2,61.0 133.8,61.0 135.3,61.0 136.9,61.0 138.4,61.0 140.0,61.0 141.6,61.0 143.1,61.0 144.7,61.0 146.2,61.0 147.8,61.0 149.3,61.0 150.9,61.0 152.4,61.0 154.0,61.0 155.6,61.0 157.1,61.0 158.7,61.0 160.2,61.0 161.8,61.0 163.3,61.0 164.9,61.0 166.4,61.0 168.0,61.0 169.6,61.0 171.1,61.0 172.7,61.0 174.2,61.0 175.8,61.0 177.3,61.0 178.9,61.0 180.4,61.0 182.0,61.0 183.6,60.9 185.1,60.9 186.7,60.7 188.2,60.6 189.8,60.5 191.3,60.5 192.9,60.5 194.4,60.0 196.0,59.8 197.6,59.4 199.1,59.1 200.7,58.0 202.2,51.0 203.8,44.0 205.3,36.4 206.9,29.3 208.4,23.0 210.0,24.1 211.6,25.8 213.1,28.3 214.7,30.8 216.2,33.0 217.8,32.8 219.3,30.8 220.9,30.2 222.4,29.3 224.0,26.3 225.6,20.2 227.1,17.0 228.7,13.7 230.2,6.0 231.8,3.0 233.3,9.4 234.9,16.1 236.4,22.6 238.0,33.4 239.6,42.5 241.1,46.8 242.7,49.4 244.2,50.5 245.8,51.6 247.3,52.4 248.9,53.2 250.4,54.0 252.0,55.3 253.6,56.3 255.1,56.9 256.7,57.3 258.2,57.6 259.8,57.9 261.3,58.1 262.9,58.4 264.4,58.5 266.0,58.5 267.6,58.8 269.1,58.7 270.7,58.7 272.2,58.9 273.8,59.2 275.3,59.2 276.9,59.5 278.4,59.6 280.0,59.6" class="tendencia-sparkline-linea"></polyline>
-        </svg>
-        
-        
-        <ul class="tendencia-historias">
-          
-          <li><a href="historias/460501.html">Todo definido: los convocados de Gimnasia para enfrentar a Atlético Tucumán en una final por el torneo y por la anual</a></li>
-          
-          <li><span class="medio">La Gaceta</span> <a href="https://www.lagaceta.com.ar/nota/1157241/sociedad/video-tesoros-secretos-guarda-tucuman-museo-miguel-lillo.html" target="_blank" rel="noopener">Video: los tesoros y secretos que guarda Tucumán en el Museo Miguel Lillo</a></li>
-          
-        </ul>
-        <p class="tendencia-mas">+1 historia más</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">7</span>
-          <h3>universidad nacional de entre ríos</h3>
-        </div>
-        <span class="tendencia-volumen">50 mil+ búsquedas</span>
-        
-        <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;universidad nacional de entre ríos&quot; en las últimas 24 horas">
-          <polygon points="0,64 0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,60.5 37.3,60.5 38.9,60.5 40.4,60.5 42.0,60.5 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,60.4 52.9,60.4 54.4,59.8 56.0,59.1 57.6,58.3 59.1,58.0 60.7,57.0 62.2,56.4 63.8,56.3 65.3,55.9 66.9,55.5 68.4,54.4 70.0,53.4 71.6,51.7 73.1,50.0 74.7,48.0 76.2,46.6 77.8,44.6 79.3,42.6 80.9,40.6 82.4,38.4 84.0,36.5 85.6,35.8 87.1,35.4 88.7,35.5 90.2,36.4 91.8,36.2 93.3,35.6 94.9,33.5 96.4,31.6 98.0,28.7 99.6,25.7 101.1,23.1 102.7,21.8 104.2,20.2 105.8,17.6 107.3,16.6 108.9,14.4 110.4,12.5 112.0,10.5 113.6,9.3 115.1,8.3 116.7,8.5 118.2,7.1 119.8,5.5 121.3,5.4 122.9,3.8 124.4,3.0 126.0,3.1 127.6,3.2 129.1,3.2 130.7,5.3 132.2,7.1 133.8,9.3 135.3,12.6 136.9,16.6 138.4,20.0 140.0,22.5 141.6,25.8 143.1,27.1 144.7,28.7 146.2,29.1 147.8,30.2 149.3,31.6 150.9,33.8 152.4,35.3 154.0,37.5 155.6,38.7 157.1,39.3 158.7,39.8 160.2,41.0 161.8,42.3 163.3,43.4 164.9,44.4 166.4,45.3 168.0,45.5 169.6,45.5 171.1,46.3 172.7,47.4 174.2,48.0 175.8,49.0 177.3,49.8 178.9,50.2 180.4,50.0 182.0,50.3 183.6,50.6 185.1,50.7 186.7,50.4 188.2,50.4 189.8,50.6 191.3,50.7 192.9,50.6 194.4,51.2 196.0,51.8 197.6,51.9 199.1,51.7 200.7,51.4 202.2,51.1 203.8,51.1 205.3,51.2 206.9,51.5 208.4,51.9 210.0,52.0 211.6,52.3 213.1,52.0 214.7,52.0 216.2,52.7 217.8,53.4 219.3,53.4 220.9,54.3 222.4,54.4 224.0,53.5 225.6,53.4 227.1,53.4 228.7,53.2 230.2,53.4 231.8,54.3 233.3,54.7 234.9,54.7 236.4,55.1 238.0,55.2 239.6,55.3 241.1,55.4 242.7,56.9 244.2,56.5 245.8,57.2 247.3,57.4 248.9,57.5 250.4,56.8 252.0,57.0 253.6,57.6 255.1,58.5 256.7,59.3 258.2,60.0 259.8,61.0 261.3,60.3 262.9,60.3 264.4,60.3 266.0,59.7 267.6,59.7 269.1,60.4 270.7,60.4 272.2,60.4 273.8,60.3 275.3,60.3 276.9,60.3 278.4,60.1 280.0,59.8 280,64" class="tendencia-sparkline-area"></polygon>
-          <polyline points="0.0,61.0 1.6,61.0 3.1,61.0 4.7,61.0 6.2,61.0 7.8,61.0 9.3,61.0 10.9,61.0 12.4,61.0 14.0,61.0 15.6,61.0 17.1,61.0 18.7,61.0 20.2,61.0 21.8,61.0 23.3,61.0 24.9,61.0 26.4,61.0 28.0,61.0 29.6,61.0 31.1,61.0 32.7,61.0 34.2,61.0 35.8,60.5 37.3,60.5 38.9,60.5 40.4,60.5 42.0,60.5 43.6,61.0 45.1,61.0 46.7,61.0 48.2,61.0 49.8,61.0 51.3,60.4 52.9,60.4 54.4,59.8 56.0,59.1 57.6,58.3 59.1,58.0 60.7,57.0 62.2,56.4 63.8,56.3 65.3,55.9 66.9,55.5 68.4,54.4 70.0,53.4 71.6,51.7 73.1,50.0 74.7,48.0 76.2,46.6 77.8,44.6 79.3,42.6 80.9,40.6 82.4,38.4 84.0,36.5 85.6,35.8 87.1,35.4 88.7,35.5 90.2,36.4 91.8,36.2 93.3,35.6 94.9,33.5 96.4,31.6 98.0,28.7 99.6,25.7 101.1,23.1 102.7,21.8 104.2,20.2 105.8,17.6 107.3,16.6 108.9,14.4 110.4,12.5 112.0,10.5 113.6,9.3 115.1,8.3 116.7,8.5 118.2,7.1 119.8,5.5 121.3,5.4 122.9,3.8 124.4,3.0 126.0,3.1 127.6,3.2 129.1,3.2 130.7,5.3 132.2,7.1 133.8,9.3 135.3,12.6 136.9,16.6 138.4,20.0 140.0,22.5 141.6,25.8 143.1,27.1 144.7,28.7 146.2,29.1 147.8,30.2 149.3,31.6 150.9,33.8 152.4,35.3 154.0,37.5 155.6,38.7 157.1,39.3 158.7,39.8 160.2,41.0 161.8,42.3 163.3,43.4 164.9,44.4 166.4,45.3 168.0,45.5 169.6,45.5 171.1,46.3 172.7,47.4 174.2,48.0 175.8,49.0 177.3,49.8 178.9,50.2 180.4,50.0 182.0,50.3 183.6,50.6 185.1,50.7 186.7,50.4 188.2,50.4 189.8,50.6 191.3,50.7 192.9,50.6 194.4,51.2 196.0,51.8 197.6,51.9 199.1,51.7 200.7,51.4 202.2,51.1 203.8,51.1 205.3,51.2 206.9,51.5 208.4,51.9 210.0,52.0 211.6,52.3 213.1,52.0 214.7,52.0 216.2,52.7 217.8,53.4 219.3,53.4 220.9,54.3 222.4,54.4 224.0,53.5 225.6,53.4 227.1,53.4 228.7,53.2 230.2,53.4 231.8,54.3 233.3,54.7 234.9,54.7 236.4,55.1 238.0,55.2 239.6,55.3 241.1,55.4 242.7,56.9 244.2,56.5 245.8,57.2 247.3,57.4 248.9,57.5 250.4,56.8 252.0,57.0 253.6,57.6 255.1,58.5 256.7,59.3 258.2,60.0 259.8,61.0 261.3,60.3 262.9,60.3 264.4,60.3 266.0,59.7 267.6,59.7 269.1,60.4 270.7,60.4 272.2,60.4 273.8,60.3 275.3,60.3 276.9,60.3 278.4,60.1 280.0,59.8" class="tendencia-sparkline-linea"></polyline>
-        </svg>
-        
-        
-        <ul class="tendencia-historias">
-          
-          <li><span>La universidad cerca de casa: cómo es el Centro Universitario de Innovación de La Matanza</span>
-      <div class="elegir-fuente">
-        <a class="chip-fuente" href="https://www.infobae.com/educacion/2026/10/08/la-universidad-cerca-de-casa-como-es-el-centro-universitario-de-innovacion-de-la-matanza/" target="_blank" rel="noopener">Leer en Infobae</a><a class="chip-fuente" href="https://www.rionegro.com.ar/sociedad/innovation-campus-day-en-neuquen-reflexiones-sobre-tecnologia-emociones-y-productividad-4752388/" target="_blank" rel="noopener">Leer en Río Negro</a>
-      </div></li>
-          
-        </ul>
-        
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">8</span>
-          <h3>12 de octubre</h3>
-        </div>
-        <span class="tendencia-volumen">20 mil+ búsquedas</span>
-        
-        <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;12 de octubre&quot; en las últimas 24 horas">
-          <polygon points="0,64 0.0,48.0 1.6,48.1 3.1,48.2 4.7,49.6 6.2,50.2 7.8,51.5 9.3,52.8 10.9,53.9 12.4,54.6 14.0,55.5 15.6,55.8 17.1,56.4 18.7,57.6 20.2,58.3 21.8,59.2 23.3,60.0 24.9,60.4 26.4,60.6 28.0,60.4 29.6,60.4 31.1,60.6 32.7,60.7 34.2,60.4 35.8,60.7 37.3,61.0 38.9,60.7 40.4,60.3 42.0,60.6 43.6,59.8 45.1,59.4 46.7,59.2 48.2,58.8 49.8,58.3 51.3,58.5 52.9,58.0 54.4,58.3 56.0,58.8 57.6,58.3 59.1,58.6 60.7,58.8 62.2,58.0 63.8,57.7 65.3,58.2 66.9,57.6 68.4,57.0 70.0,56.8 71.6,56.3 73.1,55.4 74.7,54.6 76.2,54.2 77.8,53.1 79.3,52.4 80.9,52.0 82.4,50.8 84.0,49.9 85.6,49.3 87.1,48.5 88.7,47.2 90.2,46.5 91.8,45.4 93.3,44.5 94.9,43.6 96.4,42.6 98.0,41.4 99.6,40.5 101.1,39.3 102.7,38.7 104.2,38.5 105.8,38.2 107.3,37.3 108.9,37.3 110.4,36.8 112.0,36.5 113.6,35.9 115.1,36.1 116.7,35.9 118.2,35.8 119.8,35.5 121.3,36.2 122.9,35.8 124.4,35.5 126.0,35.0 127.6,34.6 129.1,34.0 130.7,33.6 132.2,32.4 133.8,31.2 135.3,29.7 136.9,28.5 138.4,28.1 140.0,27.9 141.6,27.6 143.1,27.3 144.7,26.1 146.2,25.7 147.8,24.8 149.3,24.8 150.9,25.1 152.4,25.5 154.0,25.3 155.6,25.0 157.1,24.4 158.7,24.1 160.2,23.9 161.8,23.3 163.3,22.7 164.9,22.7 166.4,22.1 168.0,22.3 169.6,21.4 171.1,22.1 172.7,21.4 174.2,21.4 175.8,20.4 177.3,20.1 178.9,18.6 180.4,18.4 182.0,18.1 183.6,18.0 185.1,18.0 186.7,18.0 188.2,16.9 189.8,15.9 191.3,14.6 192.9,14.3 194.4,13.8 196.0,12.9 197.6,11.8 199.1,10.9 200.7,10.1 202.2,9.4 203.8,8.9 205.3,8.9 206.9,8.0 208.4,7.0 210.0,6.0 211.6,5.2 213.1,4.3 214.7,3.7 216.2,3.4 217.8,3.3 219.3,3.0 220.9,3.7 222.4,5.8 224.0,6.1 225.6,7.3 227.1,8.6 228.7,8.6 230.2,9.7 231.8,10.4 233.3,10.1 234.9,10.7 236.4,12.6 238.0,13.1 239.6,14.4 241.1,17.7 242.7,19.0 244.2,19.5 245.8,19.9 247.3,19.9 248.9,19.0 250.4,19.3 252.0,20.5 253.6,20.5 255.1,23.2 256.7,25.1 258.2,27.2 259.8,28.8 261.3,31.2 262.9,32.5 264.4,33.7 266.0,34.4 267.6,35.5 269.1,36.4 270.7,36.1 272.2,37.4 273.8,39.0 275.3,39.0 276.9,41.1 278.4,42.7 280.0,42.8 280,64" class="tendencia-sparkline-area"></polygon>
-          <polyline points="0.0,48.0 1.6,48.1 3.1,48.2 4.7,49.6 6.2,50.2 7.8,51.5 9.3,52.8 10.9,53.9 12.4,54.6 14.0,55.5 15.6,55.8 17.1,56.4 18.7,57.6 20.2,58.3 21.8,59.2 23.3,60.0 24.9,60.4 26.4,60.6 28.0,60.4 29.6,60.4 31.1,60.6 32.7,60.7 34.2,60.4 35.8,60.7 37.3,61.0 38.9,60.7 40.4,60.3 42.0,60.6 43.6,59.8 45.1,59.4 46.7,59.2 48.2,58.8 49.8,58.3 51.3,58.5 52.9,58.0 54.4,58.3 56.0,58.8 57.6,58.3 59.1,58.6 60.7,58.8 62.2,58.0 63.8,57.7 65.3,58.2 66.9,57.6 68.4,57.0 70.0,56.8 71.6,56.3 73.1,55.4 74.7,54.6 76.2,54.2 77.8,53.1 79.3,52.4 80.9,52.0 82.4,50.8 84.0,49.9 85.6,49.3 87.1,48.5 88.7,47.2 90.2,46.5 91.8,45.4 93.3,44.5 94.9,43.6 96.4,42.6 98.0,41.4 99.6,40.5 101.1,39.3 102.7,38.7 104.2,38.5 105.8,38.2 107.3,37.3 108.9,37.3 110.4,36.8 112.0,36.5 113.6,35.9 115.1,36.1 116.7,35.9 118.2,35.8 119.8,35.5 121.3,36.2 122.9,35.8 124.4,35.5 126.0,35.0 127.6,34.6 129.1,34.0 130.7,33.6 132.2,32.4 133.8,31.2 135.3,29.7 136.9,28.5 138.4,28.1 140.0,27.9 141.6,27.6 143.1,27.3 144.7,26.1 146.2,25.7 147.8,24.8 149.3,24.8 150.9,25.1 152.4,25.5 154.0,25.3 155.6,25.0 157.1,24.4 158.7,24.1 160.2,23.9 161.8,23.3 163.3,22.7 164.9,22.7 166.4,22.1 168.0,22.3 169.6,21.4 171.1,22.1 172.7,21.4 174.2,21.4 175.8,20.4 177.3,20.1 178.9,18.6 180.4,18.4 182.0,18.1 183.6,18.0 185.1,18.0 186.7,18.0 188.2,16.9 189.8,15.9 191.3,14.6 192.9,14.3 194.4,13.8 196.0,12.9 197.6,11.8 199.1,10.9 200.7,10.1 202.2,9.4 203.8,8.9 205.3,8.9 206.9,8.0 208.4,7.0 210.0,6.0 211.6,5.2 213.1,4.3 214.7,3.7 216.2,3.4 217.8,3.3 219.3,3.0 220.9,3.7 222.4,5.8 224.0,6.1 225.6,7.3 227.1,8.6 228.7,8.6 230.2,9.7 231.8,10.4 233.3,10.1 234.9,10.7 236.4,12.6 238.0,13.1 239.6,14.4 241.1,17.7 242.7,19.0 244.2,19.5 245.8,19.9 247.3,19.9 248.9,19.0 250.4,19.3 252.0,20.5 253.6,20.5 255.1,23.2 256.7,25.1 258.2,27.2 259.8,28.8 261.3,31.2 262.9,32.5 264.4,33.7 266.0,34.4 267.6,35.5 269.1,36.4 270.7,36.1 272.2,37.4 273.8,39.0 275.3,39.0 276.9,41.1 278.4,42.7 280.0,42.8" class="tendencia-sparkline-linea"></polyline>
-        </svg>
-        
-        
-        <ul class="tendencia-historias">
-          
-          <li><a href="historias/458760.html">Necrológicas de hoy, jueves 8 de octubre de 2026</a></li>
-          
-          <li><a href="historias/459271.html">Fin de semana XL en octubre: el lunes 12 es feriado nacional</a></li>
-          
-        </ul>
-        <p class="tendencia-mas">+3 historias más</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">9</span>
-          <h3>tobogán</h3>
-        </div>
-        <span class="tendencia-volumen">10 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">10</span>
-          <h3>posiciones de aldosivi contra sarmiento de junin</h3>
-        </div>
-        <span class="tendencia-volumen">50 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">11</span>
-          <h3>subsidio</h3>
-        </div>
-        <span class="tendencia-volumen">10 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">12</span>
-          <h3>vuelo</h3>
-        </div>
-        <span class="tendencia-volumen">10 mil+ búsquedas</span>
-        
-        <svg class="tendencia-sparkline" viewBox="0 0 280 64" preserveAspectRatio="none" role="img" aria-label="Evolución de búsquedas de &quot;vuelo&quot; en las últimas 24 horas">
-          <polygon points="0,64 0.0,28.8 1.6,29.9 3.1,32.1 4.7,33.3 6.2,33.8 7.8,35.2 9.3,35.2 10.9,34.8 12.4,34.0 14.0,35.0 15.6,36.7 17.1,39.1 18.7,40.7 20.2,45.5 21.8,47.6 23.3,49.3 24.9,51.2 26.4,53.1 28.0,53.9 29.6,55.0 31.1,56.2 32.7,56.5 34.2,57.2 35.8,58.1 37.3,58.8 38.9,59.3 40.4,59.6 42.0,59.8 43.6,59.6 45.1,59.3 46.7,58.9 48.2,58.9 49.8,59.1 51.3,58.8 52.9,59.1 54.4,59.8 56.0,60.5 57.6,60.1 59.1,61.0 60.7,60.3 62.2,57.6 63.8,54.3 65.3,54.3 66.9,53.8 68.4,54.8 70.0,56.9 71.6,60.0 73.1,59.8 74.7,59.1 76.2,57.9 77.8,56.2 79.3,52.6 80.9,51.5 82.4,50.7 84.0,51.0 85.6,50.2 87.1,51.9 88.7,51.4 90.2,50.7 91.8,49.6 93.3,50.0 94.9,49.6 96.4,48.8 98.0,48.4 99.6,47.9 101.1,48.6 102.7,48.3 104.2,48.3 105.8,47.9 107.3,46.9 108.9,45.7 110.4,45.9 112.0,45.9 113.6,46.4 115.1,46.7 116.7,47.4 118.2,46.7 119.8,45.7 121.3,45.3 122.9,44.6 124.4,43.4 126.0,42.8 127.6,42.2 129.1,41.7 130.7,40.9 132.2,40.3 133.8,39.7 135.3,40.2 136.9,39.3 138.4,39.3 140.0,39.0 141.6,39.0 143.1,37.8 144.7,36.9 146.2,35.2 147.8,34.7 149.3,34.7 150.9,34.5 152.4,34.5 154.0,35.9 155.6,35.4 157.1,34.3 158.7,34.0 160.2,32.8 161.8,31.1 163.3,30.4 164.9,29.3 166.4,28.3 168.0,28.3 169.6,29.2 171.1,28.8 172.7,28.3 174.2,28.5 175.8,28.0 177.3,26.1 178.9,24.7 180.4,24.5 182.0,22.6 183.6,22.3 185.1,21.1 186.7,21.8 188.2,19.4 189.8,18.7 191.3,17.5 192.9,17.6 194.4,16.6 196.0,16.4 197.6,15.4 199.1,15.0 200.7,13.7 202.2,13.0 203.8,14.5 205.3,15.0 206.9,14.4 208.4,12.6 210.0,10.4 211.6,8.7 213.1,6.6 214.7,4.7 216.2,5.2 217.8,5.4 219.3,4.9 220.9,4.9 222.4,3.7 224.0,3.5 225.6,3.5 227.1,3.0 228.7,3.3 230.2,5.9 231.8,6.3 233.3,6.4 234.9,6.4 236.4,8.7 238.0,8.9 239.6,8.9 241.1,10.6 242.7,11.8 244.2,9.0 245.8,8.9 247.3,9.7 248.9,8.2 250.4,9.0 252.0,10.4 253.6,11.4 255.1,13.3 256.7,14.0 258.2,14.0 259.8,14.5 261.3,14.4 262.9,14.7 264.4,15.7 266.0,15.6 267.6,16.8 269.1,18.0 270.7,17.6 272.2,19.2 273.8,20.2 275.3,21.9 276.9,22.8 278.4,23.7 280.0,23.9 280,64" class="tendencia-sparkline-area"></polygon>
-          <polyline points="0.0,28.8 1.6,29.9 3.1,32.1 4.7,33.3 6.2,33.8 7.8,35.2 9.3,35.2 10.9,34.8 12.4,34.0 14.0,35.0 15.6,36.7 17.1,39.1 18.7,40.7 20.2,45.5 21.8,47.6 23.3,49.3 24.9,51.2 26.4,53.1 28.0,53.9 29.6,55.0 31.1,56.2 32.7,56.5 34.2,57.2 35.8,58.1 37.3,58.8 38.9,59.3 40.4,59.6 42.0,59.8 43.6,59.6 45.1,59.3 46.7,58.9 48.2,58.9 49.8,59.1 51.3,58.8 52.9,59.1 54.4,59.8 56.0,60.5 57.6,60.1 59.1,61.0 60.7,60.3 62.2,57.6 63.8,54.3 65.3,54.3 66.9,53.8 68.4,54.8 70.0,56.9 71.6,60.0 73.1,59.8 74.7,59.1 76.2,57.9 77.8,56.2 79.3,52.6 80.9,51.5 82.4,50.7 84.0,51.0 85.6,50.2 87.1,51.9 88.7,51.4 90.2,50.7 91.8,49.6 93.3,50.0 94.9,49.6 96.4,48.8 98.0,48.4 99.6,47.9 101.1,48.6 102.7,48.3 104.2,48.3 105.8,47.9 107.3,46.9 108.9,45.7 110.4,45.9 112.0,45.9 113.6,46.4 115.1,46.7 116.7,47.4 118.2,46.7 119.8,45.7 121.3,45.3 122.9,44.6 124.4,43.4 126.0,42.8 127.6,42.2 129.1,41.7 130.7,40.9 132.2,40.3 133.8,39.7 135.3,40.2 136.9,39.3 138.4,39.3 140.0,39.0 141.6,39.0 143.1,37.8 144.7,36.9 146.2,35.2 147.8,34.7 149.3,34.7 150.9,34.5 152.4,34.5 154.0,35.9 155.6,35.4 157.1,34.3 158.7,34.0 160.2,32.8 161.8,31.1 163.3,30.4 164.9,29.3 166.4,28.3 168.0,28.3 169.6,29.2 171.1,28.8 172.7,28.3 174.2,28.5 175.8,28.0 177.3,26.1 178.9,24.7 180.4,24.5 182.0,22.6 183.6,22.3 185.1,21.1 186.7,21.8 188.2,19.4 189.8,18.7 191.3,17.5 192.9,17.6 194.4,16.6 196.0,16.4 197.6,15.4 199.1,15.0 200.7,13.7 202.2,13.0 203.8,14.5 205.3,15.0 206.9,14.4 208.4,12.6 210.0,10.4 211.6,8.7 213.1,6.6 214.7,4.7 216.2,5.2 217.8,5.4 219.3,4.9 220.9,4.9 222.4,3.7 224.0,3.5 225.6,3.5 227.1,3.0 228.7,3.3 230.2,5.9 231.8,6.3 233.3,6.4 234.9,6.4 236.4,8.7 238.0,8.9 239.6,8.9 241.1,10.6 242.7,11.8 244.2,9.0 245.8,8.9 247.3,9.7 248.9,8.2 250.4,9.0 252.0,10.4 253.6,11.4 255.1,13.3 256.7,14.0 258.2,14.0 259.8,14.5 261.3,14.4 262.9,14.7 264.4,15.7 266.0,15.6 267.6,16.8 269.1,18.0 270.7,17.6 272.2,19.2 273.8,20.2 275.3,21.9 276.9,22.8 278.4,23.7 280.0,23.9" class="tendencia-sparkline-linea"></polyline>
-        </svg>
-        
-        
-        <ul class="tendencia-historias">
-          
-          <li><span class="medio">La Gaceta</span> <a href="https://www.lagaceta.com.ar/nota/1157377/sociedad/vuelo-1484-ha-sido-suspendido-falta-tripulacion-cronica-noche-incertidumbre-aeroparque.html" target="_blank" rel="noopener">&#34;El vuelo 1484 ha sido suspendido por falta de tripulación&#34;: crónica de una noche de incertidumbre en Aeroparque</a></li>
-          
-          <li><span class="medio">La Gaceta</span> <a href="https://www.lagaceta.com.ar/nota/1157332/sociedad/profundo-malestar-porque-aerolineas-suspendio-anoche-vuelo-venia-buenos-aires-tucuman.html" target="_blank" rel="noopener">Profundo malestar porque Aerolíneas suspendió anoche un vuelo que venía de Buenos Aires a Tucumán</a></li>
-          
-        </ul>
-        <p class="tendencia-mas">+1 historia más</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">13</span>
-          <h3>marcos rojo</h3>
-        </div>
-        <span class="tendencia-volumen">10 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">14</span>
-          <h3>dalma maradona</h3>
-        </div>
-        <span class="tendencia-volumen">10 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-      <div class="tendencia-card">
-        <div class="tendencia-encabezado">
-          <span class="tendencia-rango">15</span>
-          <h3>combustible</h3>
-        </div>
-        <span class="tendencia-volumen">5 mil+ búsquedas</span>
-        
-        <p class="tendencia-sin-curva">Sin datos de evolución de búsqueda disponibles para este tema por ahora.</p>
-        
-        
-        <p class="tendencia-sin-cobertura">Sin cobertura nuestra todavía.</p>
-        
-      </div>
-      
-    </div>
+    <p class="faltan">No la cubrieron: Perfil, La Izquierda Diario, Infobae, Los Andes, Misiones Online, Diario Registrado y 16 medios más — sin nota propia sobre esta historia al momento de esta actualización.</p>
     
-  
+  </div>
 
-  <footer>Puente · metodología pública · la lista de tendencias viene de Google Trends (no oficial); el cruce con nuestras historias es propio.</footer>
+  <footer>Puente · <a href="../comparacion.html" style="color: var(--accent);">Ver comparación de medios</a></footer>
 </div>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').catch(function () {});
+      navigator.serviceWorker.register('../sw.js').catch(function () {});
     });
   }
 
